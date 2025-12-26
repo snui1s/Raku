@@ -1,0 +1,108 @@
+@import "tailwindcss";
+
+/* Line Seed Font Setup */
+@font-face {
+  font-family: "LineSeed";
+  src: url("./assets/fonts/LINESeedSansTH_Th.ttf") format("truetype");
+  font-weight: 100;
+  font-style: normal;
+}
+@font-face {
+  font-family: "LineSeed";
+  src: url("./assets/fonts/LINESeedSansTH_Rg.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+}
+@font-face {
+  font-family: "LineSeed";
+  src: url("./assets/fonts/LINESeedSansTH_Bd.ttf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+}
+@font-face {
+  font-family: "LineSeed";
+  src: url("./assets/fonts/LINESeedSansTH_XBd.ttf") format("truetype");
+  font-weight: 800;
+  font-style: normal;
+}
+@font-face {
+  font-family: "LineSeed";
+  src: url("./assets/fonts/LINESeedSansTH_He.ttf") format("truetype");
+  font-weight: 900;
+  font-style: normal;
+}
+
+/* Base Styles */
+body {
+  font-family: "LineSeed", "Inter", sans-serif;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 99px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* Selection */
+::selection {
+  background-color: rgba(56, 189, 248, 0.2);
+  color: white;
+}
+
+/* Editor Styling */
+.ProseMirror {
+  outline: none;
+  min-height: 100%;
+  padding-bottom: 30vh;
+}
+
+/* Placeholder - Bright */
+.ProseMirror p.is-editor-empty:first-child::before {
+  color: #a3a3a3;
+  content: "Start writing...";
+  float: left;
+  height: 0;
+  pointer-events: none;
+}
+
+/* Typography */
+.ProseMirror h1 {
+  font-weight: 700;
+  color: #f5f5f5;
+  margin-top: 2rem;
+  letter-spacing: -0.025em;
+}
+.ProseMirror h2 {
+  font-weight: 700;
+  color: #e5e5e5;
+  margin-top: 1.5rem;
+}
+.ProseMirror h3 {
+  font-weight: 400;
+  color: #d4d4d4;
+  margin-top: 1.25rem;
+}
+.ProseMirror p {
+  font-weight: 100;
+  margin-bottom: 0.75rem;
+  line-height: 1.6;
+}
+.ProseMirror strong {
+  font-weight: 800;
+  color: white;
+}
+.ProseMirror ul {
+  list-style-type: disc;
+  padding-left: 1.5rem;
+  color: #a3a3a3;
+}
