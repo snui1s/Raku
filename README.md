@@ -4,6 +4,8 @@
 
 > "Smarter than Notepad, simpler than Notion."
 
+**Raku (楽)** means "Ease" or "Comfort". Inspired by the freedom of scribbling (**Rakugaki**), it is designed to let you capture thoughts without friction.
+
 ## Features & Roadmap
 
 ### Core Experience (Current)
