@@ -11,6 +11,13 @@ node_modules
 dist
 dist-ssr
 *.local
+.env
+.env.*
+
+# Databases
+*.db
+*.sqlite
+*.sqlite3
 
 # Editor directories and files
 .vscode/*
@@ -25,6 +32,7 @@ dist-ssr
 
 # Tauri / Rust
 src-tauri/target
+src-tauri/gen
 
 # Lock files (optional - some prefer to commit these)
 # bun.lock

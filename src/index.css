@@ -161,6 +161,118 @@ body {
   list-style-type: disc;
   padding-left: 1.5rem;
 }
+.ProseMirror ol {
+  list-style-type: decimal;
+  padding-left: 1.5rem;
+}
+.ProseMirror ol li,
+.ProseMirror ul li {
+  margin-bottom: 0.25rem;
+}
+
+/* Custom Task List Styling (Checkboxes) */
+/* Custom Task List Styling (Checkboxes) */
+
+/* Global override for Tiptap TaskList */
+ul[data-type="taskList"] {
+  list-style: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+/* Target LI children of taskList - works even if data-type="taskItem" is missing */
+ul[data-type="taskList"] > li {
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: nowrap !important; /* CRITICAL: Prevent wrapping */
+  align-items: flex-start !important;
+  width: 100% !important;
+  margin-bottom: 0.5rem !important;
+  padding-left: 0 !important; /* Remove any prose padding */
+}
+
+/* Checkbox Container */
+ul[data-type="taskList"] > li > label {
+  flex: 0 0 auto !important; /* Do not grow, do not shrink */
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  margin: 0 !important;
+  margin-right: 0.75rem !important;
+  margin-top: 0.2rem !important;
+  user-select: none !important;
+  width: auto !important;
+}
+
+/* Text Content Wrapper */
+ul[data-type="taskList"] > li > div {
+  flex: 1 1 auto !important; /* Take remaining space */
+  display: block !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  min-width: 0 !important;
+  overflow-wrap: break-word !important;
+}
+
+/* Force paragraph to behave */
+ul[data-type="taskList"] > li > div > p {
+  margin: 0 !important;
+  padding: 0 !important;
+  display: block !important; /* Block is fine if container is flex child */
+  line-height: 1.6 !important;
+}
+
+/* Custom Checkbox Input */
+ul[data-type="taskList"] > li > label > input[type="checkbox"] {
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  width: 1.15rem !important;
+  height: 1.15rem !important;
+  border: 1.5px solid var(--color-border) !important;
+  border-radius: 4px !important;
+  background-color: transparent !important;
+  cursor: pointer !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  display: grid !important;
+  place-content: center !important;
+  transition: all 0.2s ease !important;
+}
+
+/* Hover State */
+ul[data-type="taskList"] > li > label > input[type="checkbox"]:hover {
+  border-color: var(--color-accent);
+  background-color: var(--color-bg-secondary);
+}
+
+/* Checked State */
+ul[data-type="taskList"] > li > label > input[type="checkbox"]:checked {
+  background-color: var(--color-accent);
+  border-color: var(--color-accent);
+}
+
+/* Checkmark Icon */
+ul[data-type="taskList"] > li > label > input[type="checkbox"]::after {
+  content: "";
+  width: 9px;
+  height: 5px;
+  border: 2px solid white;
+  border-width: 0 0 2px 2px;
+  transform: rotate(-45deg) scale(0);
+  margin-bottom: 2px;
+  transition: transform 0.2s;
+}
+
+ul[data-type="taskList"] > li > label > input[type="checkbox"]:checked::after {
+  transform: rotate(-45deg) scale(1);
+}
+
+/* Checked Text Style */
+ul[data-type="taskList"] > li[data-checked="true"] > div {
+  text-decoration: line-through;
+  color: var(--color-text-muted);
+  opacity: 0.8;
+}
 
 /* Blockquote */
 .ProseMirror blockquote {
