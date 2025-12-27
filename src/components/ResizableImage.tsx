@@ -1,15 +1,39 @@
 import { NodeViewWrapper, NodeViewProps } from "@tiptap/react";
 import { useCallback, useEffect, useState, useRef } from "react";
+import { readFile, BaseDirectory } from "@tauri-apps/plugin-fs";
 
 export const ResizableImage = (props: NodeViewProps) => {
   const [width, setWidth] = useState(props.node.attrs.width || "auto");
   const [isResizing, setIsResizing] = useState(false);
+  const [imgSrc, setImgSrc] = useState(props.node.attrs.src);
   const imageRef = useRef<HTMLImageElement>(null);
 
   // Update state if node attributes change externally (e.g. undo/redo)
   useEffect(() => {
     setWidth(props.node.attrs.width || "auto");
   }, [props.node.attrs.width]);
+
+  // Handle Local Image Loading (Bypass Asset Protocol)
+  useEffect(() => {
+    const src = props.node.attrs.src;
+    if (src && src.startsWith("local-image:")) {
+      const path = src.replace("local-image:", "");
+      console.log("Loading local image from:", path);
+
+      readFile(path, { baseDir: BaseDirectory.AppData })
+        .then((bytes) => {
+          const blob = new Blob([bytes]);
+          const objectUrl = URL.createObjectURL(blob);
+          setImgSrc(objectUrl);
+        })
+        .catch((err) => {
+          console.error("Failed to load local image:", err);
+          // Fallback or error placeholder could go here
+        });
+    } else {
+      setImgSrc(src);
+    }
+  }, [props.node.attrs.src]);
 
   const onMouseDown = useCallback(
     (e: React.MouseEvent) => {
@@ -60,7 +84,7 @@ export const ResizableImage = (props: NodeViewProps) => {
         {/* The Image */}
         <img
           ref={imageRef}
-          src={props.node.attrs.src}
+          src={imgSrc}
           alt={props.node.attrs.alt}
           className={`block max-w-full h-auto rounded-lg shadow-sm ${
             isResizing ? "pointer-events-none select-none opacity-90" : "" // Prevent native drag during resize

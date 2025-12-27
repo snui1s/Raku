@@ -6,7 +6,7 @@ import {
   readDir,
   remove,
 } from "@tauri-apps/plugin-fs";
-import { convertFileSrc, invoke } from "@tauri-apps/api/core";
+import { invoke } from "@tauri-apps/api/core";
 import { join } from "@tauri-apps/api/path";
 import Database from "@tauri-apps/plugin-sql";
 
@@ -16,6 +16,7 @@ const IMAGES_DIR = "images";
 export async function saveImage(blob: Blob): Promise<string> {
   try {
     // 1. Ensure directory exists
+    console.log("Creating/Checking directory...");
     const dirExists = await exists(IMAGES_DIR, {
       baseDir: BaseDirectory.AppData,
     });
@@ -27,6 +28,7 @@ export async function saveImage(blob: Blob): Promise<string> {
     }
 
     // 2. Wrap the blob buffer
+    console.log("Processing blob...");
     const arrayBuffer = await blob.arrayBuffer();
     const buffer = new Uint8Array(arrayBuffer);
 
@@ -36,24 +38,24 @@ export async function saveImage(blob: Blob): Promise<string> {
     const filePath = `${IMAGES_DIR}/${filename}`;
 
     // 4. Write file
+    console.log("Writing file to:", filePath);
     await writeFile(filePath, buffer, { baseDir: BaseDirectory.AppData });
 
-    // 5. Get absolute path to convert to asset URL
-    // We use a custom rust command or just construct it if we know the path.
-    // Better: getting the absolute path via the FS API might be tricky without a resolve.
-    // Let's rely on the fact that we can construct asset urls if we know the absolute path.
-    // Or simpler: Request the absolute path from Rust.
-
+    // 5. Get absolute path
+    console.log("Getting absolute path...");
     const absoluteImagesDir = await invoke<string>("get_images_dir");
-    // On Windows join might use backslashes, convertFileSrc handles them
     const absolutePath = await join(absoluteImagesDir, filename);
+    console.log("Absolute path:", absolutePath);
 
-    return convertFileSrc(absolutePath);
+    // FIX: Use custom local-image protocol to trigger direct FS read in frontend
+    // This bypasses network layer failure on Windows
+    const assetUrl = `local-image:${IMAGES_DIR}/${filename}`;
+    console.log("Generated Local ID:", assetUrl);
+
+    return assetUrl;
   } catch (err) {
-    console.error(
-      "Failed to save image natively, falling back to Base64:",
-      err
-    );
+    console.error("❌ FAILED to save image:", err);
+    // Return Base64 as fallback so user can still see image
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
       reader.onload = () => resolve(reader.result as string);
@@ -100,11 +102,15 @@ export async function runGarbageCollection(db: Database) {
       if (file.isFile && file.name) {
         if (!usedFilenames.has(file.name)) {
           // This file is NOT in any note -> Delete it
-          await remove(`${IMAGES_DIR}/${file.name}`, {
-            baseDir: BaseDirectory.AppData,
-          });
-          deletedCount++;
-          console.log(`🗑️ GC Deleted orphan: ${file.name}`);
+          try {
+            await remove(`${IMAGES_DIR}/${file.name}`, {
+              baseDir: BaseDirectory.AppData,
+            });
+            deletedCount++;
+            console.log(`🗑️ GC Deleted orphan: ${file.name}`);
+          } catch (e) {
+            // Ignore (file might be gone already)
+          }
         }
       }
     }

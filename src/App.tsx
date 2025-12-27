@@ -46,6 +46,7 @@ import {
   Palette,
 } from "lucide-react";
 import confetti from "canvas-confetti";
+import { check } from "@tauri-apps/plugin-updater";
 import "./index.css";
 
 function App() {
@@ -82,6 +83,37 @@ function App() {
   const [secondsLeft, setSecondsLeft] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
   const intervalRef = useRef<number | null>(null);
+
+  // Auto-Update state
+  const [updateAvailable, setUpdateAvailable] = useState<{
+    version: string;
+    notes: string;
+    downloadAndInstall: () => Promise<void>;
+  } | null>(null);
+  const [isUpdating, setIsUpdating] = useState(false);
+
+  // Check for updates on app start
+  useEffect(() => {
+    const checkForUpdates = async () => {
+      try {
+        const update = await check();
+        if (update?.available) {
+          setUpdateAvailable({
+            version: update.version,
+            notes: update.body || "New version available!",
+            downloadAndInstall: async () => {
+              setIsUpdating(true);
+              await update.downloadAndInstall();
+              // App will restart automatically after install
+            },
+          });
+        }
+      } catch (err) {
+        console.error("Failed to check for updates:", err);
+      }
+    };
+    checkForUpdates();
+  }, []);
 
   // Update clock every second (real-time)
   useEffect(() => {
@@ -287,10 +319,9 @@ function App() {
     editorProps: {
       attributes: {
         spellCheck: "false",
-        class: `prose prose-sm sm:prose lg:prose-lg xl:prose-2xl m-5 focus:outline-none ${
-          isDark ? "prose-invert" : "prose-neutral"
-        }`,
+        class: `prose prose-sm sm:prose lg:prose-lg xl:prose-2xl m-5 focus:outline-none prose-neutral dark:prose-invert`,
       },
+
       handlePaste: (view, event) => {
         const items = Array.from(event.clipboardData?.items || []);
         const item = items.find((item) => item.type.startsWith("image"));
@@ -319,24 +350,48 @@ function App() {
         }
         return false;
       },
+      handleDrop: (view, event, moved) => {
+        if (
+          !moved &&
+          event.dataTransfer &&
+          event.dataTransfer.files &&
+          event.dataTransfer.files.length > 0
+        ) {
+          const files = Array.from(event.dataTransfer.files);
+          const imageFile = files.find((file) => file.type.startsWith("image"));
+
+          if (imageFile) {
+            event.preventDefault();
+
+            // Get coordinates for the drop
+            const coordinates = view.posAtCoords({
+              left: event.clientX,
+              top: event.clientY,
+            });
+
+            saveImage(imageFile)
+              .then((url) => {
+                const imageNode = view.state.schema.nodes.image.create({
+                  src: url,
+                });
+
+                const transaction = view.state.tr.insert(
+                  coordinates?.pos ?? view.state.selection.anchor,
+                  imageNode
+                );
+                view.dispatch(transaction);
+              })
+              .catch((err) => {
+                console.error("Failed to save image:", err);
+              });
+            return true;
+          }
+        }
+        return false;
+      },
     },
     autofocus: true,
   });
-
-  // Update editor class when theme changes
-  useEffect(() => {
-    if (editor) {
-      editor.setOptions({
-        editorProps: {
-          attributes: {
-            class: `prose prose-lg max-w-none focus:outline-none ${
-              isDark ? "prose-invert" : "prose-neutral"
-            }`,
-          },
-        },
-      });
-    }
-  }, [isDark, editor]);
 
   // Notes management
   const {
@@ -447,9 +502,45 @@ function App() {
   return (
     <div
       className={`flex w-full h-screen overflow-hidden ${
-        isDark ? "bg-[#0A0A0A] text-[#E5E5E5]" : "bg-white text-[#171717]"
-      }`}
+        isDark ? "dark" : ""
+      } ${isDark ? "bg-[#0A0A0A] text-[#E5E5E5]" : "bg-white text-[#171717]"}`}
     >
+      {/* Update Available Modal */}
+      {updateAvailable && (
+        <div className="fixed inset-0 z-100 flex items-center justify-center bg-black/60 backdrop-blur-sm">
+          <div
+            className={`p-6 rounded-xl shadow-2xl max-w-sm w-full mx-4 ${
+              isDark ? "bg-neutral-900 text-white" : "bg-white text-neutral-900"
+            }`}
+          >
+            <h2 className="text-lg font-bold mb-2">🎉 มีอัพเดทใหม่!</h2>
+            <p className="text-sm opacity-70 mb-4">
+              เวอร์ชั่น {updateAvailable.version} พร้อมให้ดาวน์โหลดแล้ว
+            </p>
+            <p className="text-xs opacity-50 mb-4">{updateAvailable.notes}</p>
+            <div className="flex gap-2">
+              <button
+                onClick={() => setUpdateAvailable(null)}
+                className={`flex-1 py-2 px-4 rounded-lg text-sm font-medium transition-colors ${
+                  isDark
+                    ? "bg-neutral-800 hover:bg-neutral-700"
+                    : "bg-neutral-100 hover:bg-neutral-200"
+                }`}
+              >
+                ไว้ทีหลัง
+              </button>
+              <button
+                onClick={updateAvailable.downloadAndInstall}
+                disabled={isUpdating}
+                className="flex-1 py-2 px-4 rounded-lg text-sm font-medium bg-[#F25C54] text-white hover:bg-[#e04a42] transition-colors disabled:opacity-50"
+              >
+                {isUpdating ? "กำลังอัพเดท..." : "อัพเดทเลย"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Sidebar */}
       {sidebarOpen && (
         <aside
@@ -648,7 +739,7 @@ function App() {
               isDark ? "text-neutral-500" : "text-neutral-500"
             }`}
           >
-            v.1.0
+            v.{__APP_VERSION__}
           </div>
         </aside>
       )}
@@ -1117,7 +1208,7 @@ function App() {
                   <div className="w-px h-6 bg-neutral-700/20 mx-0.5" />
 
                   {/* Custom Color Input */}
-                  <div className="relative w-6 h-6 rounded-full overflow-hidden border border-black/10 transition-transform hover:scale-110 bg-gradient-to-br from-pink-400 via-purple-400 to-indigo-400">
+                  <div className="relative w-6 h-6 rounded-full overflow-hidden border border-black/10 transition-transform hover:scale-110 bg-linear-to-br from-pink-400 via-purple-400 to-indigo-400">
                     <input
                       type="color"
                       onInput={(e) => {
