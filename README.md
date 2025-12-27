@@ -5,7 +5,6 @@
 > "Smarter than Notepad, simpler than Notion."
 
 **Raku (楽)** means "Ease" or "Comfort". It is designed to let you capture thoughts without friction.
-
 [![Download Raku](https://img.shields.io/badge/Download-Raku_v1.0-F25C54?style=for-the-badge&logo=windows)](https://github.com/snui1s/raku/releases)
 
 _(Click the button above to download the latest `.exe`)_
