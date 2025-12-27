@@ -37,6 +37,24 @@
 
 ---
 
+## Preview
+
+### Night Temple (Dark Mode)
+The default immersive experience for late-night coding sessions.
+
+<div align="center">
+<img width="850" alt="raku dark mode" src="https://github.com/user-attachments/assets/e68fff09-8084-4c44-b00e-f6c9c05cc4cc" />
+</div>
+
+
+
+### Snowy Gate (Light Mode)
+Clean, crisp, and high-contrast for daylight focus.
+<div align="center">
+<img width="850" alt="raku light mode" src="https://github.com/user-attachments/assets/8a7a3dc9-3729-48ae-ba78-f1dcfdd82410" />
+</div>
+---
+
 ## Features
 
 - **Instant Launch** — Native speed, no Electron bloat
