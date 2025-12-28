@@ -53,6 +53,7 @@ Clean, crisp, and high-contrast for daylight focus.
 <div align="center">
 <img width="850" alt="raku light mode" src="https://github.com/user-attachments/assets/8a7a3dc9-3729-48ae-ba78-f1dcfdd82410" />
 </div>
+
 ---
 
 ## Features
