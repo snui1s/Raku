@@ -2,11 +2,6 @@
 use tauri::Manager;
 
 #[tauri::command]
-fn greet(name: &str) -> String {
-    format!("Hello, {}! You've been greeted from Rust!", name)
-}
-
-#[tauri::command]
 fn get_images_dir(app_handle: tauri::AppHandle) -> Result<String, String> {
     app_handle
         .path()
@@ -22,7 +17,7 @@ pub fn run() {
         .plugin(tauri_plugin_fs::init())
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_sql::Builder::default().build())
-        .invoke_handler(tauri::generate_handler![greet, get_images_dir])
+        .invoke_handler(tauri::generate_handler![get_images_dir])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
