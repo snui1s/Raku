@@ -211,7 +211,7 @@ ul[data-type="taskList"] > li {
 
 /* Checkbox Container */
 ul[data-type="taskList"] > li > label {
-  flex: 0 0 auto !important; /* Do not grow, do not shrink */
+  flex: 0 0 auto !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
@@ -219,7 +219,9 @@ ul[data-type="taskList"] > li > label {
   margin-right: 0.75rem !important;
   margin-top: 0.2rem !important;
   user-select: none !important;
-  width: auto !important;
+  width: 1.15rem !important;
+  height: 1.15rem !important;
+  position: relative !important;
 }
 
 /* Text Content Wrapper */
@@ -236,7 +238,7 @@ ul[data-type="taskList"] > li > div {
 ul[data-type="taskList"] > li > div > p {
   margin: 0 !important;
   padding: 0 !important;
-  display: block !important; /* Block is fine if container is flex child */
+  display: block !important;
   line-height: 1.6 !important;
 }
 
@@ -244,51 +246,37 @@ ul[data-type="taskList"] > li > div > p {
 ul[data-type="taskList"] > li > label > input[type="checkbox"] {
   appearance: none !important;
   -webkit-appearance: none !important;
-  width: 1.15rem !important;
-  height: 1.15rem !important;
-  border: 1.5px solid var(--color-border) !important;
+  width: 100% !important;
+  height: 100% !important;
+  border: 1.5px solid #a3a3a3 !important;
   border-radius: 4px !important;
   background-color: transparent !important;
   cursor: pointer !important;
   margin: 0 !important;
   padding: 0 !important;
-  display: grid !important;
-  place-content: center !important;
   transition: all 0.2s ease !important;
 }
 
 /* Hover State */
 ul[data-type="taskList"] > li > label > input[type="checkbox"]:hover {
-  border-color: var(--color-accent);
-  background-color: var(--color-bg-secondary);
+  border-color: #f25c54;
+  background-color: rgba(242, 92, 84, 0.1);
 }
 
-/* Checked State */
+/* Checked State - with SVG checkmark */
 ul[data-type="taskList"] > li > label > input[type="checkbox"]:checked {
-  background-color: var(--color-accent);
-  border-color: var(--color-accent);
-}
-
-/* Checkmark Icon */
-ul[data-type="taskList"] > li > label > input[type="checkbox"]::after {
-  content: "";
-  width: 9px;
-  height: 5px;
-  border: 2px solid white;
-  border-width: 0 0 2px 2px;
-  transform: rotate(-45deg) scale(0);
-  margin-bottom: 2px;
-  transition: transform 0.2s;
-}
-
-ul[data-type="taskList"] > li > label > input[type="checkbox"]:checked::after {
-  transform: rotate(-45deg) scale(1);
+  background-color: #f25c54 !important;
+  border-color: #f25c54 !important;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'%3E%3C/polyline%3E%3C/svg%3E") !important;
+  background-size: 12px !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
 }
 
 /* Checked Text Style */
 ul[data-type="taskList"] > li[data-checked="true"] > div {
   text-decoration: line-through;
-  color: var(--color-text-muted);
+  color: #a3a3a3;
   opacity: 0.8;
 }
 

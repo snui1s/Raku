@@ -9,7 +9,11 @@ import TaskItem from "@tiptap/extension-task-item";
 import Image from "@tiptap/extension-image";
 import { saveImage } from "./utils/imageUtils";
 import { useState, useEffect, useRef, useCallback } from "react";
-import { useNotes } from "./hooks/useNotes";
+import {
+  useNotes,
+  AVAILABLE_FONTS,
+  AVAILABLE_FONT_SIZES,
+} from "./hooks/useNotes";
 import BulletList from "@tiptap/extension-bullet-list";
 import OrderedList from "@tiptap/extension-ordered-list";
 import ListItem from "@tiptap/extension-list-item";
@@ -17,6 +21,7 @@ import { Extension } from "@tiptap/core";
 import Dropcursor from "@tiptap/extension-dropcursor";
 import Highlight from "@tiptap/extension-highlight";
 import { TextStyle } from "@tiptap/extension-text-style";
+import FontFamily from "@tiptap/extension-font-family";
 import Color from "@tiptap/extension-color";
 import {
   Undo2,
@@ -44,6 +49,8 @@ import {
   Pencil,
   Highlighter,
   Palette,
+  Type,
+  ALargeSmall,
 } from "lucide-react";
 import confetti from "canvas-confetti";
 import { check } from "@tauri-apps/plugin-updater";
@@ -65,6 +72,8 @@ function App() {
   const [listOpen, setListOpen] = useState(false);
   const [highlightOpen, setHighlightOpen] = useState(false);
   const [textColorOpen, setTextColorOpen] = useState(false);
+  const [fontFamilyOpen, setFontFamilyOpen] = useState(false);
+  const [fontSizeOpen, setFontSizeOpen] = useState(false);
 
   // Pastel Color Palette
   const PASTEL_COLORS = [
@@ -185,7 +194,25 @@ function App() {
       Highlight.configure({
         multicolor: true,
       }),
-      TextStyle,
+      TextStyle.extend({
+        addAttributes() {
+          return {
+            ...this.parent?.(),
+            fontSize: {
+              default: null,
+              parseHTML: (element) =>
+                element.style.fontSize?.replace(/['"]+/g, ""),
+              renderHTML: (attributes) => {
+                if (!attributes.fontSize) {
+                  return {};
+                }
+                return { style: `font-size: ${attributes.fontSize}` };
+              },
+            },
+          };
+        },
+      }),
+      FontFamily,
       Color,
       // Custom Behavior Extension
       Extension.create({
@@ -778,6 +805,7 @@ function App() {
             >
               {isDark ? <Sun size={16} /> : <Moon size={16} />}
             </button>
+
             <div
               className={`text-xs ${
                 isDark ? "text-neutral-500" : "text-neutral-400"
@@ -874,6 +902,110 @@ function App() {
             >
               <Redo2 size={16} />
             </button>
+
+            <div className="w-px h-4 bg-neutral-700 mx-1" />
+
+            {/* Font Family Dropdown */}
+            <div className="relative">
+              <button
+                onClick={() => {
+                  setFontFamilyOpen(!fontFamilyOpen);
+                  setFontSizeOpen(false);
+                  setHeadingOpen(false);
+                  setListOpen(false);
+                }}
+                className={`p-2 rounded transition-colors flex items-center gap-1 ${
+                  isDark
+                    ? "text-neutral-400 hover:bg-neutral-700 hover:text-white"
+                    : "text-neutral-500 hover:bg-neutral-100 hover:text-neutral-800"
+                }`}
+                title="Font Family"
+              >
+                <Type size={16} />
+                <ChevronDown size={12} />
+              </button>
+              {fontFamilyOpen && (
+                <div
+                  className={`absolute top-full left-0 mt-1 py-1 rounded-lg shadow-xl z-60 min-w-[140px] ${
+                    isDark
+                      ? "bg-neutral-800 border border-neutral-700"
+                      : "bg-white border border-neutral-200"
+                  }`}
+                >
+                  {AVAILABLE_FONTS.map((font) => (
+                    <button
+                      key={font.name}
+                      className={`w-full text-left px-3 py-1.5 text-sm ${
+                        isDark
+                          ? "text-neutral-300 hover:bg-neutral-700 hover:text-white"
+                          : "text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900"
+                      }`}
+                      onClick={() => {
+                        editor
+                          ?.chain()
+                          .focus()
+                          .setFontFamily(font.family)
+                          .run();
+                        setFontFamilyOpen(false);
+                      }}
+                    >
+                      {font.name}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Font Size Dropdown */}
+            <div className="relative">
+              <button
+                onClick={() => {
+                  setFontSizeOpen(!fontSizeOpen);
+                  setFontFamilyOpen(false);
+                  setHeadingOpen(false);
+                  setListOpen(false);
+                }}
+                className={`p-2 rounded transition-colors flex items-center gap-1 ${
+                  isDark
+                    ? "text-neutral-400 hover:bg-neutral-700 hover:text-white"
+                    : "text-neutral-500 hover:bg-neutral-100 hover:text-neutral-800"
+                }`}
+                title="Font Size"
+              >
+                <ALargeSmall size={16} />
+                <ChevronDown size={12} />
+              </button>
+              {fontSizeOpen && (
+                <div
+                  className={`absolute top-full left-0 mt-1 py-1 rounded-lg shadow-xl z-60 min-w-[80px] ${
+                    isDark
+                      ? "bg-neutral-800 border border-neutral-700"
+                      : "bg-white border border-neutral-200"
+                  }`}
+                >
+                  {AVAILABLE_FONT_SIZES.map((size) => (
+                    <button
+                      key={size}
+                      className={`w-full text-left px-3 py-1.5 text-sm ${
+                        isDark
+                          ? "text-neutral-300 hover:bg-neutral-700 hover:text-white"
+                          : "text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900"
+                      }`}
+                      onClick={() => {
+                        editor
+                          ?.chain()
+                          .focus()
+                          .setMark("textStyle", { fontSize: `${size}px` })
+                          .run();
+                        setFontSizeOpen(false);
+                      }}
+                    >
+                      {size}px
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
 
             <div className="w-px h-4 bg-neutral-700 mx-1" />
 
@@ -1288,7 +1420,16 @@ function App() {
         {/* Editor */}
         <main
           className="flex-1 overflow-y-auto py-8 px-12 cursor-text"
-          onClick={() => editor?.chain().focus().run()}
+          onClick={() => {
+            // Close all dropdowns when clicking on editor
+            setFontFamilyOpen(false);
+            setFontSizeOpen(false);
+            setHeadingOpen(false);
+            setListOpen(false);
+            setHighlightOpen(false);
+            setTextColorOpen(false);
+            editor?.chain().focus().run();
+          }}
         >
           <div className="max-w-1xl mx-auto">
             <EditorContent editor={editor} />

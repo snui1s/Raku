@@ -10,6 +10,20 @@ export interface Note {
   isManualTitle?: boolean;
 }
 
+// Available fonts (sorted A-Z)
+export const AVAILABLE_FONTS = [
+  { name: "Inter", family: "Inter" },
+  { name: "Kanit", family: "Kanit" },
+  { name: "LineSeed", family: "LineSeed" },
+  { name: "Open Sans", family: "'Open Sans'" },
+  { name: "Poppins", family: "Poppins" },
+  { name: "Prompt", family: "Prompt" },
+  { name: "Roboto", family: "Roboto" },
+  { name: "Sarabun", family: "Sarabun" },
+];
+
+export const AVAILABLE_FONT_SIZES = [12, 14, 16, 18, 20, 24];
+
 const STORAGE_KEY = "raku-notes"; // Legacy storage key
 const ACTIVE_NOTE_KEY = "raku-active-note"; // Keeping active note ID in localStorage for speed
 
@@ -61,7 +75,9 @@ export function useNotes() {
             content TEXT,
             created_at INTEGER,
             updated_at INTEGER,
-            is_manual_title INTEGER DEFAULT 0
+            is_manual_title INTEGER DEFAULT 0,
+            font_family TEXT DEFAULT 'LineSeed',
+            font_size INTEGER DEFAULT 16
           )
         `);
 
@@ -71,7 +87,30 @@ export function useNotes() {
             "ALTER TABLE notes ADD COLUMN is_manual_title INTEGER DEFAULT 0"
           );
         } catch (e) {
-          // Check if error is because column already exists
+          const msg = String(e);
+          if (!msg.includes("duplicate column")) {
+            console.log("Schema migration note: ", msg);
+          }
+        }
+
+        // Schema Migration: Add font_family if missing
+        try {
+          await dbInstance.execute(
+            "ALTER TABLE notes ADD COLUMN font_family TEXT DEFAULT 'LineSeed'"
+          );
+        } catch (e) {
+          const msg = String(e);
+          if (!msg.includes("duplicate column")) {
+            console.log("Schema migration note: ", msg);
+          }
+        }
+
+        // Schema Migration: Add font_size if missing
+        try {
+          await dbInstance.execute(
+            "ALTER TABLE notes ADD COLUMN font_size INTEGER DEFAULT 16"
+          );
+        } catch (e) {
           const msg = String(e);
           if (!msg.includes("duplicate column")) {
             console.log("Schema migration note: ", msg);
