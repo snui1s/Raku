@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <!-- Top curved bar -->
+  <path
+    d="M4 12 C4 8, 32 4, 60 12"
+    stroke="#F25C54"
+    stroke-width="4"
+    stroke-linecap="round"
+    fill="none"
+  />
+  <!-- Horizontal beam -->
+  <rect
+    x="8"
+    y="16"
+    width="48"
+    height="4"
+    rx="1"
+    fill="#F25C54"
+  />
+  <!-- Left pillar -->
+  <rect
+    x="12"
+    y="20"
+    width="6"
+    height="40"
+    rx="1"
+    fill="#F25C54"
+  />
+  <!-- Right pillar -->
+  <rect
+    x="46"
+    y="20"
+    width="6"
+    height="40"
+    rx="1"
+    fill="#F25C54"
+  />
+  <!-- Left top block -->
+  <rect
+    x="10"
+    y="14"
+    width="10"
+    height="6"
+    rx="1"
+    fill="#F25C54"
+  />
+  <!-- Right top block -->
+  <rect
+    x="44"
+    y="14"
+    width="10"
+    height="6"
+    rx="1"
+    fill="#F25C54"
+  />
+</svg>
