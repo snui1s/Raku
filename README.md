@@ -1,56 +1,109 @@
+<img width="1280" height="640" alt="RAKU-background-repo" src="https://github.com/user-attachments/assets/162c2daf-3c17-47b1-9b7f-9e308e8723ff" />
+
+
+[![Download](https://img.shields.io/badge/Download-Raku-F25C54?style=for-the-badge&logo=windows)](https://github.com/snui1s/raku/releases)
+[![Platform](https://img.shields.io/badge/Platform-Windows-0078D6?style=for-the-badge&logo=windows&logoColor=white)]()
+[![Tauri](https://img.shields.io/badge/Tauri-24C8D8?style=for-the-badge&logo=tauri&logoColor=white)](https://tauri.app)
+[![React](https://img.shields.io/badge/React-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://react.dev)
+
 # 楽 Raku
 
-**The Cloud Scratchpad** — A minimal, fast note-taking app designed for flow.
+### Lightning Fast. Dead Simple. Just Write.
 
-> "Smarter than Notepad, simpler than Notion."
+<p>
+    A blazing-fast, distraction-free note-taking app.<br>
+    No accounts. No cloud. No friction. <strong>Just you and your thoughts.</strong>
+</p>
+<p>
+    The name also captures the spirit of <em>"Rakugaki" (落書き)</em>, meaning "Scribble".<br>
+    It celebrates the messy, raw, and unpolished nature of your initial thoughts.<br>
+    <strong>Capture now, organize later.</strong>
+</p>
 
-**Raku (楽)** means "Ease" or "Comfort". It is designed to let you capture thoughts without friction.
 
-[![Download Raku](https://img.shields.io/badge/Download-Raku_v1.0-F25C54?style=for-the-badge&logo=windows)](https://github.com/snui1s/raku/releases)
+---
 
-_(Click the button above to download the latest `.exe`)_
+## Why Raku?
 
-## Features (v1.0)
+| **Speed**              | **Simplicity**   |
+| ------------------------- | ------------------- |
+| Opens in **< 1 second**   | Zero setup required |
+| Native performance (Rust) | Clean, minimal UI   |
+| Instant auto-save         | No learning curve   |
+| Lightweight (~25MB)       | Write immediately   |
 
-**Raku** comes packed with essential tools for focused writing:
+> _"Open app → Write → Done."_  
+> That's it. That's the whole workflow.
 
-- **Rich Text & Markdown**: Write naturally with Bold, Italic, Headings, and Lists.
-- **Stylish Highlighting**: Highlight text and change colors with a beautiful pastel palette.
-- **Task Management**: Interactive checkboxes with "Smart Backspace" logic.
-- **Pomodoro Timer**: Built-in focus timer (25 min) with celebration confetti.
-- **Image Support**: Drag & drop images directly into your notes (resizeable!).
-- **Day/Night Theme**: Smooth toggle between Light and Dark modes.
-- **Auto-Save**: Offline-first architecture using SQLite. Your work is saved instantly.
-- **Sidebar Navigation**: Easily manage multiple notes with search/rename capabilities.
+---
+
+## Preview
+
+### Night Temple (Dark Mode)
+The default immersive experience for late-night coding sessions.
+
+<div align="center">
+<img width="850" alt="raku dark mode" src="https://github.com/user-attachments/assets/e68fff09-8084-4c44-b00e-f6c9c05cc4cc" />
+</div>
+
+
+
+### Snowy Gate (Light Mode)
+Clean, crisp, and high-contrast for daylight focus.
+<div align="center">
+<img width="850" alt="raku light mode" src="https://github.com/user-attachments/assets/8a7a3dc9-3729-48ae-ba78-f1dcfdd82410" />
+</div>
+
+---
+
+## Features
+
+- **Instant Launch** — Native speed, no Electron bloat
+- **Auto-Save** — Never lose your work, saves as you type
+- **Dark Mode** — Easy on the eyes, day or night
+- **Pomodoro Timer** — Built-in focus sessions
+- **Rich Text** — Bold, Italic, Headings, Lists, Highlights
+- **Drag & Drop Images** — Just drop and resize
+- **Task Lists** — Interactive checkboxes
+- **Auto-Update** — Always up to date
+
+---
 
 ## Tech Stack
 
-- **Frontend:** React + TypeScript + TailwindCSS
-- **Desktop:** Tauri (Rust)
-- **Editor:** Tiptap
-- **Database:** SQLite (Local)
-- **Font:** LINE Seed Sans TH
+| Frontend           | Backend      | Editor | Database |
+| ------------------ | ------------ | ------ | -------- |
+| React + TypeScript | Tauri (Rust) | Tiptap | SQLite   |
 
-## Getting Started (For Developers)
+---
+
+## Getting Started
 
 ```bash
-# Install dependencies
+# Install
 bun install
 
-# Run development server
-bun run dev
-
-# Run Tauri app
+# Develop
 bun tauri dev
 
-# Build for production
+# Build
 bun tauri build
 ```
 
-## Project Structure
+---
+
+## Structure
 
 ```
 src/           # React frontend
 src-tauri/     # Tauri/Rust backend
-public/        # Static assets
 ```
+
+---
+
+<p align="center">
+  <b>Raku</b> — Write with ease.<br>
+  Made with 楽 (Raku/รัก) by <a href="https://github.com/snui1s">snui1s</a>
+</p>
+
+
