@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import Database from "@tauri-apps/plugin-sql";
+import { initDatabase } from "../services/db";
 
 export interface Note {
   id: string;
@@ -10,22 +11,7 @@ export interface Note {
   isManualTitle?: boolean;
 }
 
-// Available fonts (sorted A-Z)
-export const AVAILABLE_FONTS = [
-  { name: "Inter", family: "Inter" },
-  { name: "Kanit", family: "Kanit" },
-  { name: "LineSeed", family: "LineSeed" },
-  { name: "Open Sans", family: "'Open Sans'" },
-  { name: "Poppins", family: "Poppins" },
-  { name: "Prompt", family: "Prompt" },
-  { name: "Roboto", family: "Roboto" },
-  { name: "Sarabun", family: "Sarabun" },
-];
-
-export const AVAILABLE_FONT_SIZES = [12, 14, 16, 18, 20, 24];
-
-const STORAGE_KEY = "raku-notes"; // Legacy storage key
-const ACTIVE_NOTE_KEY = "raku-active-note"; // Keeping active note ID in localStorage for speed
+const ACTIVE_NOTE_KEY = "raku-active-note";
 
 // Generate unique ID
 const generateId = () =>
@@ -46,8 +32,6 @@ const extractTitle = (content: string): string => {
   return "Untitled";
 };
 
-import { runGarbageCollection } from "../utils/imageUtils";
-
 export function useNotes() {
   const [notes, setNotes] = useState<Note[]>([]);
   const [activeNoteId, setActiveNoteId] = useState<string | null>(null);
@@ -60,156 +44,25 @@ export function useNotes() {
     notesRef.current = notes;
   }, [notes]);
 
-  // Initialize Database & Migrate Data
+  // Initialize Database
   useEffect(() => {
-    const initDb = async () => {
-      try {
-        const dbInstance = await Database.load("sqlite:raku.db");
-        setDb(dbInstance);
-
-        // Create Table
-        await dbInstance.execute(`
-          CREATE TABLE IF NOT EXISTS notes (
-            id TEXT PRIMARY KEY,
-            title TEXT,
-            content TEXT,
-            created_at INTEGER,
-            updated_at INTEGER,
-            is_manual_title INTEGER DEFAULT 0,
-            font_family TEXT DEFAULT 'LineSeed',
-            font_size INTEGER DEFAULT 16
-          )
-        `);
-
-        // Schema Migration: Add is_manual_title if missing
+    const init = async () => {
         try {
-          await dbInstance.execute(
-            "ALTER TABLE notes ADD COLUMN is_manual_title INTEGER DEFAULT 0"
-          );
-        } catch (e) {
-          const msg = String(e);
-          if (!msg.includes("duplicate column")) {
-            console.log("Schema migration note: ", msg);
-          }
-        }
-
-        // Schema Migration: Add font_family if missing
-        try {
-          await dbInstance.execute(
-            "ALTER TABLE notes ADD COLUMN font_family TEXT DEFAULT 'LineSeed'"
-          );
-        } catch (e) {
-          const msg = String(e);
-          if (!msg.includes("duplicate column")) {
-            console.log("Schema migration note: ", msg);
-          }
-        }
-
-        // Schema Migration: Add font_size if missing
-        try {
-          await dbInstance.execute(
-            "ALTER TABLE notes ADD COLUMN font_size INTEGER DEFAULT 16"
-          );
-        } catch (e) {
-          const msg = String(e);
-          if (!msg.includes("duplicate column")) {
-            console.log("Schema migration note: ", msg);
-          }
-        }
-
-        // Migration: Check localStorage
-        const stored = localStorage.getItem(STORAGE_KEY);
-        if (stored) {
-          try {
-            const parsed = JSON.parse(stored) as Note[];
-            if (parsed.length > 0) {
-              console.log(
-                "Migrating notes from localStorage to SQLite...",
-                parsed.length
+            const { db: dbInstance, notes: loadedNotes, activeNoteId: activeId } = await initDatabase();
+            setDb(dbInstance);
+            setNotes(loadedNotes);
+            setActiveNoteId(activeId);
+            setIsLoaded(true);
+        } catch (error) {
+            alert(
+                `Database Error Details: ${JSON.stringify(
+                  error,
+                  Object.getOwnPropertyNames(error)
+                )} \n\nCheck console for more info.`
               );
-              for (const note of parsed) {
-                await dbInstance.execute(
-                  "INSERT OR REPLACE INTO notes (id, title, content, created_at, updated_at, is_manual_title) VALUES ($1, $2, $3, $4, $5, 0)",
-                  [
-                    note.id,
-                    note.title,
-                    note.content,
-                    note.createdAt,
-                    note.updatedAt,
-                  ]
-                );
-              }
-            }
-          } catch (e) {
-            console.error("Migration failed:", e);
-          }
-          localStorage.removeItem(STORAGE_KEY);
         }
-
-        // Load Notes from DB
-        const result = await dbInstance.select<any[]>(
-          "SELECT * FROM notes ORDER BY updated_at DESC"
-        );
-        const loadedNotes: Note[] = result.map((row) => ({
-          id: row.id,
-          title: row.title,
-          content: row.content,
-          createdAt: row.created_at,
-          updatedAt: row.updated_at,
-          isManualTitle: !!row.is_manual_title,
-        }));
-
-        setNotes(loadedNotes);
-
-        // Restore active note
-        const activeId = localStorage.getItem(ACTIVE_NOTE_KEY);
-        if (activeId && loadedNotes.find((n) => n.id === activeId)) {
-          setActiveNoteId(activeId);
-        } else if (loadedNotes.length > 0) {
-          setActiveNoteId(loadedNotes[0].id);
-        } else {
-          // Create initial note if empty
-          if (loadedNotes.length === 0) {
-            const initialNote: Note = {
-              id: generateId(),
-              title: "Untitled",
-              content: "",
-              createdAt: Date.now(),
-              updatedAt: Date.now(),
-              isManualTitle: false,
-            };
-            await dbInstance.execute(
-              "INSERT INTO notes (id, title, content, created_at, updated_at, is_manual_title) VALUES ($1, $2, $3, $4, $5, 0)",
-              [
-                initialNote.id,
-                initialNote.title,
-                initialNote.content,
-                initialNote.createdAt,
-                initialNote.updatedAt,
-              ]
-            );
-            setNotes([initialNote]);
-            setActiveNoteId(initialNote.id);
-          }
-        }
-
-        // Initialize success
-        setIsLoaded(true);
-
-        // Run Garbage Collection in background
-        runGarbageCollection(dbInstance);
-      } catch (error) {
-        console.error("Failed to initialize database:", error);
-        alert(
-          `Database Error Details: ${JSON.stringify(
-            error,
-            Object.getOwnPropertyNames(error)
-          )} \n\nCheck console for more info.`
-        );
-      }
-    };
-
-    initDb();
+    }
+    init();
   }, []);
 
   // Save active note ID to localStorage (fast access)
