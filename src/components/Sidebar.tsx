@@ -1,9 +1,4 @@
-import {
-  PanelLeftClose,
-  Plus,
-  Pencil,
-  Trash2,
-} from "lucide-react";
+import { PanelLeftClose, Plus, Pencil, Trash2 } from "lucide-react";
 import { Note } from "../hooks/useNotes";
 
 interface SidebarProps {
@@ -148,79 +143,106 @@ export function Sidebar({
             <Plus size={14} />
           </button>
         </div>
-        <nav className="space-y-1">
-          {notes.map((note) => (
-            <div key={note.id} className="group flex items-center">
-              <button
-                onClick={() => handleSelectNote(note.id)}
-                className={`flex-1 text-left px-3 py-2 rounded-md text-sm transition-colors truncate ${
-                  note.id === activeNoteId
-                    ? isDark
-                      ? "bg-neutral-800 text-neutral-100"
-                      : "bg-neutral-100 text-neutral-900"
-                    : isDark
-                    ? "text-neutral-400 hover:bg-neutral-800/50 hover:text-neutral-200"
-                    : "text-neutral-500 hover:bg-neutral-50 hover:text-neutral-800"
+        <nav className="space-y-4">
+          {Object.entries(
+            [...notes]
+              .sort((a, b) => b.updatedAt - a.updatedAt)
+              .reduce((groups, note) => {
+                const date = new Date(note.updatedAt).toLocaleDateString(
+                  "en-GB",
+                  {
+                    day: "numeric",
+                    month: "short",
+                    year: "2-digit",
+                  }
+                );
+                if (!groups[date]) groups[date] = [];
+                groups[date].push(note);
+                return groups;
+              }, {} as Record<string, Note[]>)
+          ).map(([date, dateNotes]) => (
+            <div key={date} className="space-y-1">
+              <div
+                className={`px-3 py-1 text-[10px] font-bold uppercase tracking-widest ${
+                  isDark ? "text-neutral-600" : "text-neutral-400"
                 }`}
               >
-                {renamingNoteId === note.id ? (
-                  <input
-                    type="text"
-                    value={renameValue}
-                    onChange={(e) => setRenameValue(e.target.value)}
-                    onBlur={() => {
-                      if (renameValue.trim()) {
-                        renameNote(note.id, renameValue.trim());
-                      }
-                      setRenamingNoteId(null);
-                    }}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") {
-                        if (renameValue.trim()) {
-                          renameNote(note.id, renameValue.trim());
-                        }
-                        setRenamingNoteId(null);
-                      } else if (e.key === "Escape") {
-                        setRenamingNoteId(null);
-                      }
-                    }}
-                    onClick={(e) => e.stopPropagation()}
-                    autoFocus
-                    className={`w-full bg-transparent border-b outline-none ${
-                      isDark
-                        ? "border-[#F25C54] text-white"
-                        : "border-[#F25C54] text-neutral-900"
+                {date}
+              </div>
+              {dateNotes.map((note) => (
+                <div key={note.id} className="group flex items-center">
+                  <button
+                    onClick={() => handleSelectNote(note.id)}
+                    className={`flex-1 text-left px-3 py-2 rounded-md text-sm transition-colors truncate ${
+                      note.id === activeNoteId
+                        ? isDark
+                          ? "bg-neutral-800 text-neutral-100"
+                          : "bg-neutral-100 text-neutral-900"
+                        : isDark
+                        ? "text-neutral-400 hover:bg-neutral-800/50 hover:text-neutral-200"
+                        : "text-neutral-500 hover:bg-neutral-50 hover:text-neutral-800"
                     }`}
-                  />
-                ) : (
-                  note.title || "Untitled"
-                )}
-              </button>
-              <button
-                onClick={() => {
-                  setRenameValue(note.title || "");
-                  setRenamingNoteId(note.id);
-                }}
-                className={`opacity-0 group-hover:opacity-100 p-1 rounded transition-all ${
-                  isDark
-                    ? "text-neutral-600 hover:text-[#F25C54]"
-                    : "text-neutral-400 hover:text-[#F25C54]"
-                }`}
-                title="Rename"
-              >
-                <Pencil size={12} />
-              </button>
-              <button
-                onClick={() => deleteNote(note.id)}
-                className={`opacity-0 group-hover:opacity-100 p-1 rounded transition-all ${
-                  isDark
-                    ? "text-neutral-600 hover:text-red-400"
-                    : "text-neutral-400 hover:text-red-500"
-                }`}
-                title="Delete"
-              >
-                <Trash2 size={12} />
-              </button>
+                  >
+                    {renamingNoteId === note.id ? (
+                      <input
+                        type="text"
+                        value={renameValue}
+                        onChange={(e) => setRenameValue(e.target.value)}
+                        onBlur={() => {
+                          if (renameValue.trim()) {
+                            renameNote(note.id, renameValue.trim());
+                          }
+                          setRenamingNoteId(null);
+                        }}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") {
+                            if (renameValue.trim()) {
+                              renameNote(note.id, renameValue.trim());
+                            }
+                            setRenamingNoteId(null);
+                          } else if (e.key === "Escape") {
+                            setRenamingNoteId(null);
+                          }
+                        }}
+                        onClick={(e) => e.stopPropagation()}
+                        autoFocus
+                        className={`w-full bg-transparent border-b outline-none ${
+                          isDark
+                            ? "border-[#F25C54] text-white"
+                            : "border-[#F25C54] text-neutral-900"
+                        }`}
+                      />
+                    ) : (
+                      note.title || "Untitled"
+                    )}
+                  </button>
+                  <button
+                    onClick={() => {
+                      setRenameValue(note.title || "");
+                      setRenamingNoteId(note.id);
+                    }}
+                    className={`opacity-0 group-hover:opacity-100 p-1 rounded transition-all ${
+                      isDark
+                        ? "text-neutral-600 hover:text-[#F25C54]"
+                        : "text-neutral-400 hover:text-[#F25C54]"
+                    }`}
+                    title="Rename"
+                  >
+                    <Pencil size={12} />
+                  </button>
+                  <button
+                    onClick={() => deleteNote(note.id)}
+                    className={`opacity-0 group-hover:opacity-100 p-1 rounded transition-all ${
+                      isDark
+                        ? "text-neutral-600 hover:text-red-400"
+                        : "text-neutral-400 hover:text-red-500"
+                    }`}
+                    title="Delete"
+                  >
+                    <Trash2 size={12} />
+                  </button>
+                </div>
+              ))}
             </div>
           ))}
         </nav>

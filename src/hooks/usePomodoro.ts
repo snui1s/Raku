@@ -16,12 +16,15 @@ export function usePomodoro() {
     } else if (secondsLeft === 0 && isRunning) {
       setIsRunning(false);
       // Celebration! 🎉
-      confetti({
-        particleCount: 100,
-        spread: 70,
-        origin: { y: 0.6 },
-        colors: ["#F25C54", "#FFD93D", "#6BCB77", "#4D96FF"],
-      });
+      setTimeout(() => {
+        confetti({
+          particleCount: 150,
+          spread: 70,
+          origin: { y: 0.6 },
+          colors: ["#F25C54", "#FFD93D", "#6BCB77", "#4D96FF"],
+          zIndex: 9999,
+        });
+      }, 0);
     }
     return () => {
       if (intervalRef.current) clearInterval(intervalRef.current);

@@ -16,22 +16,19 @@ export function Header({
   setSidebarOpen,
   currentTime,
 }: HeaderProps) {
-  const {
-    isRunning,
-    startPomodoro,
-    adjustMinutes,
-    formatPomodoro,
-  } = usePomodoro();
+  const { isRunning, startPomodoro, adjustMinutes, formatPomodoro } =
+    usePomodoro();
 
   const formatTime = (date: Date) => {
-    return date.toLocaleTimeString("th-TH", {
+    return date.toLocaleTimeString("en-US", {
       hour: "2-digit",
       minute: "2-digit",
+      hour12: false,
     });
   };
 
   const formatDate = (date: Date) => {
-    return date.toLocaleDateString("th-TH", {
+    return date.toLocaleDateString("en-US", {
       weekday: "short",
       day: "numeric",
       month: "short",

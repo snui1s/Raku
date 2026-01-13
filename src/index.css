@@ -19,21 +19,23 @@
   --color-accent-hover: #e04d45;
   --color-accent-muted: rgba(242, 92, 84, 0.2);
 
-  /* Dark Mode (Night Temple) - Default */
+  /* Light Mode (Snowy Gate) - Default */
+  --color-bg: #ffffff;
+  --color-bg-secondary: #f5f5f5;
+  --color-bg-tertiary: #fafafa;
+  --color-text: #171717;
+  --color-text-muted: #737373;
+  --color-border: #e5e5e5;
+}
+
+/* Dark Mode (Night Temple) Overrides */
+.dark {
   --color-bg: #0a0a0a;
   --color-bg-secondary: #141414;
   --color-bg-tertiary: #1a1a1a;
   --color-text: #e5e5e5;
   --color-text-muted: #a3a3a3;
   --color-border: #262626;
-
-  /* Light Mode (Snowy Gate) - Reference */
-  --color-light-bg: #ffffff;
-  --color-light-bg-secondary: #f5f5f5;
-  --color-light-bg-tertiary: #fafafa;
-  --color-light-text: #171717;
-  --color-light-text-muted: #737373;
-  --color-light-border: #e5e5e5;
 }
 
 /* Light Mode (Snowy Gate) - Reference Colors
@@ -257,6 +259,11 @@ ul[data-type="taskList"] > li > label > input[type="checkbox"] {
   transition: all 0.2s ease !important;
 }
 
+/* Specific border for light/dark to ensure visibility */
+.dark ul[data-type="taskList"] > li > label > input[type="checkbox"] {
+  border-color: #525252 !important;
+}
+
 /* Hover State */
 ul[data-type="taskList"] > li > label > input[type="checkbox"]:hover {
   border-color: #f25c54;
@@ -267,10 +274,12 @@ ul[data-type="taskList"] > li > label > input[type="checkbox"]:hover {
 ul[data-type="taskList"] > li > label > input[type="checkbox"]:checked {
   background-color: #f25c54 !important;
   border-color: #f25c54 !important;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'%3E%3C/polyline%3E%3C/svg%3E") !important;
-  background-size: 12px !important;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'%3E%3C/polyline%3E%3C/svg%3E") !important;
+  background-size: 80% !important;
   background-position: center !important;
   background-repeat: no-repeat !important;
+  appearance: none !important;
+  -webkit-appearance: none !important;
 }
 
 /* Checked Text Style */
