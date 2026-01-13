@@ -59,6 +59,14 @@ export function useEditorConfig() {
         name: "customBehavior",
         addKeyboardShortcuts() {
           return {
+            "Mod-Enter": ({ editor }) => {
+              const pos = editor.state.selection.$from.after();
+              return editor
+                .chain()
+                .insertContentAt(pos, { type: "paragraph" })
+                .focus(pos + 1)
+                .run();
+            },
             Enter: ({ editor }) => {
               // 1. Enter in Highlight Mode -> Split and Remove Highlight
               if (editor.isActive("highlight")) {

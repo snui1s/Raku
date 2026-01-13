@@ -1,45 +1,45 @@
 {
-  "$schema": "https://schema.tauri.app/config/2",
-  "productName": "Raku",
-  "version": "1.0.2",
-  "identifier": "com.snails.raku-app",
-  "build": {
-    "beforeDevCommand": "bun run dev",
-    "devUrl": "http://localhost:1420",
-    "beforeBuildCommand": "bun run build",
-    "frontendDist": "../dist"
-  },
-  "plugins": {
-    "updater": {
-      "endpoints": [
-        "https://raw.githubusercontent.com/snui1s/raku/main/update.json"
-      ],
-      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDFGNDgxQ0VCMjVCMjNBOEIKUldTTE9ySWw2eHhJSDNQLy9MTCt2OXBzZEtIRW81ckZPaDZWanlnaVBNUFBwZzBXWklER01tc2kK"
-    }
-  },
-  "app": {
-    "windows": [
-      {
-        "title": "Raku",
-        "width": 1200,
-        "height": 800,
-        "resizable": true,
-        "maximized": false
-      }
-    ],
-    "security": {
-      "csp": "default-src 'self' 'unsafe-inline' 'unsafe-eval'; img-src 'self' asset: blob: data: https: http://asset.localhost https://asset.localhost; style-src 'self' 'unsafe-inline'; font-src 'self' data:;"
-    }
-  },
-  "bundle": {
-    "active": true,
-    "targets": "all",
-    "icon": [
-      "icons/32x32.png",
-      "icons/128x128.png",
-      "icons/128x128@2x.png",
-      "icons/icon.icns",
-      "icons/icon.ico"
-    ]
-  }
+    "$schema":  "https://schema.tauri.app/config/2",
+    "productName":  "Raku",
+    "version":  "1.0.3",
+    "identifier":  "com.snails.raku-app",
+    "build":  {
+                  "beforeDevCommand":  "bun run dev",
+                  "devUrl":  "http://localhost:1420",
+                  "beforeBuildCommand":  "bun run build",
+                  "frontendDist":  "../dist"
+              },
+    "plugins":  {
+                    "updater":  {
+                                    "endpoints":  [
+                                                      "https://raw.githubusercontent.com/snui1s/raku/main/update.json"
+                                                  ],
+                                    "pubkey":  "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDFGNDgxQ0VCMjVCMjNBOEIKUldTTE9ySWw2eHhJSDNQLy9MTCt2OXBzZEtIRW81ckZPaDZWanlnaVBNUFBwZzBXWklER01tc2kK"
+                                }
+                },
+    "app":  {
+                "windows":  [
+                                {
+                                    "title":  "Raku",
+                                    "width":  1200,
+                                    "height":  800,
+                                    "resizable":  true,
+                                    "maximized":  false
+                                }
+                            ],
+                "security":  {
+                                 "csp":  "default-src \u0027self\u0027 \u0027unsafe-inline\u0027 \u0027unsafe-eval\u0027; img-src \u0027self\u0027 asset: blob: data: https: http://asset.localhost https://asset.localhost; style-src \u0027self\u0027 \u0027unsafe-inline\u0027; font-src \u0027self\u0027 data:;"
+                             }
+            },
+    "bundle":  {
+                   "active":  true,
+                   "targets":  "all",
+                   "icon":  [
+                                "icons/32x32.png",
+                                "icons/128x128.png",
+                                "icons/128x128@2x.png",
+                                "icons/icon.icns",
+                                "icons/icon.ico"
+                            ]
+               }
 }
