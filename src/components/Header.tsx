@@ -1,5 +1,7 @@
-import { PanelLeft, Sun, Moon } from "lucide-react";
+import { PanelLeft, Sun, Moon, Palette, Check, Sparkles, Download } from "lucide-react";
+import { useState, useRef, useEffect } from "react";
 import { usePomodoro } from "../hooks/usePomodoro";
+import { THEMES } from "../constants/themes";
 
 interface HeaderProps {
   isDark: boolean;
@@ -7,6 +9,11 @@ interface HeaderProps {
   sidebarOpen: boolean;
   setSidebarOpen: (open: boolean) => void;
   currentTime: Date;
+  currentTheme: string;
+  setCurrentTheme: (theme: string) => void;
+  zenMode: boolean;
+  setZenMode: (zen: boolean) => void;
+  onOpenExport: () => void;
 }
 
 export function Header({
@@ -15,9 +22,32 @@ export function Header({
   sidebarOpen,
   setSidebarOpen,
   currentTime,
+  currentTheme,
+  setCurrentTheme,
+  zenMode,
+  setZenMode,
+  onOpenExport,
 }: HeaderProps) {
   const { isRunning, startPomodoro, adjustMinutes, formatPomodoro } =
     usePomodoro();
+
+  const [themeOpen, setThemeOpen] = useState(false);
+  const themeMenuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        themeMenuRef.current &&
+        !themeMenuRef.current.contains(event.target as Node)
+      ) {
+        setThemeOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   const formatTime = (date: Date) => {
     return date.toLocaleTimeString("en-US", {
@@ -35,22 +65,18 @@ export function Header({
     });
   };
 
+  const activeThemeObj = THEMES.find((t) => t.id === currentTheme);
+
   return (
     <header
-      className={`h-12 shrink-0 flex items-center justify-between px-8 border-b ${
-        isDark ? "border-[#262626]" : "border-neutral-200"
-      }`}
+      className="h-12 shrink-0 flex items-center justify-between px-8 border-b relative z-50 transition-colors duration-200 border-app-border bg-app-main"
     >
-      {/* Left: Sidebar Toggle (when closed) + Clock */}
-      <div className="flex items-center gap-4">
+      {/* Left: Sidebar Toggle (when closed) + Dark Mode + Theme Picker + Clock */}
+      <div className="flex items-center gap-2">
         {!sidebarOpen && (
           <button
             onClick={() => setSidebarOpen(true)}
-            className={`p-1.5 rounded-md transition-colors ${
-              isDark
-                ? "text-neutral-500 hover:text-white hover:bg-neutral-800"
-                : "text-neutral-400 hover:text-neutral-800 hover:bg-neutral-100"
-            }`}
+            className="p-1.5 rounded-md transition-colors text-app-muted hover:text-accent hover:bg-app-tertiary"
             title="Show Sidebar"
           >
             <PanelLeft size={16} />
@@ -58,26 +84,96 @@ export function Header({
         )}
         <button
           onClick={() => setIsDark(!isDark)}
-          className={`p-1.5 rounded-md transition-colors ${
-            isDark
-              ? "text-neutral-500 hover:text-[#F25C54] hover:bg-neutral-800"
-              : "text-neutral-400 hover:text-[#F25C54] hover:bg-neutral-100"
-          }`}
+          className="p-1.5 rounded-md transition-colors text-app-muted hover:text-accent hover:bg-app-tertiary"
           title={isDark ? "Switch to Light Mode" : "Switch to Dark Mode"}
         >
           {isDark ? <Sun size={16} /> : <Moon size={16} />}
         </button>
 
-        <div
-          className={`text-xs ${
-            isDark ? "text-neutral-500" : "text-neutral-400"
+        {/* Theme Picker Dropdown */}
+        <div className="relative" ref={themeMenuRef}>
+          <button
+            onClick={() => setThemeOpen(!themeOpen)}
+            className="p-1.5 rounded-md transition-colors flex items-center gap-1.5 text-app-muted hover:text-accent hover:bg-app-tertiary"
+            title="Theme Palette"
+          >
+            <Palette size={16} />
+            <span
+              className="w-2.5 h-2.5 rounded-full inline-block border border-black/20 transition-colors"
+              style={{ backgroundColor: activeThemeObj?.accent || "#F25C54" }}
+            />
+          </button>
+
+          {themeOpen && (
+            <div
+              className="absolute top-full left-0 mt-2 p-2 rounded-xl shadow-2xl z-[100] min-w-[210px] backdrop-blur-md bg-app-dropdown border-app-border text-app-text border"
+            >
+              <div className="px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-app-muted">
+                Select Theme Palette
+              </div>
+              <div className="space-y-1 mt-1">
+                {THEMES.map((t) => (
+                  <button
+                    key={t.id}
+                    onClick={() => {
+                      setCurrentTheme(t.id);
+                      setThemeOpen(false);
+                    }}
+                    className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+                      currentTheme === t.id
+                        ? "bg-app-tertiary text-app-text font-semibold shadow-xs"
+                        : "text-app-muted hover:bg-app-tertiary hover:text-app-text"
+                    }`}
+                  >
+                    <div className="flex items-center gap-2.5">
+                      <span
+                        className="w-3.5 h-3.5 rounded-full border border-black/20 shrink-0 shadow-xs"
+                        style={{ backgroundColor: t.accent }}
+                      />
+                      <span>{t.name}</span>
+                    </div>
+                    {currentTheme === t.id && (
+                      <Check size={14} className="text-accent shrink-0" />
+                    )}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Zen Focus Mode Toggle */}
+        <button
+          onClick={() => setZenMode(!zenMode)}
+          className={`p-1.5 rounded-md transition-colors flex items-center gap-1.5 text-xs font-medium ${
+            zenMode
+              ? "bg-accent-muted text-accent font-semibold"
+              : "text-app-muted hover:text-accent hover:bg-app-tertiary"
           }`}
+          title="Zen Focus Mode (Ctrl+Shift+Z)"
+        >
+          <Sparkles size={16} />
+          <span className="hidden sm:inline">Zen Mode</span>
+        </button>
+
+        {/* Export Note Button */}
+        <button
+          onClick={onOpenExport}
+          className="p-1.5 rounded-md transition-colors flex items-center gap-1.5 text-xs font-medium text-app-muted hover:text-accent hover:bg-app-tertiary"
+          title="Export Note (.md / PDF)"
+        >
+          <Download size={16} />
+          <span className="hidden sm:inline">Export</span>
+        </button>
+
+        <div className="w-px h-3.5 border-app-border mx-1" />
+
+        <div
+          className="text-xs text-app-muted"
         >
           <span className="font-medium">{formatDate(currentTime)}</span>
           <span
-            className={`mx-2 ${
-              isDark ? "text-neutral-700" : "text-neutral-300"
-            }`}
+            className="mx-2 opacity-50"
           >
             •
           </span>
@@ -91,29 +187,19 @@ export function Header({
         <button
           onClick={() => adjustMinutes(-5)}
           disabled={isRunning}
-          className={`w-6 h-6 flex items-center justify-center rounded disabled:opacity-30 transition-colors text-sm font-bold ${
-            isDark
-              ? "bg-neutral-800 text-neutral-400 hover:bg-neutral-700 hover:text-white"
-              : "bg-neutral-100 text-neutral-500 hover:bg-neutral-200 hover:text-neutral-800"
-          }`}
+          className="w-6 h-6 flex items-center justify-center rounded disabled:opacity-30 transition-colors text-sm font-bold bg-app-tertiary text-app-text hover:opacity-80"
         >
           −
         </button>
         <span
-          className={`font-mono text-sm w-12 text-center ${
-            isDark ? "text-neutral-300" : "text-[#171717]"
-          }`}
+          className="font-mono text-sm w-12 text-center text-app-text"
         >
           {formatPomodoro()}
         </span>
         <button
           onClick={() => adjustMinutes(5)}
           disabled={isRunning}
-          className={`w-6 h-6 flex items-center justify-center rounded disabled:opacity-30 transition-colors text-sm font-bold ${
-            isDark
-              ? "bg-neutral-800 text-neutral-400 hover:bg-neutral-700 hover:text-white"
-              : "bg-neutral-100 text-neutral-500 hover:bg-neutral-200 hover:text-neutral-800"
-          }`}
+          className="w-6 h-6 flex items-center justify-center rounded disabled:opacity-30 transition-colors text-sm font-bold bg-app-tertiary text-app-text hover:opacity-80"
         >
           +
         </button>
@@ -121,8 +207,8 @@ export function Header({
           onClick={startPomodoro}
           className={`ml-2 px-3 py-1 rounded text-xs font-semibold transition-colors ${
             isRunning
-              ? "bg-neutral-700 text-neutral-300 hover:bg-neutral-600"
-              : "bg-[#F25C54]/20 text-[#F25C54] hover:bg-[#F25C54]/30"
+              ? "bg-app-tertiary text-app-muted hover:opacity-80"
+              : "bg-accent-muted text-accent hover:opacity-80"
           }`}
         >
           {isRunning ? "Stop" : "Focus"}
@@ -131,3 +217,4 @@ export function Header({
     </header>
   );
 }
+

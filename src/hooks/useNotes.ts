@@ -9,6 +9,7 @@ export interface Note {
   createdAt: number;
   updatedAt: number;
   isManualTitle?: boolean;
+  isPinned?: boolean;
 }
 
 const ACTIVE_NOTE_KEY = "raku-active-note";
@@ -104,16 +105,45 @@ export function useNotes() {
     return newNote;
   }, [db]);
 
+  // Helper to check if Tiptap JSON content has any actual text
+  const hasTextContent = (content: string): boolean => {
+    try {
+      const json = JSON.parse(content);
+      const checkNode = (node: any): boolean => {
+        if (node.text && node.text.trim().length > 0) return true;
+        if (node.content && Array.isArray(node.content)) {
+          return node.content.some(checkNode);
+        }
+        return false;
+      };
+      return checkNode(json);
+    } catch {
+      return false;
+    }
+  };
+
   // Update note content
   const updateNote = useCallback(
     async (id: string, content: string) => {
       if (!db) return;
 
-      let title = extractTitle(content);
       const currentNote = notesRef.current.find((n) => n.id === id);
+      if (!currentNote) return;
+
+      // Skip update if content has not changed
+      if (currentNote.content === content) {
+        return;
+      }
+
+      // If note was empty ("") and new content has no actual text, skip update
+      if (currentNote.content === "" && !hasTextContent(content)) {
+        return;
+      }
+
+      let title = extractTitle(content);
 
       // Respect manual title
-      if (currentNote?.isManualTitle) {
+      if (currentNote.isManualTitle) {
         title = currentNote.title;
       }
 
@@ -192,6 +222,33 @@ export function useNotes() {
     [db]
   );
 
+  // Toggle pin note
+  const togglePinNote = useCallback(
+    async (id: string) => {
+      if (!db) return;
+      const currentNote = notesRef.current.find((n) => n.id === id);
+      if (!currentNote) return;
+
+      const newPinned = !currentNote.isPinned;
+
+      setNotes((prev) =>
+        prev.map((note) =>
+          note.id === id ? { ...note, isPinned: newPinned } : note
+        )
+      );
+
+      try {
+        await db.execute("UPDATE notes SET is_pinned = $1 WHERE id = $2", [
+          newPinned ? 1 : 0,
+          id,
+        ]);
+      } catch (e) {
+        console.error("Failed to toggle pin note:", e);
+      }
+    },
+    [db]
+  );
+
   return {
     notes,
     activeNote: notes.find((n) => n.id === activeNoteId) || null,
@@ -202,5 +259,6 @@ export function useNotes() {
     deleteNote,
     selectNote,
     renameNote,
+    togglePinNote,
   };
 }

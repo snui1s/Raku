@@ -1,119 +1,296 @@
 @import "tailwindcss";
 
+@theme {
+  --color-accent: var(--raku-accent);
+  --color-accent-hover: var(--raku-accent-hover);
+  --color-accent-muted: var(--raku-accent-muted);
+
+  --color-app-main: var(--raku-bg);
+  --color-app-sidebar: var(--raku-bg-secondary);
+  --color-app-toolbar: var(--raku-toolbar-bg);
+  --color-app-tertiary: var(--raku-bg-tertiary);
+  --color-app-dropdown: var(--raku-dropdown-bg);
+  --color-app-text: var(--raku-text);
+  --color-app-muted: var(--raku-text-muted);
+  --color-app-border: var(--raku-border);
+}
+
 /* ============================================
-   RAKU COLOR SYSTEM
-   ============================================
-   Accent:     #F25C54 (Red-Orange Pastel)
-   
-   Dark Mode (Night Temple):
-   - Background: #0A0A0A
-   - Text:       #E5E5E5
-   
-   Light Mode (Snowy Gate):
-   - Background: #FFFFFF
-   - Text:       #171717
+   DEFAULT COLOR VARIABLES
+   ============================================ */
+:root {
+  --raku-accent: #f25c54;
+  --raku-accent-hover: #e04d45;
+  --raku-accent-muted: rgba(242, 92, 84, 0.2);
+
+  --raku-bg: #ffffff;
+  --raku-bg-secondary: #f8f8f8;
+  --raku-bg-tertiary: #f0f0f0;
+  --raku-text: #171717;
+  --raku-text-muted: #737373;
+  --raku-border: #e5e5e5;
+  --raku-toolbar-bg: rgba(255, 255, 255, 0.85);
+  --raku-dropdown-bg: rgba(255, 255, 255, 0.95);
+}
+
+.dark {
+  --raku-bg: #0a0a0a;
+  --raku-bg-secondary: #121212;
+  --raku-bg-tertiary: #1a1a1a;
+  --raku-text: #e5e5e5;
+  --raku-text-muted: #a3a3a3;
+  --raku-border: #262626;
+  --raku-toolbar-bg: rgba(26, 26, 26, 0.85);
+  --raku-dropdown-bg: rgba(20, 20, 20, 0.95);
+}
+
+/* ============================================
+   8 DISTINCT THEME PALETTES
    ============================================ */
 
-:root {
-  --color-accent: #f25c54;
-  --color-accent-hover: #e04d45;
-  --color-accent-muted: rgba(242, 92, 84, 0.2);
-
-  /* Light Mode (Snowy Gate) - Default */
-  --color-bg: #ffffff;
-  --color-bg-secondary: #f5f5f5;
-  --color-bg-tertiary: #fafafa;
-  --color-text: #171717;
-  --color-text-muted: #737373;
-  --color-border: #e5e5e5;
+/* 0. Mono Minimal 🖤 (Pure Black & White Minimalist) */
+html[data-theme="mono"] {
+  --raku-accent: #171717;
+  --raku-accent-hover: #404040;
+  --raku-accent-muted: rgba(0, 0, 0, 0.08);
+  --raku-bg: #ffffff;
+  --raku-bg-secondary: #f8f8f8;
+  --raku-bg-tertiary: #efefef;
+  --raku-text: #171717;
+  --raku-text-muted: #737373;
+  --raku-border: #e5e5e5;
+  --raku-toolbar-bg: rgba(255, 255, 255, 0.9);
+  --raku-dropdown-bg: rgba(255, 255, 255, 0.98);
 }
 
-/* Dark Mode (Night Temple) Overrides */
-.dark {
-  --color-bg: #0a0a0a;
-  --color-bg-secondary: #141414;
-  --color-bg-tertiary: #1a1a1a;
-  --color-text: #e5e5e5;
-  --color-text-muted: #a3a3a3;
-  --color-border: #262626;
+html.dark[data-theme="mono"] {
+  --raku-accent: #ffffff;
+  --raku-accent-hover: #d4d4d4;
+  --raku-accent-muted: rgba(255, 255, 255, 0.15);
+  --raku-bg: #0a0a0a;
+  --raku-bg-secondary: #121212;
+  --raku-bg-tertiary: #1f1f1f;
+  --raku-text: #e5e5e5;
+  --raku-text-muted: #a3a3a3;
+  --raku-border: #262626;
+  --raku-toolbar-bg: rgba(22, 22, 22, 0.92);
+  --raku-dropdown-bg: rgba(18, 18, 18, 0.96);
 }
 
-/* Light Mode (Snowy Gate) - Reference Colors
-   Background: #FFFFFF
-   Text:       #171717
-   Border:     #E5E5E5
-*/
-
-/* Line Seed Font Setup */
-@font-face {
-  font-family: "LineSeed";
-  src: url("./assets/fonts/LINESeedSansTH_Th.ttf") format("truetype");
-  font-weight: 100;
-  font-style: normal;
-}
-@font-face {
-  font-family: "LineSeed";
-  src: url("./assets/fonts/LINESeedSansTH_Rg.ttf") format("truetype");
-  font-weight: 400;
-  font-style: normal;
-}
-@font-face {
-  font-family: "LineSeed";
-  src: url("./assets/fonts/LINESeedSansTH_Bd.ttf") format("truetype");
-  font-weight: 700;
-  font-style: normal;
-}
-@font-face {
-  font-family: "LineSeed";
-  src: url("./assets/fonts/LINESeedSansTH_XBd.ttf") format("truetype");
-  font-weight: 800;
-  font-style: normal;
-}
-@font-face {
-  font-family: "LineSeed";
-  src: url("./assets/fonts/LINESeedSansTH_He.ttf") format("truetype");
-  font-weight: 900;
-  font-style: normal;
+/* 1. Classic (Raku Coral) 🌺 */
+html[data-theme="classic"] {
+  --raku-accent: #f25c54;
+  --raku-accent-hover: #e04d45;
+  --raku-accent-muted: rgba(242, 92, 84, 0.15);
+  --raku-bg: #ffffff;
+  --raku-bg-secondary: #fff7f6;
+  --raku-bg-tertiary: #fde8e5;
+  --raku-text: #171717;
+  --raku-text-muted: #737373;
+  --raku-border: #fae2df;
+  --raku-toolbar-bg: rgba(255, 245, 243, 0.95);
+  --raku-dropdown-bg: rgba(255, 248, 247, 0.98);
 }
 
-/* Base Styles */
+html.dark[data-theme="classic"] {
+  --raku-accent: #f25c54;
+  --raku-accent-hover: #e04d45;
+  --raku-accent-muted: rgba(242, 92, 84, 0.25);
+  --raku-bg: #0a0a0a;
+  --raku-bg-secondary: #121212;
+  --raku-bg-tertiary: #221616;
+  --raku-text: #e5e5e5;
+  --raku-text-muted: #a3a3a3;
+  --raku-border: #2a2020;
+  --raku-toolbar-bg: rgba(22, 22, 22, 0.92);
+  --raku-dropdown-bg: rgba(18, 18, 18, 0.96);
+}
+
+/* 2. Matcha Zen 🍵 */
+html[data-theme="matcha"] {
+  --raku-accent: #38763c;
+  --raku-accent-hover: #29572c;
+  --raku-accent-muted: rgba(56, 118, 60, 0.15);
+  --raku-bg: #f5f9f5;
+  --raku-bg-secondary: #eaf3ea;
+  --raku-bg-tertiary: #d2e6d3;
+  --raku-text: #142616;
+  --raku-text-muted: #4d6c4f;
+  --raku-border: #cfe0d0;
+  --raku-toolbar-bg: rgba(224, 238, 225, 0.95);
+  --raku-dropdown-bg: rgba(240, 247, 240, 0.98);
+}
+
+html.dark[data-theme="matcha"] {
+  --raku-accent: #52b765;
+  --raku-accent-hover: #3e984f;
+  --raku-accent-muted: rgba(82, 183, 101, 0.25);
+  --raku-bg: #0a0d0a;
+  --raku-bg-secondary: #111612;
+  --raku-bg-tertiary: #19261b;
+  --raku-text: #e4ebe4;
+  --raku-text-muted: #8aa08c;
+  --raku-border: #213023;
+  --raku-toolbar-bg: rgba(20, 26, 21, 0.92);
+  --raku-dropdown-bg: rgba(16, 22, 17, 0.96);
+}
+
+/* 3. Sakura Bloom 🌸 */
+html[data-theme="sakura"] {
+  --raku-accent: #d84a78;
+  --raku-accent-hover: #b83560;
+  --raku-accent-muted: rgba(216, 74, 120, 0.15);
+  --raku-bg: #fcf4f7;
+  --raku-bg-secondary: #f9e8ef;
+  --raku-bg-tertiary: #f3cad8;
+  --raku-text: #29121b;
+  --raku-text-muted: #784758;
+  --raku-border: #f0c8d6;
+  --raku-toolbar-bg: rgba(247, 222, 232, 0.95);
+  --raku-dropdown-bg: rgba(251, 237, 243, 0.98);
+}
+
+html.dark[data-theme="sakura"] {
+  --raku-accent: #f472a1;
+  --raku-accent-hover: #d85283;
+  --raku-accent-muted: rgba(244, 114, 161, 0.25);
+  --raku-bg: #0e0a0c;
+  --raku-bg-secondary: #171114;
+  --raku-bg-tertiary: #291820;
+  --raku-text: #f5e6eb;
+  --raku-text-muted: #ad8a96;
+  --raku-border: #362029;
+  --raku-toolbar-bg: rgba(26, 18, 22, 0.92);
+  --raku-dropdown-bg: rgba(20, 14, 17, 0.96);
+}
+
+/* 4. Ocean Mist 🌊 */
+html[data-theme="ocean"] {
+  --raku-accent: #1c7cb0;
+  --raku-accent-hover: #125e87;
+  --raku-accent-muted: rgba(28, 124, 176, 0.15);
+  --raku-bg: #f3f8fb;
+  --raku-bg-secondary: #e5f1f7;
+  --raku-bg-tertiary: #bfdeed;
+  --raku-text: #0f202b;
+  --raku-text-muted: #3d6073;
+  --raku-border: #bcdde8;
+  --raku-toolbar-bg: rgba(216, 234, 244, 0.95);
+  --raku-dropdown-bg: rgba(235, 245, 250, 0.98);
+}
+
+html.dark[data-theme="ocean"] {
+  --raku-accent: #4caee6;
+  --raku-accent-hover: #2991cd;
+  --raku-accent-muted: rgba(76, 174, 230, 0.25);
+  --raku-bg: #0a0d10;
+  --raku-bg-secondary: #11161c;
+  --raku-bg-tertiary: #182633;
+  --raku-text: #e4edf2;
+  --raku-text-muted: #8a9fb0;
+  --raku-border: #203140;
+  --raku-toolbar-bg: rgba(18, 24, 31, 0.92);
+  --raku-dropdown-bg: rgba(14, 19, 24, 0.96);
+}
+
+/* 5. Lavender Dream 🪻 */
+html[data-theme="lavender"] {
+  --raku-accent: #683bf0;
+  --raku-accent-hover: #4f23d4;
+  --raku-accent-muted: rgba(104, 59, 240, 0.15);
+  --raku-bg: #f6f4fe;
+  --raku-bg-secondary: #ede8fc;
+  --raku-bg-tertiary: #d2c6fa;
+  --raku-text: #18112e;
+  --raku-text-muted: #56407d;
+  --raku-border: #cec4f7;
+  --raku-toolbar-bg: rgba(228, 220, 253, 0.95);
+  --raku-dropdown-bg: rgba(242, 238, 254, 0.98);
+}
+
+html.dark[data-theme="lavender"] {
+  --raku-accent: #9b76fc;
+  --raku-accent-hover: #7d50f7;
+  --raku-accent-muted: rgba(155, 118, 252, 0.25);
+  --raku-bg: #0c0a12;
+  --raku-bg-secondary: #14111f;
+  --raku-bg-tertiary: #211a36;
+  --raku-text: #e8e4f5;
+  --raku-text-muted: #938ab3;
+  --raku-border: #2b2242;
+  --raku-toolbar-bg: rgba(22, 18, 33, 0.92);
+  --raku-dropdown-bg: rgba(17, 14, 26, 0.96);
+}
+
+/* 6. Sunset Gold 🌅 */
+html[data-theme="sunset"] {
+  --raku-accent: #d9741e;
+  --raku-accent-hover: #b35a10;
+  --raku-accent-muted: rgba(217, 116, 30, 0.15);
+  --raku-bg: #fef9f0;
+  --raku-bg-secondary: #fbf0dd;
+  --raku-bg-tertiary: #f3d9b0;
+  --raku-text: #29190c;
+  --raku-text-muted: #7a5433;
+  --raku-border: #ebd5b4;
+  --raku-toolbar-bg: rgba(249, 232, 207, 0.95);
+  --raku-dropdown-bg: rgba(253, 244, 230, 0.98);
+}
+
+html.dark[data-theme="sunset"] {
+  --raku-accent: #f59842;
+  --raku-accent-hover: #db7b23;
+  --raku-accent-muted: rgba(245, 152, 66, 0.25);
+  --raku-bg: #0e0b08;
+  --raku-bg-secondary: #17130f;
+  --raku-bg-tertiary: #291d14;
+  --raku-text: #f5ebe4;
+  --raku-text-muted: #ad988a;
+  --raku-border: #36271c;
+  --raku-toolbar-bg: rgba(26, 20, 15, 0.92);
+  --raku-dropdown-bg: rgba(20, 15, 11, 0.96);
+}
+
+/* 7. Nordic Slate 🪵 */
+html[data-theme="nordic"] {
+  --raku-accent: #546e7a;
+  --raku-accent-hover: #37474f;
+  --raku-accent-muted: rgba(84, 110, 122, 0.15);
+  --raku-bg: #f6f7f9;
+  --raku-bg-secondary: #eaecef;
+  --raku-bg-tertiary: #ccd2db;
+  --raku-text: #131821;
+  --raku-text-muted: #4a5463;
+  --raku-border: #c4c9d4;
+  --raku-toolbar-bg: rgba(223, 227, 234, 0.95);
+  --raku-dropdown-bg: rgba(239, 241, 245, 0.98);
+}
+
+html.dark[data-theme="nordic"] {
+  --raku-accent: #90a4ae;
+  --raku-accent-hover: #78909c;
+  --raku-accent-muted: rgba(144, 164, 174, 0.25);
+  --raku-bg: #0d0f12;
+  --raku-bg-secondary: #14171c;
+  --raku-bg-tertiary: #1e242d;
+  --raku-text: #e4e8ed;
+  --raku-text-muted: #8a95a3;
+  --raku-border: #252d38;
+  --raku-toolbar-bg: rgba(22, 26, 31, 0.92);
+  --raku-dropdown-bg: rgba(16, 20, 24, 0.96);
+}
+
+/* Global Body Styling */
 body {
   font-family: "LineSeed", "Inter", sans-serif;
-  background-color: var(--color-bg);
-  color: var(--color-text);
-  /* Smooth Theme Transition - Colors Only */
-  transition: background-color 0.3s ease, color 0.3s ease,
-    border-color 0.3s ease;
+  background-color: var(--raku-bg);
+  color: var(--raku-text);
+  transition: background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease;
 }
 
-/* Apply transitions to all major elements for consistency */
-*,
-*::before,
-*::after {
-  transition-property: background-color, color, border-color, fill, stroke;
-  transition-duration: 0.2s;
-  transition-timing-function: ease-out;
-}
-
-/* Custom Scrollbar */
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 99px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.2);
-}
-
-/* Selection - Accent Color */
+/* Selection Highlight */
 ::selection {
-  background-color: var(--color-accent-muted);
+  background-color: var(--raku-accent-muted);
 }
 
 /* Editor Styling */
@@ -121,220 +298,65 @@ body {
   outline: none;
   min-height: 100%;
   padding-bottom: 30vh;
-  caret-color: var(--color-accent);
-
-  /* Fix: Long text wrapping */
+  caret-color: var(--raku-accent);
   word-wrap: break-word;
   overflow-wrap: break-word;
   word-break: break-word;
   white-space: pre-wrap;
+  color: var(--raku-text);
 }
 
-/* Placeholder */
 .ProseMirror p.is-editor-empty:first-child::before {
-  color: var(--color-text-muted);
+  color: var(--raku-text-muted);
   content: "Start writing...";
   float: left;
   height: 0;
   pointer-events: none;
 }
 
-/* Typography */
-.ProseMirror h1 {
-  font-size: 2.25rem;
-  font-weight: 700;
-  margin-top: 2rem;
-  margin-bottom: 0.5rem;
-  letter-spacing: -0.025em;
-  line-height: 1.2;
-}
-.ProseMirror h2 {
-  font-size: 1.875rem;
-  font-weight: 700;
-  margin-top: 1.5rem;
-  margin-bottom: 0.5rem;
-  line-height: 1.25;
-}
-.ProseMirror h3 {
-  font-size: 1.5rem;
-  font-weight: 600;
-  margin-top: 1.25rem;
-  margin-bottom: 0.5rem;
-  line-height: 1.3;
-}
-.ProseMirror h4 {
-  font-size: 1.25rem;
-  font-weight: 600;
-  margin-top: 1rem;
-  margin-bottom: 0.5rem;
-  line-height: 1.4;
-}
-.ProseMirror p {
-  font-weight: 400;
-  margin-bottom: 0.75rem;
-  line-height: 1.6;
-}
-.ProseMirror strong {
-  font-weight: 800;
-}
-.ProseMirror ul {
-  list-style-type: disc;
-  padding-left: 1.5rem;
-}
-.ProseMirror ol {
-  list-style-type: decimal;
-  padding-left: 1.5rem;
-}
-.ProseMirror ol li,
-.ProseMirror ul li {
-  margin-bottom: 0.25rem;
-}
-
-/* Custom Task List Styling (Checkboxes) */
-/* Custom Task List Styling (Checkboxes) */
-
-/* Global override for Tiptap TaskList */
-ul[data-type="taskList"] {
-  list-style: none !important;
-  padding: 0 !important;
-  margin: 0 !important;
-}
-
-/* Target LI children of taskList - works even if data-type="taskItem" is missing */
-ul[data-type="taskList"] > li {
-  display: flex !important;
-  flex-direction: row !important;
-  flex-wrap: nowrap !important; /* CRITICAL: Prevent wrapping */
-  align-items: flex-start !important;
-  width: 100% !important;
-  margin-bottom: 0.5rem !important;
-  padding-left: 0 !important; /* Remove any prose padding */
-}
-
-/* Checkbox Container */
-ul[data-type="taskList"] > li > label {
-  flex: 0 0 auto !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  margin: 0 !important;
-  margin-right: 0.75rem !important;
-  margin-top: 0.2rem !important;
-  user-select: none !important;
-  width: 1.15rem !important;
-  height: 1.15rem !important;
-  position: relative !important;
-}
-
-/* Text Content Wrapper */
-ul[data-type="taskList"] > li > div {
-  flex: 1 1 auto !important; /* Take remaining space */
-  display: block !important;
-  margin: 0 !important;
-  padding: 0 !important;
-  min-width: 0 !important;
-  overflow-wrap: break-word !important;
-}
-
-/* Force paragraph to behave */
-ul[data-type="taskList"] > li > div > p {
-  margin: 0 !important;
-  padding: 0 !important;
-  display: block !important;
-  line-height: 1.6 !important;
-}
-
-/* Custom Checkbox Input */
-ul[data-type="taskList"] > li > label > input[type="checkbox"] {
-  appearance: none !important;
-  -webkit-appearance: none !important;
-  width: 100% !important;
-  height: 100% !important;
-  border: 1.5px solid #a3a3a3 !important;
-  border-radius: 4px !important;
-  background-color: transparent !important;
-  cursor: pointer !important;
-  margin: 0 !important;
-  padding: 0 !important;
-  transition: all 0.2s ease !important;
-}
-
-/* Specific border for light/dark to ensure visibility */
-.dark ul[data-type="taskList"] > li > label > input[type="checkbox"] {
-  border-color: #525252 !important;
-}
-
-/* Hover State */
-ul[data-type="taskList"] > li > label > input[type="checkbox"]:hover {
-  border-color: #f25c54;
-  background-color: rgba(242, 92, 84, 0.1);
-}
-
-/* Checked State - with SVG checkmark */
-ul[data-type="taskList"] > li > label > input[type="checkbox"]:checked {
-  background-color: #f25c54 !important;
-  border-color: #f25c54 !important;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'%3E%3C/polyline%3E%3C/svg%3E") !important;
-  background-size: 80% !important;
-  background-position: center !important;
-  background-repeat: no-repeat !important;
-  appearance: none !important;
-  -webkit-appearance: none !important;
-}
-
-/* Checked Text Style */
-ul[data-type="taskList"] > li[data-checked="true"] > div {
-  text-decoration: line-through;
-  color: #a3a3a3;
-  opacity: 0.8;
-}
-
-/* Blockquote */
 .ProseMirror blockquote {
-  border-left: 3px solid var(--color-accent);
-  padding-left: 1rem;
+  border-left: 3px solid var(--raku-accent);
   margin-left: 0;
   margin-right: 0;
-  background-color: rgba(242, 92, 84, 0.05);
+  background-color: var(--raku-accent-muted);
   padding: 0.75rem 1rem;
   border-radius: 0 8px 8px 0;
   font-style: italic;
-  opacity: 0.8;
 }
 
-/* Code Block */
 .ProseMirror pre {
-  background-color: #1a1a1a;
-  border: 1px solid #333;
+  background-color: var(--raku-bg-tertiary);
+  border: 1px solid var(--raku-border);
   border-radius: 8px;
   padding: 1rem;
   overflow-x: auto;
   font-family: "Fira Code", "JetBrains Mono", monospace;
   font-size: 0.875rem;
   line-height: 1.5;
+  color: var(--raku-text);
 }
+
 .ProseMirror pre code {
   background: none;
   padding: 0;
-  color: #e5e5e5;
+  color: var(--raku-text);
 }
 
-/* Inline Code */
 .ProseMirror code {
-  background-color: rgba(255, 255, 255, 0.1);
+  background-color: var(--raku-accent-muted);
   padding: 0.125rem 0.375rem;
   border-radius: 4px;
   font-family: "Fira Code", "JetBrains Mono", monospace;
   font-size: 0.875em;
-  color: var(--color-accent);
+  color: var(--raku-accent);
 }
 
-/* Links - Accent Color */
 .ProseMirror a {
-  color: var(--color-accent);
+  color: var(--raku-accent);
   text-decoration: underline;
   text-underline-offset: 2px;
 }
+
 .ProseMirror a:hover {
-  color: var(--color-accent-hover);
+  color: var(--raku-accent-hover);
 }

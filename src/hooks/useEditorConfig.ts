@@ -28,7 +28,7 @@ export function useEditorConfig() {
       }),
       ListItem,
       Dropcursor.configure({
-        color: "#F25C54", // Accent color
+        color: "var(--color-accent)", // Dynamic accent color
         width: 2,
       }),
       Highlight.configure({

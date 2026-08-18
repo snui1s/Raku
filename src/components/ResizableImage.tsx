@@ -77,7 +77,7 @@ export const ResizableImage = (props: NodeViewProps) => {
     <NodeViewWrapper className="resize-image-wrapper inline-block relative leading-none">
       <div
         className={`relative inline-block transition-all ${
-          isSelected || isResizing ? "ring-2 ring-[#F25C54]" : ""
+          isSelected || isResizing ? "ring-2 ring-accent" : ""
         }`}
         style={{ width: width === "auto" ? "auto" : width }}
       >
@@ -95,7 +95,7 @@ export const ResizableImage = (props: NodeViewProps) => {
         {/* Resize Handle (Bottom Right) */}
         {(isSelected || isResizing) && (
           <div
-            className="absolute bottom-1 right-1 w-4 h-4 bg-[#F25C54] border-2 border-white rounded-full cursor-nwse-resize z-10 hover:scale-125 transition-transform"
+            className="absolute bottom-1 right-1 w-4 h-4 bg-accent border-2 border-white rounded-full cursor-nwse-resize z-10 hover:scale-125 transition-transform"
             onMouseDown={onMouseDown}
             title="Drag to resize"
           />

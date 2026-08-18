@@ -66,6 +66,18 @@ export const initDatabase = async (): Promise<{
       }
     }
 
+    // Schema Migration: Add is_pinned if missing
+    try {
+      await dbInstance.execute(
+        "ALTER TABLE notes ADD COLUMN is_pinned INTEGER DEFAULT 0"
+      );
+    } catch (e) {
+      const msg = String(e);
+      if (!msg.includes("duplicate column")) {
+        console.log("Schema migration note: ", msg);
+      }
+    }
+
     // Migration: Check localStorage
     const stored = localStorage.getItem(STORAGE_KEY);
     if (stored) {
@@ -78,13 +90,14 @@ export const initDatabase = async (): Promise<{
           );
           for (const note of parsed) {
             await dbInstance.execute(
-              "INSERT OR REPLACE INTO notes (id, title, content, created_at, updated_at, is_manual_title) VALUES ($1, $2, $3, $4, $5, 0)",
+              "INSERT OR REPLACE INTO notes (id, title, content, created_at, updated_at, is_manual_title, is_pinned) VALUES ($1, $2, $3, $4, $5, 0, $6)",
               [
                 note.id,
                 note.title,
                 note.content,
                 note.createdAt,
                 note.updatedAt,
+                note.isPinned ? 1 : 0,
               ]
             );
           }
@@ -97,7 +110,7 @@ export const initDatabase = async (): Promise<{
 
     // Load Notes from DB
     const result = await dbInstance.select<any[]>(
-      "SELECT * FROM notes ORDER BY updated_at DESC"
+      "SELECT * FROM notes ORDER BY is_pinned DESC, updated_at DESC"
     );
     const loadedNotes: Note[] = result.map((row) => ({
       id: row.id,
@@ -106,6 +119,7 @@ export const initDatabase = async (): Promise<{
       createdAt: row.created_at,
       updatedAt: row.updated_at,
       isManualTitle: !!row.is_manual_title,
+      isPinned: !!row.is_pinned,
     }));
 
     let activeId = localStorage.getItem(ACTIVE_NOTE_KEY);

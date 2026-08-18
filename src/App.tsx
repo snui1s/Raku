@@ -8,6 +8,8 @@ import { Sidebar } from "./components/Sidebar";
 import { Header } from "./components/Header";
 import { EditorToolbar } from "./components/Editor/EditorToolbar";
 import { UpdateModal } from "./components/UpdateModal";
+import { WordCounter } from "./components/WordCounter";
+import { ExportModal } from "./components/ExportModal";
 
 // Hooks
 import { useAppUpdate } from "./hooks/useAppUpdate";
@@ -19,6 +21,42 @@ function App() {
   // Theme state
   const [isDark, setIsDark] = useState(true);
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [currentTheme, setCurrentTheme] = useState<string>(() => {
+    return localStorage.getItem("raku-theme") || "classic";
+  });
+
+  // Zen Focus Mode state
+  const [zenMode, setZenMode] = useState(false);
+
+  // Export Modal state
+  const [isExportOpen, setIsExportOpen] = useState(false);
+
+  // Keyboard shortcut Ctrl+Shift+Z or Esc to toggle/exit Zen mode
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key.toLowerCase() === "z") {
+        e.preventDefault();
+        setZenMode((prev) => !prev);
+      } else if (e.key === "Escape" && zenMode) {
+        setZenMode(false);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [zenMode]);
+
+  useEffect(() => {
+    if (isDark) {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+  }, [isDark]);
+
+  useEffect(() => {
+    document.documentElement.setAttribute("data-theme", currentTheme);
+    localStorage.setItem("raku-theme", currentTheme);
+  }, [currentTheme]);
 
   // Rename modal state
   const [renamingNoteId, setRenamingNoteId] = useState<string | null>(null);
@@ -47,6 +85,7 @@ function App() {
     deleteNote,
     selectNote,
     renameNote,
+    togglePinNote,
   } = useNotes();
 
   // Auto-save with debounce
@@ -130,7 +169,7 @@ function App() {
     <div
       className={`flex w-full h-screen overflow-hidden ${
         isDark ? "dark" : ""
-      } ${isDark ? "bg-[#0A0A0A] text-[#E5E5E5]" : "bg-white text-[#171717]"}`}
+      } bg-app-main text-app-text transition-colors duration-200`}
     >
       {/* Update Available Modal */}
       <UpdateModal
@@ -140,8 +179,8 @@ function App() {
         isDark={isDark}
       />
 
-      {/* Sidebar */}
-      {sidebarOpen && (
+      {/* Sidebar (Hidden in Zen Mode) */}
+      {!zenMode && sidebarOpen && (
         <Sidebar
           isDark={isDark}
           notes={notes}
@@ -155,22 +194,42 @@ function App() {
           setRenamingNoteId={setRenamingNoteId}
           renameNote={renameNote}
           deleteNote={deleteNote}
+          togglePinNote={togglePinNote}
           version={__APP_VERSION__}
         />
       )}
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col h-full">
+      <div className="flex-1 flex flex-col h-full relative">
+        {/* Zen Mode Exit Banner */}
+        {zenMode && (
+          <div className="fixed top-4 right-6 z-50">
+            <button
+              onClick={() => setZenMode(false)}
+              className="px-3 py-1.5 rounded-full backdrop-blur-md bg-app-toolbar border border-app-border text-xs text-app-muted hover:text-accent shadow-lg transition-all flex items-center gap-1.5 group cursor-pointer hover:scale-105"
+              title="Exit Zen Mode (Esc or Ctrl+Shift+Z)"
+            >
+              <span className="font-semibold text-accent">🧘 Exit Zen Mode</span>
+              <span className="text-[10px] opacity-60 font-mono bg-app-tertiary px-1.5 py-0.5 rounded ml-1">Esc</span>
+            </button>
+          </div>
+        )}
+
         <Header
           isDark={isDark}
           setIsDark={setIsDark}
           sidebarOpen={sidebarOpen}
           setSidebarOpen={setSidebarOpen}
           currentTime={currentTime}
+          currentTheme={currentTheme}
+          setCurrentTheme={setCurrentTheme}
+          zenMode={zenMode}
+          setZenMode={setZenMode}
+          onOpenExport={() => setIsExportOpen(true)}
         />
 
-        {/* Floating Toolbar Island */}
-        <EditorToolbar editor={editor} isDark={isDark} />
+        {/* Floating Toolbar Island (Hidden in Zen Mode) */}
+        {!zenMode && <EditorToolbar editor={editor} isDark={isDark} />}
 
         {/* Editor */}
         <main
@@ -184,6 +243,18 @@ function App() {
             <EditorContent editor={editor} />
           </div>
         </main>
+
+        {/* Live Word & Character Counter */}
+        <WordCounter editor={editor} />
+
+        {/* Export Modal */}
+        <ExportModal
+          isOpen={isExportOpen}
+          onClose={() => setIsExportOpen(false)}
+          activeNote={activeNote}
+          editor={editor}
+          isDark={isDark}
+        />
       </div>
     </div>
   );
