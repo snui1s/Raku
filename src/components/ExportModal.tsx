@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Editor } from "@tiptap/react";
-import { Download, FileText, FileCode, X, Check, Loader2, FolderCheck } from "lucide-react";
+import { Download, FileText, FileCode, X, Check, Loader2 } from "lucide-react";
 import JSZip from "jszip";
 import { readFile, writeFile, BaseDirectory } from "@tauri-apps/plugin-fs";
 import { Note } from "../hooks/useNotes";
@@ -10,7 +10,7 @@ interface ExportModalProps {
   onClose: () => void;
   activeNote: Note | null;
   editor: Editor | null;
-  isDark: boolean;
+  isDark?: boolean;
 }
 
 // Convert TipTap HTML / DOM to clean Markdown string
@@ -93,7 +93,6 @@ export function ExportModal({
   onClose,
   activeNote,
   editor,
-  isDark,
 }: ExportModalProps) {
   const [isExporting, setIsExporting] = useState(false);
   const [exportSuccess, setExportSuccess] = useState<string | null>(null);

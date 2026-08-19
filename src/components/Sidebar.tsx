@@ -2,7 +2,7 @@ import { PanelLeftClose, Plus, Pencil, Trash2, Pin } from "lucide-react";
 import { Note } from "../hooks/useNotes";
 
 interface SidebarProps {
-  isDark: boolean;
+  isDark?: boolean;
   notes: Note[];
   activeNoteId: string | null;
   renamingNoteId: string | null;
@@ -19,7 +19,6 @@ interface SidebarProps {
 }
 
 export function Sidebar({
-  isDark,
   notes,
   activeNoteId,
   renamingNoteId,

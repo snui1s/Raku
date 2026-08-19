@@ -6,14 +6,13 @@ interface UpdateModalProps {
   } | null;
   setUpdateAvailable: (value: null) => void;
   isUpdating: boolean;
-  isDark: boolean;
+  isDark?: boolean;
 }
 
 export function UpdateModal({
   updateAvailable,
   setUpdateAvailable,
   isUpdating,
-  isDark,
 }: UpdateModalProps) {
   if (!updateAvailable) return null;
 
