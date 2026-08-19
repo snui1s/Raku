@@ -1,13 +1,17 @@
 // Fonts
 export const AVAILABLE_FONTS = [
-  { name: "Inter", family: "Inter" },
-  { name: "Kanit", family: "Kanit" },
-  { name: "LineSeed", family: "LineSeed" },
-  { name: "Open Sans", family: "'Open Sans'" },
-  { name: "Poppins", family: "Poppins" },
-  { name: "Prompt", family: "Prompt" },
-  { name: "Roboto", family: "Roboto" },
-  { name: "Sarabun", family: "Sarabun" },
+  { name: "Chakra Petch", family: "'Chakra Petch', sans-serif" },
+  { name: "IBM Plex Sans Thai", family: "'IBM Plex Sans Thai', sans-serif" },
+  { name: "Inter", family: "'Inter', sans-serif" },
+  { name: "Kanit", family: "'Kanit', sans-serif" },
+  { name: "LINE Seed", family: "'LINE Seed Sans TH', 'LineSeed', sans-serif" },
+  { name: "Mitr", family: "'Mitr', sans-serif" },
+  { name: "Noto Sans Thai", family: "'Noto Sans Thai', sans-serif" },
+  { name: "Open Sans", family: "'Open Sans', sans-serif" },
+  { name: "Poppins", family: "'Poppins', sans-serif" },
+  { name: "Prompt", family: "'Prompt', sans-serif" },
+  { name: "Roboto", family: "'Roboto', sans-serif" },
+  { name: "Sarabun", family: "'Sarabun', sans-serif" },
 ];
 
 export const AVAILABLE_FONT_SIZES = [12, 14, 16, 18, 20, 24];

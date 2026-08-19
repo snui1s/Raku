@@ -251,20 +251,29 @@ export function EditorToolbar({ editor, isDark }: EditorToolbarProps) {
           </button>
           {fontFamilyOpen && (
             <div
-              className="absolute top-full left-0 mt-1 py-1 rounded-lg shadow-xl z-50 min-w-[140px] bg-app-dropdown border-app-border text-app-text border"
+              className="absolute top-full left-0 mt-1 py-1 rounded-lg shadow-xl z-50 min-w-[180px] max-h-72 overflow-y-auto bg-app-dropdown border-app-border text-app-text border"
             >
-              {AVAILABLE_FONTS.map((font) => (
-                <button
-                  key={font.name}
-                  className="w-full text-left px-3 py-1.5 text-sm text-app-muted hover:bg-app-tertiary hover:text-app-text transition-colors"
-                  onClick={() => {
-                    editor?.chain().focus().setFontFamily(font.family).run();
-                    closeAllDropdowns();
-                  }}
-                >
-                  {font.name}
-                </button>
-              ))}
+              {AVAILABLE_FONTS.map((font) => {
+                const isActive = editor?.getAttributes("textStyle").fontFamily === font.family;
+                return (
+                  <button
+                    key={font.name}
+                    style={{ fontFamily: font.family }}
+                    className={`w-full text-left px-3 py-1.5 text-sm transition-colors flex items-center justify-between ${
+                      isActive
+                        ? "text-accent font-semibold bg-app-tertiary"
+                        : "text-app-muted hover:bg-app-tertiary hover:text-app-text"
+                    }`}
+                    onClick={() => {
+                      editor?.chain().focus().setFontFamily(font.family).run();
+                      closeAllDropdowns();
+                    }}
+                  >
+                    <span>{font.name}</span>
+                    {isActive && <span className="text-xs text-accent">✓</span>}
+                  </button>
+                );
+              })}
             </div>
           )}
         </div>
@@ -285,24 +294,34 @@ export function EditorToolbar({ editor, isDark }: EditorToolbarProps) {
           </button>
           {fontSizeOpen && (
             <div
-              className="absolute top-full left-0 mt-1 py-1 rounded-lg shadow-xl z-50 min-w-[80px] bg-app-dropdown border-app-border text-app-text border"
+              className="absolute top-full left-0 mt-1 py-1 rounded-lg shadow-xl z-50 min-w-[100px] bg-app-dropdown border-app-border text-app-text border"
             >
-              {AVAILABLE_FONT_SIZES.map((size) => (
-                <button
-                  key={size}
-                  className="w-full text-left px-3 py-1.5 text-sm text-app-muted hover:bg-app-tertiary hover:text-app-text transition-colors"
-                  onClick={() => {
-                    editor
-                      ?.chain()
-                      .focus()
-                      .setMark("textStyle", { fontSize: `${size}px` })
-                      .run();
-                    closeAllDropdowns();
-                  }}
-                >
-                  {size}px
-                </button>
-              ))}
+              {AVAILABLE_FONT_SIZES.map((size) => {
+                const currentSizeStr = editor?.getAttributes("textStyle").fontSize;
+                const currentSizeNum = currentSizeStr ? parseInt(currentSizeStr, 10) : 16;
+                const isActive = currentSizeNum === size;
+                return (
+                  <button
+                    key={size}
+                    className={`w-full text-left px-3 py-1.5 text-sm transition-colors flex items-center justify-between ${
+                      isActive
+                        ? "text-accent font-semibold bg-app-tertiary"
+                        : "text-app-muted hover:bg-app-tertiary hover:text-app-text"
+                    }`}
+                    onClick={() => {
+                      editor
+                        ?.chain()
+                        .focus()
+                        .setMark("textStyle", { fontSize: `${size}px` })
+                        .run();
+                      closeAllDropdowns();
+                    }}
+                  >
+                    <span>{size}px</span>
+                    {isActive && <span className="text-xs text-accent">✓</span>}
+                  </button>
+                );
+              })}
             </div>
           )}
         </div>
