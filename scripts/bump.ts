@@ -88,7 +88,12 @@ function runBump() {
     console.log(`\x1b[32m✔\x1b[0m Git commit & tag created: v${newVersion}`);
 
     console.log(`\x1b[36m📤 Pushing to remote with --follow-tags...\x1b[0m`);
-    execSync(`git push --follow-tags`, { stdio: "inherit" });
+    try {
+      execSync(`git push --follow-tags`, { stdio: "inherit" });
+    } catch {
+      const branch = execSync(`git rev-parse --abbrev-ref HEAD`, { encoding: "utf-8" }).trim();
+      execSync(`git push -u origin ${branch} --follow-tags`, { stdio: "inherit" });
+    }
     console.log(`\x1b[32m✔\x1b[0m Git pushed with --follow-tags successfully`);
   } catch (err) {
     console.warn(`\x1b[33m⚠\x1b[0m Git commit/push skipped or failed (you can push manually)`);
