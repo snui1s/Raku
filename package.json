@@ -7,6 +7,8 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
     "tauri": "tauri",
     "bump": "bun scripts/bump.ts",
     "bump:patch": "bun scripts/bump.ts patch",
@@ -52,6 +54,7 @@
     "postcss": "^8.5.6",
     "tailwindcss": "^4.1.18",
     "typescript": "~5.8.3",
-    "vite": "^7.0.4"
+    "vite": "^7.0.4",
+    "vitest": "^5.0.3"
   }
 }

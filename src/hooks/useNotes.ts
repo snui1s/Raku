@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import Database from "@tauri-apps/plugin-sql";
 import { initDatabase } from "../services/db";
+import { extractTitle, hasTextContent } from "../utils/noteUtils";
 
 export interface Note {
   id: string;
@@ -18,26 +19,13 @@ const ACTIVE_NOTE_KEY = "raku-active-note";
 const generateId = () =>
   `note-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
 
-// Get title from content (first line or "Untitled")
-const extractTitle = (content: string): string => {
-  try {
-    const json = JSON.parse(content);
-    const firstNode = json?.content?.[0];
-    if (firstNode?.content?.[0]?.text) {
-      const text = firstNode.content[0].text.trim();
-      return text.slice(0, 50) || "Untitled";
-    }
-  } catch {
-    // ignore
-  }
-  return "Untitled";
-};
-
 export function useNotes() {
   const [notes, setNotes] = useState<Note[]>([]);
   const [activeNoteId, setActiveNoteId] = useState<string | null>(null);
   const [isLoaded, setIsLoaded] = useState(false);
   const [db, setDb] = useState<Database | null>(null);
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const [saveError, setSaveError] = useState<string | null>(null);
 
   // Ref to access latest notes in callbacks without dependency
   const notesRef = useRef<Note[]>([]);
@@ -55,12 +43,8 @@ export function useNotes() {
             setActiveNoteId(activeId);
             setIsLoaded(true);
         } catch (error) {
-            alert(
-                `Database Error Details: ${JSON.stringify(
-                  error,
-                  Object.getOwnPropertyNames(error)
-                )} \n\nCheck console for more info.`
-              );
+            console.error("Database init failed:", error);
+            setLoadError(error instanceof Error ? error.message : String(error));
         }
     }
     init();
@@ -101,26 +85,10 @@ export function useNotes() {
       );
     } catch (e) {
       console.error("Failed to create note:", e);
+        setSaveError("Could not create note. Your latest changes may not be saved.");
     }
     return newNote;
   }, [db]);
-
-  // Helper to check if Tiptap JSON content has any actual text
-  const hasTextContent = (content: string): boolean => {
-    try {
-      const json = JSON.parse(content);
-      const checkNode = (node: any): boolean => {
-        if (node.text && node.text.trim().length > 0) return true;
-        if (node.content && Array.isArray(node.content)) {
-          return node.content.some(checkNode);
-        }
-        return false;
-      };
-      return checkNode(json);
-    } catch {
-      return false;
-    }
-  };
 
   // Update note content
   const updateNote = useCallback(
@@ -160,8 +128,10 @@ export function useNotes() {
           "UPDATE notes SET content = $1, title = $2, updated_at = $3 WHERE id = $4",
           [content, title, updatedAt, id]
         );
+        setSaveError(null);
       } catch (e) {
         console.error("Failed to update note:", e);
+        setSaveError("Could not save note. Your latest changes may not be saved.");
       }
     },
     [db] // No 'notes' dependency
@@ -186,6 +156,7 @@ export function useNotes() {
         await db.execute("DELETE FROM notes WHERE id = $1", [id]);
       } catch (e) {
         console.error("Failed to delete note:", e);
+        setSaveError("Could not delete note. Your latest changes may not be saved.");
       }
     },
     [db, activeNoteId]
@@ -217,6 +188,7 @@ export function useNotes() {
         );
       } catch (e) {
         console.error("Failed to rename note:", e);
+        setSaveError("Could not rename note. Your latest changes may not be saved.");
       }
     },
     [db]
@@ -244,6 +216,7 @@ export function useNotes() {
         ]);
       } catch (e) {
         console.error("Failed to toggle pin note:", e);
+        setSaveError("Could not update pin. Your latest changes may not be saved.");
       }
     },
     [db]
@@ -254,6 +227,9 @@ export function useNotes() {
     activeNote: notes.find((n) => n.id === activeNoteId) || null,
     activeNoteId,
     isLoaded,
+    loadError,
+    saveError,
+    clearSaveError: () => setSaveError(null),
     createNote,
     updateNote,
     deleteNote,

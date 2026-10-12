@@ -1,5 +1,6 @@
 import { PanelLeftClose, Plus, Pencil, Trash2, Pin } from "lucide-react";
 import { Note } from "../hooks/useNotes";
+import { BackupControls } from "./BackupControls";
 
 interface SidebarProps {
   isDark?: boolean;
@@ -252,6 +253,8 @@ export function Sidebar({
           ))}
         </nav>
       </div>
+
+      <BackupControls />
 
       {/* Version Footer */}
       <div className="p-4 text-center text-[10px] font-mono opacity-50 text-app-muted">

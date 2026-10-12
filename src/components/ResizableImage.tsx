@@ -18,7 +18,6 @@ export const ResizableImage = (props: NodeViewProps) => {
     const src = props.node.attrs.src;
     if (src && src.startsWith("local-image:")) {
       const path = src.replace("local-image:", "");
-      console.log("Loading local image from:", path);
 
       readFile(path, { baseDir: BaseDirectory.AppData })
         .then((bytes) => {
