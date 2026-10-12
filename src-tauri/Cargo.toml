@@ -1,8 +1,8 @@
 [package]
 name = "raku-app"
 version = "1.0.7"
-description = "A Tauri App"
-authors = ["you"]
+description = "Raku - a fast, distraction-free note-taking app"
+authors = ["snui1s"]
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html

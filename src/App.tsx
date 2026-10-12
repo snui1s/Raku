@@ -80,6 +80,9 @@ function App() {
     activeNote,
     activeNoteId,
     isLoaded,
+    loadError,
+    saveError,
+    clearSaveError,
     createNote,
     updateNote,
     deleteNote,
@@ -165,12 +168,34 @@ function App() {
     }
   }, [isLoaded, notes.length, createNote]);
 
+  if (loadError) {
+    return (
+      <div className="flex w-full h-screen items-center justify-center p-8 text-center">
+        <div className="max-w-md">
+          <h1 className="text-lg font-semibold mb-2">Raku couldn't open your notes</h1>
+          <p className="text-sm opacity-70 mb-4">
+            Your data has not been modified. Try restarting the app. If this
+            keeps happening, please report it with the details below.
+          </p>
+          <pre className="text-xs opacity-60 whitespace-pre-wrap break-words">{loadError}</pre>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div
       className={`flex w-full h-screen overflow-hidden ${
         isDark ? "dark" : ""
       } bg-app-main text-app-text transition-colors duration-200`}
     >
+      {saveError && (
+        <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 px-4 py-2 rounded-lg bg-red-600 text-white text-sm shadow-lg flex items-center gap-3">
+          <span>{saveError}</span>
+          <button onClick={clearSaveError} className="underline cursor-pointer">Dismiss</button>
+        </div>
+      )}
+
       {/* Update Available Modal */}
       <UpdateModal
         updateAvailable={updateAvailable}
