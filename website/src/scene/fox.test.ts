@@ -6,7 +6,7 @@ import { FOX, buildFox } from "./fox";
 
 describe("buildFox", () => {
   const fox = () => {
-    const part = buildFox(PALETTE.light);
+    const part = buildFox(PALETTE);
     part.object.updateMatrixWorld(true);
     return part;
   };
@@ -52,7 +52,7 @@ describe("buildFox", () => {
     expect(tailTip.z).toBeGreaterThan(root.z); // the curled tail is on the camera side, not hidden behind the body
   });
 
-  it("works in both themes", () => {
-    for (const p of [PALETTE.light, PALETTE.dark]) expect(buildFox(p).object.getObjectByName("fox-body")).toBeTruthy();
+  it("has a body", () => {
+    expect(buildFox(PALETTE).object.getObjectByName("fox-body")).toBeTruthy();
   });
 });

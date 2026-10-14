@@ -50,7 +50,7 @@ describe("scatterFlowers", () => {
 
 describe("buildFlowers", () => {
   it("has stems plus one instanced mesh per flower kind, sized to match", () => {
-    const { object } = buildFlowers(PALETTE.light);
+    const { object } = buildFlowers(PALETTE);
     const count = (n: string) => (object.getObjectByName(n) as InstancedMesh).count;
     expect(count("flower-stems")).toBe(FLOWERS.susan + FLOWERS.poppy);
     expect(count("susan-heads")).toBe(FLOWERS.susan);
@@ -58,7 +58,7 @@ describe("buildFlowers", () => {
   });
 
   it("sways with the wind without moving the roots", () => {
-    const { object, update } = buildFlowers(PALETTE.light);
+    const { object, update } = buildFlowers(PALETTE);
     const heads = object.getObjectByName("poppy-heads") as InstancedMesh;
     const before = Array.from(heads.instanceMatrix.array.slice(0, 16));
     update!(20, 1 / 60);

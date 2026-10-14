@@ -1,10 +1,11 @@
 import {
-  AmbientLight, DataTexture, DirectionalLight, Fog, Color, NearestFilter, PerspectiveCamera,
+  AmbientLight, DataTexture, DirectionalLight, Fog, Color, NearestFilter, PCFShadowMap, PerspectiveCamera,
   RedFormat, Scene, WebGLRenderer, Group, Vector3, type Object3D, type Texture,
 } from "three";
 import { CAMERA, parallaxOffset } from "./camera";
 import { adaptPixelRatioScale, cappedPixelRatio } from "./capabilities";
-import { PALETTE, type Palette, type Theme } from "./palette";
+import { PALETTE, type Palette } from "./palette";
+import { disposeTree } from "./dispose";
 import { buildHill } from "./hill";
 import { buildTorii } from "./torii";
 import { buildTree } from "./tree";
@@ -12,17 +13,23 @@ import { buildGrass } from "./grass";
 import { buildPetals } from "./petals";
 import { buildStars } from "./stars";
 import { buildMoon } from "./moon";
+import { buildClouds } from "./clouds";
 import { buildRiver } from "./river";
+import { buildRiverside } from "./riverside";
 import { buildFox } from "./fox";
 import { buildWindLines } from "./windlines";
 import { buildFlowers } from "./flowers";
+import { LIGHTING, SUN_POSITION, configureMoonLight } from "./shadows";
+import { applyFlip, flipSky, resetFlip, type StageState } from "./stage";
+import { buildWhirl, createHorizonFlash } from "./vortex";
 
 export interface SceneOptions {
-  getTheme: () => Theme;
   /** Called when the scene cannot continue (context lost, init error); the still image stays visible. */
   onFail?: () => void;
   /** Deterministic single frame at a fixed time, no parallax and no loop (used to render stills). */
   still?: { time: number };
+  /** PROTOTYPE: scroll-driven flip of the world, read once per frame. */
+  stage?: { getState: () => StageState };
 }
 
 export interface ScenePart {
@@ -32,8 +39,20 @@ export interface ScenePart {
 
 /** Builders for each piece of the world; later tasks add torii, tree, grass and petals here. */
 type Builder = (palette: Palette, toon: Texture) => ScenePart | Object3D;
-const BUILDERS: Builder[] = [(p) => buildStars(p), (p) => buildMoon(p), (p, toon) => buildHill(p, toon), (p) => buildRiver(p), (p, toon) => buildFox(p, toon), (p, toon) => buildTorii(p, toon), (p, toon) => buildTree(p, toon),
-  (p, toon) => buildFlowers(p, toon), (p, toon) => buildGrass(p, toon), (p, toon) => buildPetals(p, toon), (p) => buildWindLines(p)];
+/** What each piece does with the moon's shadow map: casts a shadow, receives one, or neither. */
+interface Entry { build: Builder; cast?: boolean; receive?: boolean }
+const BUILDERS: Entry[] = [
+  { build: () => buildStars() }, { build: (p) => buildMoon(p) }, { build: (p) => buildClouds(p) },
+  { build: (p, toon) => buildHill(p, toon) }, // the hill marks its own near mesh as a receiver
+  { build: (p) => buildRiver(p) },
+  { build: (p, toon) => buildRiverside(p, toon) }, // marks its own stones as casters and receivers
+  { build: (p, toon) => buildFox(p, toon), cast: true, receive: true },
+  { build: (p, toon) => buildTorii(p, toon), cast: true, receive: true },
+  { build: (p, toon) => buildTree(p, toon), cast: true, receive: true },
+  { build: (p, toon) => buildFlowers(p, toon), receive: true },
+  { build: (p, toon) => buildGrass(p, toon), receive: true },
+  { build: (p, toon) => buildPetals(p, toon) }, { build: () => buildWindLines() },
+];
 
 function toonGradient(): Texture {
   const data = new Uint8Array([90, 170, 255]);
@@ -41,15 +60,6 @@ function toonGradient(): Texture {
   t.minFilter = t.magFilter = NearestFilter;
   t.needsUpdate = true;
   return t;
-}
-
-function disposeTree(root: Object3D) {
-  root.traverse((o) => {
-    const m = o as unknown as { geometry?: { dispose(): void }; material?: { dispose(): void } | { dispose(): void }[] };
-    m.geometry?.dispose();
-    if (Array.isArray(m.material)) m.material.forEach((x) => x.dispose());
-    else m.material?.dispose();
-  });
 }
 
 export async function mountScene(host: HTMLElement, opts: SceneOptions): Promise<{ dispose(): void }> {
@@ -62,27 +72,42 @@ export async function mountScene(host: HTMLElement, opts: SceneOptions): Promise
   const scene = new Scene();
   const camera = new PerspectiveCamera(CAMERA.fov, 1, 0.1, 500);
   const toon = toonGradient();
-  const sun = new DirectionalLight(0xffffff, 2.2);
-  sun.position.set(-8, 14, 6);
-  scene.add(new AmbientLight(0xffffff, 1.1), sun);
+  const sun = new DirectionalLight(0xffffff, LIGHTING.sun);
+  sun.position.set(...SUN_POSITION);
+  // The moon's light casts the shadows. The shadow map is drawn once per build, not every frame: what casts shadows
+  // barely moves, and this keeps the per-frame cost to reading the map.
+  const moonLight = new DirectionalLight(0xffffff, LIGHTING.moon);
+  configureMoonLight(moonLight);
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = PCFShadowMap;
+  renderer.shadowMap.autoUpdate = false;
+  scene.add(new AmbientLight(0xffffff, LIGHTING.ambient), sun, moonLight, moonLight.target);
 
   let world = new Group();
   let parts: ScenePart[] = [];
-  let theme: Theme = opts.getTheme();
+  // stage only: petals that whirl round the view while the world turns, and a glow along the horizon
+  const whirl = opts.stage ? buildWhirl(PALETTE) : null;
+  const flash = opts.stage ? createHorizonFlash() : null;
+  if (whirl) { scene.add(camera); camera.add(whirl.object); }
 
   function rebuild() {
     scene.remove(world);
     disposeTree(world);
     world = new Group();
-    parts = BUILDERS.map((b) => {
-      const r = b(PALETTE[theme], toon);
-      return "object" in r && !("isObject3D" in r) ? (r as ScenePart) : { object: r as Object3D };
+    parts = BUILDERS.map((entry) => {
+      const r = entry.build(PALETTE, toon);
+      const part = "object" in r && !("isObject3D" in r) ? (r as ScenePart) : { object: r as Object3D };
+      part.object.traverse((o) => {
+        if (entry.cast) o.castShadow = true;
+        if (entry.receive) o.receiveShadow = true;
+      });
+      return part;
     });
     parts.forEach((p) => world.add(p.object));
     scene.add(world);
-    const pal = PALETTE[theme];
-    scene.background = new Color(pal.sky);
-    scene.fog = new Fog(pal.sky, 120, 420);
+    scene.background = new Color(PALETTE.sky);
+    scene.fog = new Fog(PALETTE.sky, 120, 420);
+    renderer.shadowMap.needsUpdate = true; // draw the shadow map once for this build
   }
 
   const target = new Vector3(...CAMERA.target);
@@ -144,11 +169,22 @@ export async function mountScene(host: HTMLElement, opts: SceneOptions): Promise
     last = now;
     elapsed += dt;
     if (dt > 0) trackFrame(dt * 1000);
-    smooth.x += (pointer.x - smooth.x) * 0.06;
-    smooth.y += (pointer.y - smooth.y) * 0.06;
-    placeCamera();
+    const stage = opts.stage?.getState();
+    if (stage && (stage.flip > 0 || stage.feature > 0)) {
+      applyFlip(camera, stage.flip, stage.feature);
+      const sky = flipSky(stage.flip);
+      (scene.background as Color).copy(sky);
+      (scene.fog as Fog).color.copy(sky);
+    } else {
+      smooth.x += (pointer.x - smooth.x) * 0.06;
+      smooth.y += (pointer.y - smooth.y) * 0.06;
+      if (stage) { resetFlip(camera); (scene.background as Color).set(PALETTE.sky); (scene.fog as Fog).color.set(PALETTE.sky); }
+      placeCamera();
+    }
     parts.forEach((p) => p.update?.(elapsed, dt));
+    if (stage && whirl) whirl.update(elapsed, stage.flip, camera.fov, camera.aspect);
     renderer.render(scene, camera);
+    if (stage && flash && flash.set(camera, stage.flip, elapsed)) flash.draw(renderer);
     if (!shown) { shown = true; canvas.style.opacity = "1"; }
   }
   const start = () => { if (!raf && !failed) { last = 0; raf = requestAnimationFrame(frame); } };
@@ -163,19 +199,17 @@ export async function mountScene(host: HTMLElement, opts: SceneOptions): Promise
     pointer.y = -((e.clientY / window.innerHeight) * 2 - 1);
   };
   const ro = new ResizeObserver(resize);
-  const themeObs = new MutationObserver(() => {
-    const next = opts.getTheme();
-    if (next !== theme) { theme = next; rebuild(); }
-  });
   const onLost = (e: Event) => { e.preventDefault(); fail(); };
 
   function dispose() {
     stop();
-    io.disconnect(); ro.disconnect(); themeObs.disconnect();
+    io.disconnect(); ro.disconnect();
     document.removeEventListener("visibilitychange", onVis);
     window.removeEventListener("pointermove", onMove);
     canvas.removeEventListener("webglcontextlost", onLost);
     disposeTree(world);
+    whirl?.dispose();
+    flash?.dispose();
     toon.dispose();
     renderer.dispose();
     overlay?.remove();
@@ -197,7 +231,6 @@ export async function mountScene(host: HTMLElement, opts: SceneOptions): Promise
       io.observe(host);
       document.addEventListener("visibilitychange", onVis);
       window.addEventListener("pointermove", onMove, { passive: true });
-      themeObs.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
       sync();
     }
   } catch {

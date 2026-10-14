@@ -9,10 +9,11 @@ const { title, description = "A fast, distraction-free note-taking app for Windo
 const canonical = new URL(Astro.url.pathname, Astro.site);
 ---
 <!doctype html>
-<html lang="en" data-theme="light">
+<html lang="en" data-theme="dark">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="dark" />
     <title>{title}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
@@ -21,17 +22,7 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
     <meta property="og:url" content={canonical} />
-    <!-- Set the theme before first paint (same key and attribute Starlight uses) -->
-    <script is:inline>
-      (function () {
-        var t = null;
-        try { t = localStorage.getItem("starlight-theme"); } catch (e) {}
-        if (t !== "light" && t !== "dark") {
-          t = matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
-        }
-        document.documentElement.dataset.theme = t;
-      })();
-    </script>
+    <slot name="head" />
   </head>
   <body>
     <slot />

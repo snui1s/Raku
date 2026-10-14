@@ -14,7 +14,7 @@ import { windGust } from "./wind";
 import type { Palette } from "./palette";
 import type { ScenePart } from "./index";
 
-export const FLOWERS = { susan: 90, poppy: 140 };
+export const FLOWERS = { susan: 70, poppy: 105 };
 export const POPPY_COLORS = [0xe53935, 0xff7a2f, 0xff8fb3, 0xfff1ea, 0xffd23f, 0xd63a8c];
 const SUSAN_COLORS = [0xffc61a, 0xf7a600, 0xffd84d];
 

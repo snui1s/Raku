@@ -1,30 +1,39 @@
 @import "tailwindcss";
 
-@font-face { font-family: "LINE Seed Sans TH"; src: url("/fonts/LINESeedSansTH_Rg.ttf") format("truetype"); font-weight: 400; font-display: swap; }
-@font-face { font-family: "LINE Seed Sans TH"; src: url("/fonts/LINESeedSansTH_Bd.ttf") format("truetype"); font-weight: 700; font-display: swap; }
-@font-face { font-family: "LINE Seed Sans TH"; src: url("/fonts/LINESeedSansTH_XBd.ttf") format("truetype"); font-weight: 800; font-display: swap; }
+@font-face {
+  font-family: "LINE Seed Sans TH";
+  src: url("/fonts/LINESeedSansTH_Rg.ttf") format("truetype");
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: "LINE Seed Sans TH";
+  src: url("/fonts/LINESeedSansTH_Bd.ttf") format("truetype");
+  font-weight: 700;
+  font-display: swap;
+}
+@font-face {
+  font-family: "LINE Seed Sans TH";
+  src: url("/fonts/LINESeedSansTH_XBd.ttf") format("truetype");
+  font-weight: 800;
+  font-display: swap;
+}
 
 :root {
-  --bg: #faf9f7;
-  --text: #171717;
-  --muted: #6b6b6b;
-  --accent: #f25c54;
-  --accent-hover: #e04d45;
-  --border: rgba(0, 0, 0, 0.08);
-  --nav-bg: rgba(250, 249, 247, 0.8);
-  --card: #ffffff;
-}
-:root[data-theme="dark"] {
   --bg: #171717;
   --text: #f2f2f2;
   --muted: #9a9a9a;
+  --accent: #f25c54;
+  --accent-hover: #e04d45;
   --border: rgba(255, 255, 255, 0.1);
-  --nav-bg: rgba(23, 23, 23, 0.8);
+  --nav-bg: rgba(23, 23, 23, 0.1);
   --card: #1f1f1f;
 }
 
-html { background: var(--bg); color-scheme: light; }
-html[data-theme="dark"] { color-scheme: dark; }
+html {
+  background: var(--bg);
+  color-scheme: dark;
+}
 body {
   margin: 0;
   background: var(--bg);

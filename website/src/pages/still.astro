@@ -3,7 +3,7 @@
 export const prerender = true;
 ---
 <!doctype html>
-<html lang="en" data-theme="light">
+<html lang="en" data-theme="dark">
   <head>
     <meta charset="utf-8" />
     <meta name="robots" content="noindex" />
@@ -18,10 +18,8 @@ export const prerender = true;
     <script>
       import { mountScene } from "../scene/index";
 
-      const theme = new URLSearchParams(location.search).get("theme") === "dark" ? "dark" : "light";
-      document.documentElement.dataset.theme = theme;
       const host = document.getElementById("host")!;
-      mountScene(host, { getTheme: () => theme, still: { time: 12 } }).then(() => {
+      mountScene(host, { still: { time: 12 } }).then(() => {
         (window as unknown as { __STILL_READY: boolean }).__STILL_READY = true;
       });
     </script>

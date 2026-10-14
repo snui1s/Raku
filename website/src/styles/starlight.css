@@ -5,13 +5,6 @@
 
 :root {
   --sl-font: "LINE Seed Sans TH", "Segoe UI", system-ui, sans-serif;
-  --sl-color-accent-low: #fde3e1;
-  --sl-color-accent: #e04d45;
-  --sl-color-accent-high: #a8322c;
-  --sl-color-white: #171717;
-  --sl-color-black: #faf9f7;
-}
-:root[data-theme="dark"] {
   --sl-color-accent-low: #3a1c1a;
   --sl-color-accent: #f25c54;
   --sl-color-accent-high: #f7a39e;

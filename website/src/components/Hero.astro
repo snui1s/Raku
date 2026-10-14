@@ -7,15 +7,13 @@ const { release } = Astro.props;
 ---
 <section id="hero" class="hero">
   <!-- Still image first: always visible, and the fallback when the live scene is not used -->
-  {(["light", "dark"] as const).map((t) => (
-    <picture class={`still still-${t}`} data-hero-still>
-      <source media="(max-width: 960px)" srcset={`/hero/${t}-sm.avif`} type="image/avif" />
-      <source media="(max-width: 960px)" srcset={`/hero/${t}-sm.webp`} type="image/webp" />
-      <source srcset={`/hero/${t}.avif`} type="image/avif" />
-      <source srcset={`/hero/${t}.webp`} type="image/webp" />
-      <img src={`/hero/${t}.webp`} alt="" width="1920" height="1200" loading="lazy" decoding="async" />
-    </picture>
-  ))}
+  <picture class="still" data-hero-still>
+    <source media="(max-width: 960px)" srcset="/hero/dark-sm.avif" type="image/avif" />
+    <source media="(max-width: 960px)" srcset="/hero/dark-sm.webp" type="image/webp" />
+    <source srcset="/hero/dark.avif" type="image/avif" />
+    <source srcset="/hero/dark.webp" type="image/webp" />
+    <img src="/hero/dark.webp" alt="" width="1920" height="1200" loading="lazy" decoding="async" />
+  </picture>
   <div id="hero-scene" class="scene" aria-hidden="true"></div>
 
   <div class="copy">
@@ -29,11 +27,7 @@ const { release } = Astro.props;
       <a class="ghost" href="/docs/getting-started/">Read the docs</a>
     </div>
     <p class="meta">
-      {release.version ? `v${release.version} · ` : ""}About 4.6 MB · Free and open source
-    </p>
-    <p class="smartscreen">
-      Windows may warn about an unsigned app. Click <strong>More info</strong>, then <strong>Run anyway</strong>.{" "}
-      <a href="/docs/getting-started/#windows-smartscreen">Why?</a>
+      {release.version ? `v${release.version} · ` : ""}About 5 MB · Free and open source
     </p>
   </div>
 </section>
@@ -42,9 +36,6 @@ const { release } = Astro.props;
   .hero { position: relative; min-height: min(100vh, 960px); overflow: hidden; }
   .still, .scene { position: absolute; inset: 0; width: 100%; height: 100%; }
   .still img { width: 100%; height: 100%; object-fit: cover; object-position: 70% bottom; display: block; }
-  .still-dark { display: none; }
-  :global(html[data-theme="dark"]) .still-light { display: none; }
-  :global(html[data-theme="dark"]) .still-dark { display: block; }
   .copy {
     position: relative; z-index: 10; max-width: min(560px, 47vw);
     min-height: min(100vh, 960px); padding: 80px max(24px, 3vw) 0; margin-left: max(0px, 5vw);
@@ -61,8 +52,6 @@ const { release } = Astro.props;
   }
   .ghost:hover { background: var(--border); }
   .meta { margin: 14px 0 0; font-size: 13px; color: var(--muted); }
-  .smartscreen { margin: 8px 0 0; font-size: 13px; color: var(--muted); max-width: 440px; line-height: 1.5; }
-  .smartscreen a { color: var(--text); }
   @media (max-width: 767px) {
     /* phones: text first, then the picture below it, so nothing is drawn over the gate */
     .hero { display: flex; flex-direction: column; min-height: 0; }
@@ -78,10 +67,9 @@ const { release } = Astro.props;
 
   const host = document.getElementById("hero-scene");
   if (host && shouldRunScene(detectEnv(window))) {
-    const getTheme = () => (document.documentElement.dataset.theme === "dark" ? "dark" : "light") as "light" | "dark";
     // Three.js is a separate chunk, loaded only here, after the still has painted
     import("../scene/index")
-      .then(({ mountScene }) => mountScene(host, { getTheme }))
+      .then(({ mountScene }) => mountScene(host, {}))
       .then((handle) => {
         // Reduced motion switched on while the page is open: drop the live scene, the still stays
         window.matchMedia("(prefers-reduced-motion: reduce)").addEventListener("change", (e) => {

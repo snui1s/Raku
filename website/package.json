@@ -8,7 +8,7 @@
     "preview": "astro preview",
     "check": "astro check",
     "test": "vitest run",
-    "stills": "bun scripts/render-stills.ts"
+    "stills": "node --experimental-strip-types scripts/render-stills.ts"
   },
   "dependencies": {
     "@astrojs/starlight": "0.42.6",

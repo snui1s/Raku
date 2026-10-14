@@ -1,6 +1,5 @@
 import { describe, expect, it } from "vitest";
 import { Points } from "three";
-import { PALETTE } from "./palette";
 import { STARS, buildStars, generateStars } from "./stars";
 
 describe("generateStars", () => {
@@ -38,9 +37,8 @@ describe("generateStars", () => {
 });
 
 describe("buildStars", () => {
-  it("is empty in the light theme (daytime) and has points at night", () => {
-    expect(buildStars(PALETTE.light).object.children).toHaveLength(0);
-    const night = buildStars(PALETTE.dark).object;
+  it("has a field of points", () => {
+    const night = buildStars().object;
     expect(night.children.some((c) => (c as Points).isPoints)).toBe(true);
   });
 });

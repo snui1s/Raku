@@ -2,15 +2,13 @@ import { describe, expect, it } from "vitest";
 import { PerspectiveCamera, Vector3 } from "three";
 import { CAMERA } from "./camera";
 import { PALETTE } from "./palette";
-import { MOON, buildMoon } from "./moon";
+import { MOON, MOON_RADIUS, buildMoon } from "./moon";
 
 describe("buildMoon", () => {
-  it("has a disc and a glow, in both themes", () => {
-    for (const p of [PALETTE.light, PALETTE.dark]) {
-      const g = buildMoon(p).object;
-      expect(g.getObjectByName("moon-disc")).toBeTruthy();
-      expect(g.getObjectByName("moon-glow")).toBeTruthy();
-    }
+  it("is a single mesh (no stacked coplanar layers to fight over depth)", () => {
+    const g = buildMoon(PALETTE).object;
+    expect(g.children).toHaveLength(1);
+    expect(g.getObjectByName("moon-disc")).toBeTruthy();
   });
 
   it("sits in the upper left of a 16:10 view, clear of the headline", () => {
@@ -18,7 +16,7 @@ describe("buildMoon", () => {
     cam.position.set(...CAMERA.position);
     cam.lookAt(new Vector3(...CAMERA.target));
     cam.updateMatrixWorld(true);
-    const g = buildMoon(PALETTE.dark).object;
+    const g = buildMoon(PALETTE).object;
     g.updateMatrixWorld(true);
     const ndc = g.getObjectByName("moon-disc")!.getWorldPosition(new Vector3()).project(cam);
     expect(ndc.x).toBeGreaterThan(-0.75);
@@ -28,9 +26,7 @@ describe("buildMoon", () => {
   });
 
   it("is a few degrees wide", () => {
-    const g = buildMoon(PALETTE.dark).object;
-    const r = (g.getObjectByName("moon-disc") as unknown as { geometry: { parameters: { radius: number } } }).geometry.parameters.radius;
-    const deg = (Math.atan(r / MOON.distance) * 180) / Math.PI;
+    const deg = (Math.atan(MOON_RADIUS / MOON.distance) * 180) / Math.PI;
     expect(deg).toBeGreaterThan(2);
     expect(deg).toBeLessThan(5);
   });

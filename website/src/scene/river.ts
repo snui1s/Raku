@@ -17,6 +17,12 @@ const curve = new CatmullRomCurve3(RIVER.points.map(([x, z]) => new Vector3(x, 0
 const SAMPLES = 120;
 const samples = Array.from({ length: SAMPLES + 1 }, (_, i) => curve.getPoint(i / SAMPLES));
 
+/** Centre point of the river at u (0 far .. 1 near), and the horizontal unit vector pointing to the left of the flow. */
+export function riverFrame(u: number): { point: Vector3; side: Vector3 } {
+  const tan = curve.getTangent(u).setY(0).normalize();
+  return { point: curve.getPoint(u), side: new Vector3().crossVectors(new Vector3(0, 1, 0), tan).normalize() };
+}
+
 /** Distance in the ground plane from (x, z) to the river centerline. */
 export function riverDistance(x: number, z: number): number {
   let best = Infinity;
@@ -41,7 +47,9 @@ const FRAG = /* glsl */ `
   varying vec2 vUv;
   uniform vec3 uBase;
   uniform vec3 uLight;
+  uniform vec3 uGlint;
   uniform float uTime;
+  float hash(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
   void main() {
     float along = vUv.y * 150.0 - uTime * 2.2;
     float wob = sin(vUv.x * 11.0 + vUv.y * 26.0 + uTime * 0.6) * 1.4;
@@ -49,6 +57,12 @@ const FRAG = /* glsl */ `
     float edge = smoothstep(0.0, 0.16, vUv.x) * smoothstep(1.0, 0.84, vUv.x);
     float far = smoothstep(0.0, 0.12, vUv.y);
     vec3 col = mix(uBase, uLight, streak * 0.75 + (1.0 - edge) * 0.35);
+    // small glints that ride the current and twinkle
+    vec2 g = vec2(vUv.x * 9.0, vUv.y * 150.0 - uTime * 2.2);
+    vec2 cell = floor(g), f = fract(g) - 0.5;
+    float h = hash(cell);
+    float glint = step(0.9, h) * smoothstep(0.32, 0.0, length(f)) * (0.5 + 0.5 * sin(uTime * 3.0 + h * 40.0)) * edge;
+    col = mix(col, uGlint, glint);
     gl_FragColor = vec4(col, (0.92 * edge + 0.08) * far);
   }
 `;
@@ -76,7 +90,7 @@ export function buildRiver(palette: Palette): ScenePart {
   geo.setAttribute("uv", new Float32BufferAttribute(uv, 2));
   geo.setIndex(idx);
   const mat = new ShaderMaterial({
-    uniforms: { uBase: { value: new Color(palette.water[0]) }, uLight: { value: new Color(palette.water[1]) }, uTime: { value: 0 } },
+    uniforms: { uBase: { value: new Color(palette.water[0]) }, uLight: { value: new Color(palette.water[1]) }, uGlint: { value: new Color(0xdff0ff) }, uTime: { value: 0 } },
     vertexShader: VERT,
     fragmentShader: FRAG,
     transparent: true,

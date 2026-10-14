@@ -38,9 +38,9 @@ export function buildGrass(palette: Palette, toon?: Texture, seed = 11): ScenePa
   const group = new Group();
   group.name = "grass";
   const layers: Layer[] = [
-    { name: "grass-back", count: 130, z: [-9.5, -6.5], h: [0.3, 0.65], w: 0.09, color: palette.grass[0] },
-    { name: "grass-mid", count: 110, z: [-7, -4.5], h: [0.4, 0.85], w: 0.1, color: palette.grass[1] },
-    { name: "grass-front", count: 80, z: [-5, -2.8], h: [0.5, 1.15], w: 0.12, color: palette.grass[2] },
+    { name: "grass-back", count: 105, z: [-9.5, -6.5], h: [0.3, 0.65], w: 0.09, color: palette.grass[0] },
+    { name: "grass-mid", count: 90, z: [-7, -4.5], h: [0.4, 0.85], w: 0.1, color: palette.grass[1] },
+    { name: "grass-front", count: 65, z: [-5, -2.8], h: [0.5, 1.15], w: 0.12, color: palette.grass[2] },
   ];
 
   type Blade = { x: number; y: number; z: number; h: number; w: number; yaw: number; lean: number; phase: number };

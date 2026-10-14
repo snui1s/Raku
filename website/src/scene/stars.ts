@@ -1,12 +1,11 @@
 import { AdditiveBlending, BufferGeometry, Float32BufferAttribute, Group, Points, ShaderMaterial } from "three";
 import { cappedPixelRatio } from "./capabilities";
 import { mulberry32 } from "./rng";
-import type { Palette } from "./palette";
 import type { ScenePart } from "./index";
 
 /** Stars on a far dome in front of the camera (the visible sky window, with some margin for parallax). */
 export const STARS = {
-  count: 300,
+  count: 220,
   radius: 220,
   elevationDeg: [9, 52] as [number, number],
   azimuthDeg: [-58, 58] as [number, number],
@@ -62,10 +61,9 @@ const FRAG = /* glsl */ `
   }
 `;
 
-export function buildStars(palette: Palette): ScenePart {
+export function buildStars(): ScenePart {
   const group = new Group();
   group.name = "stars";
-  if (!palette.night) return { object: group }; // daytime: no stars
   const s = generateStars(STARS.count);
   const geo = new BufferGeometry();
   geo.setAttribute("position", new Float32BufferAttribute(s.positions, 3));

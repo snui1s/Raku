@@ -5,7 +5,7 @@ import { PALETTE } from "./palette";
 import { TORII, buildTorii } from "./torii";
 
 const gate = () => {
-  const g = buildTorii(PALETTE.light);
+  const g = buildTorii(PALETTE);
   g.updateMatrixWorld(true);
   return g;
 };

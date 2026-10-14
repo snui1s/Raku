@@ -21,7 +21,7 @@ describe("river path", () => {
 
 describe("buildRiver", () => {
   it("lies on the hill surface, just above it", () => {
-    const { object } = buildRiver(PALETTE.light);
+    const { object } = buildRiver(PALETTE);
     const mesh = object.getObjectByName("river") as Mesh;
     const pos = mesh.geometry.attributes.position;
     for (let i = 0; i < pos.count; i += 7) {
@@ -32,7 +32,7 @@ describe("buildRiver", () => {
     }
   });
 
-  it("works in both themes", () => {
-    for (const p of [PALETTE.light, PALETTE.dark]) expect(buildRiver(p).object.getObjectByName("river")).toBeTruthy();
+  it("builds the river mesh", () => {
+    expect(buildRiver(PALETTE).object.getObjectByName("river")).toBeTruthy();
   });
 });

@@ -10,7 +10,7 @@ export function hillHeight(x: number, z: number): number {
   return -2 + 0.26 * d - crestFall + 0.1 * x - 0.004 * x * x + Math.sin(x * 0.11 + 1.3) * 0.4 + Math.sin(z * 0.17) * 0.3;
 }
 
-/** Main hill and a lower far hill behind it. */
+/** Main hill and a lower far hill behind it. The main hill receives shadows. */
 export function buildHill(palette: Palette, toonGradient: Texture): Object3D {
   const make = (width: number, depth: number, color: number, z: number, lift: number, fn: (x: number, z: number) => number) => {
     const g = new PlaneGeometry(width, depth, 90, 60);
@@ -25,6 +25,7 @@ export function buildHill(palette: Palette, toonGradient: Texture): Object3D {
     return m;
   };
   const near = make(140, 70, palette.hill, -32, 0, hillHeight);
+  near.receiveShadow = true;
   const far = make(240, 90, palette.hillFar, -95, 0, (x, z) => 6 + 0.14 * Math.max(0, -z) + Math.sin(x * 0.05) * 5 + Math.sin(z * 0.08) * 2);
   const group = new Group();
   group.add(far, near);

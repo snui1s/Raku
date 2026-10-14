@@ -64,7 +64,7 @@ function petalGeometry(): ShapeGeometry {
   return new ShapeGeometry(s);
 }
 
-export function buildPetals(palette: Palette, toon?: Texture, count = 90, seed = 3): ScenePart {
+export function buildPetals(palette: Palette, toon?: Texture, count = 65, seed = 3): ScenePart {
   const state = createPetals(count, seed);
   const mesh = new InstancedMesh(
     petalGeometry(),

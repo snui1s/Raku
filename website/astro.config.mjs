@@ -6,14 +6,19 @@ import sitemap from "@astrojs/sitemap";
 export default defineConfig({
   site: "https://raku.snui1s.com",
   integrations: [
-    // the /still page only exists to render the hero images; keep it out of the sitemap
-    sitemap({ filter: (page) => !page.includes("/still") }),
+    // /still only exists to render the hero images and /dive is a prototype; keep both out of the sitemap
+    sitemap({ filter: (page) => !page.includes("/still") && !page.includes("/dive") }),
     starlight({
       title: "Raku",
       description: "A fast, distraction-free note-taking app for Windows.",
       favicon: "/favicon.svg",
       logo: { src: "./src/assets/logo.svg", alt: "Raku" },
       customCss: ["./src/styles/starlight.css"],
+      // dark only: no theme picker, and the theme is always set to dark
+      components: {
+        ThemeProvider: "./src/components/starlight/ThemeProvider.astro",
+        ThemeSelect: "./src/components/starlight/ThemeSelect.astro",
+      },
       sidebar: [
         { label: "Getting started", slug: "docs/getting-started" },
         {

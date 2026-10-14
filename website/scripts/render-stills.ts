@@ -13,7 +13,8 @@ const SIZES = [
   { suffix: "", width: 1920, height: 1200 },
   { suffix: "-sm", width: 960, height: 600 },
 ] as const;
-const THEMES = ["light", "dark"] as const;
+// The site is dark only, so one image set. The files keep the name "dark" (hero/dark.webp etc.).
+const NAME = "dark";
 
 const TYPES: Record<string, string> = {
   ".html": "text/html", ".js": "text/javascript", ".css": "text/css", ".svg": "image/svg+xml",
@@ -35,30 +36,28 @@ if (build.status !== 0) throw new Error("astro build failed");
 
 mkdirSync(OUT, { recursive: true });
 
-// 2. Render each theme and size with Chrome (software WebGL), serving dist/ from disk
+// 2. Render each size with Chrome (software WebGL), serving dist/ from disk
 const browser = await chromium.launch({
   channel: "chrome",
   args: ["--use-gl=angle", "--use-angle=swiftshader", "--enable-unsafe-swiftshader", "--ignore-gpu-blocklist"],
 });
 try {
-  for (const theme of THEMES) {
-    for (const size of SIZES) {
-      const page = await browser.newPage({ viewport: { width: size.width, height: size.height }, deviceScaleFactor: 1 });
-      await page.route(`${ORIGIN}/**`, async (route) => {
-        const file = fileFor(new URL(route.request().url()).pathname);
-        if (!file) return route.fulfill({ status: 404, body: "not found" });
-        return route.fulfill({ status: 200, contentType: TYPES[extname(file)] ?? "application/octet-stream", body: readFileSync(file) });
-      });
-      await page.goto(`${ORIGIN}/still/?theme=${theme}`);
-      await page.waitForFunction(() => (window as unknown as { __STILL_READY?: boolean }).__STILL_READY === true, null, { timeout: 30000 });
-      const png = await page.screenshot({ type: "png" });
-      await page.close();
+  for (const size of SIZES) {
+    const page = await browser.newPage({ viewport: { width: size.width, height: size.height }, deviceScaleFactor: 1 });
+    await page.route(`${ORIGIN}/**`, async (route) => {
+      const file = fileFor(new URL(route.request().url()).pathname);
+      if (!file) return route.fulfill({ status: 404, body: "not found" });
+      return route.fulfill({ status: 200, contentType: TYPES[extname(file)] ?? "application/octet-stream", body: readFileSync(file) });
+    });
+    await page.goto(`${ORIGIN}/still/`);
+    await page.waitForFunction(() => (window as unknown as { __STILL_READY?: boolean }).__STILL_READY === true, null, { timeout: 30000 });
+    const png = await page.screenshot({ type: "png" });
+    await page.close();
 
-      const base = join(OUT, `${theme}${size.suffix}`);
-      await sharp(png).webp({ quality: 80 }).toFile(`${base}.webp`);
-      await sharp(png).avif({ quality: 50, effort: 6 }).toFile(`${base}.avif`);
-      console.log(`wrote ${theme}${size.suffix}.{webp,avif} (${size.width}x${size.height})`);
-    }
+    const base = join(OUT, `${NAME}${size.suffix}`);
+    await sharp(png).webp({ quality: 80 }).toFile(`${base}.webp`);
+    await sharp(png).avif({ quality: 50, effort: 6 }).toFile(`${base}.avif`);
+    console.log(`wrote ${NAME}${size.suffix}.{webp,avif} (${size.width}x${size.height})`);
   }
 } finally {
   await browser.close();

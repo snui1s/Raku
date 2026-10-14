@@ -26,7 +26,7 @@ bun scripts/check-build.ts   # sanity check of the built home page
 | `src/lib/release.ts` | Reads `../update.json` at build time for the download button |
 | `src/scene/` | The 3D hero (Three.js), loaded only on capable desktop browsers |
 | `src/pages/still.astro` | Page used only to render the hero images |
-| `public/hero/` | Generated hero images (light and dark, two sizes) |
+| `public/hero/` | Generated hero images (two sizes, `dark.*` and `dark-sm.*`) |
 
 ### Download button
 
@@ -36,7 +36,7 @@ bun scripts/check-build.ts   # sanity check of the built home page
 
 The home page always shows a pre-rendered image first. The live 3D scene mounts over it only when WebGL works, `prefers-reduced-motion` is off, the window is at least 768 px wide and the pointer is not touch. Otherwise the image stays. Rendering pauses when the hero is scrolled out of view or the tab is hidden. If frames stay slow, the renderer lowers its resolution (down to 60%).
 
-The scene has the torii, a sakura tree, grass, falling petals, a river, a sitting fox, black-eyed Susans and poppies scattered over the hill, a moon, stars (dark theme only) and wind gusts that move the grass, tree, petals and fox tail, with a few streaks drawn across the sky. Add `?fps` to the home page URL to see a readout of frame rate, draw calls and triangles.
+The scene has the torii, a sakura tree, grass, falling petals, a river, a sitting fox, black-eyed Susans and poppies scattered over the hill, clouds, a moon, stars and wind gusts that move the grass, tree, petals and fox tail, with a few streaks drawn across the sky. Add `?fps` to the home page URL to see a readout of frame rate, draw calls and triangles.
 
 After **any change to `src/scene/`**, regenerate the images and commit them:
 
@@ -44,7 +44,7 @@ After **any change to `src/scene/`**, regenerate the images and commit them:
 bun run stills
 ```
 
-This builds the site and renders `public/hero/*.webp|avif` with Google Chrome (it must be installed). No local web server is used.
+This builds the site and renders `public/hero/*.webp|avif` with Google Chrome (it must be installed). No local web server is used. The script runs under Node 22.6 or newer (not Bun: on Windows Bun cannot talk to Chrome and the launch times out).
 
 ## Sizes (measured at build time on 2026-10-14)
 
