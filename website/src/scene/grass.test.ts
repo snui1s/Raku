@@ -3,6 +3,7 @@ import { InstancedMesh, Matrix4, Vector3 } from "three";
 import { PALETTE } from "./palette";
 import { hillHeight } from "./hill";
 import { buildGrass } from "./grass";
+import { riverDistance, riverWidthAt } from "./river";
 
 describe("buildGrass", () => {
   it("builds three layers with about 230 or more blades", () => {
@@ -27,5 +28,19 @@ describe("buildGrass", () => {
     const a = buildGrass(PALETTE.light, undefined, 5).object.children[0] as InstancedMesh;
     const b = buildGrass(PALETTE.light, undefined, 5).object.children[0] as InstancedMesh;
     expect(Array.from(a.instanceMatrix.array.slice(0, 160))).toEqual(Array.from(b.instanceMatrix.array.slice(0, 160)));
+  });
+});
+
+describe("grass and the river", () => {
+  it("keeps every blade off the water", () => {
+    const { object } = buildGrass(PALETTE.light);
+    const m = new Matrix4(), p = new Vector3();
+    for (const layer of object.children as InstancedMesh[]) {
+      for (let i = 0; i < layer.count; i++) {
+        layer.getMatrixAt(i, m);
+        p.setFromMatrixPosition(m);
+        expect(riverDistance(p.x, p.z)).toBeGreaterThan(riverWidthAt(0.6) / 2);
+      }
+    }
   });
 });

@@ -3,6 +3,7 @@ import {
   MeshToonMaterial, Quaternion, Vector3, type Texture,
 } from "three";
 import { hillHeight } from "./hill";
+import { riverDistance, riverWidthAt } from "./river";
 import { mulberry32 } from "./rng";
 import { windGust } from "./wind";
 import type { Palette } from "./palette";
@@ -56,9 +57,13 @@ export function buildGrass(palette: Palette, toon?: Texture, seed = 11): ScenePa
     mesh.frustumCulled = false;
     const blades: Blade[] = [];
     for (let i = 0; i < l.count; i++) {
-      const z = r(l.z[0], l.z[1]);
-      const reach = Math.abs(z) * 0.75 + 1.2; // wider ground is visible farther away
-      const x = r(-0.9 - reach, -0.9 + reach);
+      let x = 0, z = 0;
+      for (let tries = 0; tries < 30; tries++) {
+        z = r(l.z[0], l.z[1]);
+        const reach = Math.abs(z) * 0.75 + 1.2; // wider ground is visible farther away
+        x = r(-0.9 - reach, -0.9 + reach);
+        if (riverDistance(x, z) > riverWidthAt(1) / 2 + 0.3) break; // keep blades out of the water
+      }
       const b: Blade = { x, y: hillHeight(x, z) - 0.02, z, h: r(l.h[0], l.h[1]), w: l.w * r(0.8, 1.3), yaw: r(-0.6, 0.6), lean: r(-0.28, 0.28), phase: r(0, Math.PI * 2) };
       blades.push(b);
       compose(mesh, i, b, 0);
