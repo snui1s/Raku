@@ -1,0 +1,31 @@
+---
+const features = [
+  ["Local first", "Notes, folders and images stay on your computer."],
+  ["Small", "The installer is about 4.6 MB, and the app uses about 170 MB of memory when idle (WebView2 included)."],
+  ["Rich text", "Headings, lists, checklists, quotes, highlights, fonts and colors."],
+  ["Folders", "Organize notes and move them with drag and drop."],
+  ["Quick search", "Press Ctrl K to jump to any note."],
+  ["Zoom and settings", "Ctrl + scroll zooms the paper. Width, line spacing and interface scale are adjustable."],
+  ["Themes", "Light and dark, with 8 color palettes."],
+  ["Export and backup", "Markdown, PDF, and full backup and restore."],
+  ["Focus tools", "Zen mode and a Pomodoro timer."],
+  ["Auto-update", "New versions install from within the app."],
+];
+---
+<section id="features" class="wrap">
+  <h2>Everything you need, and nothing more</h2>
+  <ul>
+    {features.map(([title, text]) => (
+      <li><h3>{title}</h3><p>{text}</p></li>
+    ))}
+  </ul>
+</section>
+
+<style>
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 96px max(24px, 3vw) 24px; }
+  h2 { font-size: clamp(28px, 4vw, 40px); letter-spacing: -0.02em; margin: 0 0 40px; }
+  ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 14px; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); }
+  li { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 22px; }
+  h3 { margin: 0 0 6px; font-size: 16px; }
+  p { margin: 0; color: var(--muted); line-height: 1.55; font-size: 14.5px; }
+</style>

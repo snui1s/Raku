@@ -1,0 +1,26 @@
+---
+const stats = [
+  ["4.6 MB", "installer"],
+  ["< 0.1 s", "until the window appears"],
+  ["~2 s", "until it is ready to type"],
+  ["~170 MB", "memory when idle"],
+];
+---
+<section class="wrap">
+  <dl>
+    {stats.map(([value, label]) => (
+      <div><dt>{value}</dt><dd>{label}</dd></div>
+    ))}
+  </dl>
+  <p>Measured on a Core Ultra 7 laptop with 32 GB RAM. <a href="https://github.com/snui1s/Raku/tree/main/bench">Measure your own machine.</a></p>
+</section>
+
+<style>
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 72px max(24px, 3vw) 24px; }
+  dl { margin: 0; display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
+  div { padding: 8px 0; }
+  dt { font-size: clamp(32px, 5vw, 48px); font-weight: 800; letter-spacing: -0.03em; color: var(--accent); }
+  dd { margin: 4px 0 0; color: var(--muted); font-size: 14px; }
+  p { margin: 24px 0 0; color: var(--muted); font-size: 13px; }
+  a { color: var(--text); }
+</style>

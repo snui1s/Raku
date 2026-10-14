@@ -1,0 +1,25 @@
+---
+import type { ReleaseInfo } from "../lib/release";
+
+interface Props {
+  release: ReleaseInfo;
+  size?: "lg" | "md";
+}
+const { release, size = "lg" } = Astro.props;
+---
+<a class:list={["btn", "primary", size]} href={release.url} data-download>
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5M5 21h14" /></svg>
+  Download for Windows
+</a>
+
+<style>
+  .btn {
+    display: inline-flex; align-items: center; gap: 9px;
+    border-radius: 12px; font-weight: 600; text-decoration: none;
+    transition: transform 0.15s, background 0.15s;
+  }
+  .btn.lg { padding: 13px 22px; font-size: 15px; }
+  .btn.md { padding: 10px 18px; font-size: 14px; }
+  .primary { background: var(--accent); color: #fff; }
+  .primary:hover { background: var(--accent-hover); transform: translateY(-1px); }
+</style>
