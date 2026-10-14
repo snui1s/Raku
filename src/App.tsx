@@ -287,7 +287,7 @@ function App() {
 
       {/* Sidebar (Hidden in Zen Mode) */}
       <div
-        className="shrink-0 overflow-hidden transition-[width] duration-300 ease-[cubic-bezier(0.2,0.8,0.2,1)]"
+        className="shrink-0 flex overflow-hidden transition-[width] duration-300 ease-[cubic-bezier(0.2,0.8,0.2,1)]"
         style={{ width: !zenMode && sidebarOpen ? "18.125rem" : 0 }}
         aria-hidden={zenMode || !sidebarOpen}
         inert={zenMode || !sidebarOpen}
