@@ -38,6 +38,19 @@ powershell -ExecutionPolicy Bypass -File bench/startup.ps1
 powershell -ExecutionPolicy Bypass -File bench/startup.ps1 -Runs 15 -Exe "C:\path\to\raku-app.exe"
 ```
 
+Reference run (v1.1.0 installed, Intel Core Ultra 7 258V, 32 GB RAM, Windows 11, 10 runs after 1 warm-up):
+
+| Metric | Median | Best | Worst |
+|---|---:|---:|---:|
+| Window shown | 78 ms | 62 ms | 112 ms |
+| Settled (ready) | 1,907 ms | 1,311 ms | 2,169 ms |
+| Idle memory (all processes) | 170 MB | 168 MB | 187 MB |
+
+How to read it: the window exists almost immediately but is still blank; the app is busy for about
+two seconds loading the notes and the editor. "Settled" is a CPU-idle proxy, so the time you can
+actually start typing is somewhere between the two. Memory is mostly the WebView2 renderer.
+These numbers depend on how many notes you have.
+
 Close Raku first. The app opens with your normal notes and nothing is modified. The first run is
 discarded as a warm-up. The script itself was checked with a stand-in Windows app; run it against Raku
 on your machine and add your numbers to the project README.
