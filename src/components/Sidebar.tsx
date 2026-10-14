@@ -376,7 +376,7 @@ export function Sidebar({
   };
 
   return (
-    <aside className="w-[18.125rem] shrink-0 flex flex-col border-r transition-colors duration-200 bg-app-sidebar border-app-border">
+    <aside className="w-[18.125rem] shrink-0 min-h-0 flex flex-col border-r transition-colors duration-200 bg-app-sidebar border-app-border">
       {/* Brand */}
       <div className="px-5 pt-5 pb-3 flex items-center gap-3">
         <img
