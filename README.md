@@ -20,7 +20,7 @@
 ## Features
 
 - **Local first:** notes, folders and images stay on your computer
-- **Small:** the installer is about 4.6 MB, and the app uses about 170 MB of memory when idle (WebView2 included)
+- **Small:** the installer is about 5 MB, and the app uses about 170 MB of memory when idle (WebView2 included)
 - **Rich text:** headings, lists, checklists, quotes, highlights, fonts and colors
 - **Folders:** organize notes and move them with drag and drop
 - **Quick search:** `Ctrl K` jumps to any note
