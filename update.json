@@ -1,11 +1,11 @@
 {
-  "version": "1.0.6",
-  "notes": "Release v1.0.6",
-  "pub_date": "2026-08-19T06:33:43.994Z",
+  "version": "1.1.0",
+  "notes": "Release v1.1.0",
+  "pub_date": "2026-10-14T05:20:51.372Z",
   "platforms": {
     "windows-x86_64": {
-      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVTTE9ySWw2eHhJSCtUMlhaSkVuTHNpMnpROGM1TGNSZnZkUG5NZTBScjJhSW1KMTZIL09Ick5Ma3FmZnNPK0tjek9vRTk3cXQxUGI0dFE3SGJpNS9yOGZCTDUvTllkNFFVPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzg3MTIxMjIzCWZpbGU6UmFrdV8xLjAuNl94NjQtc2V0dXAuZXhlCmtrc3VFWFo0UkgyNzBzYStmbXRHYjVRUktqK09PR2tOcjRwenBXTWQyZ2VuNkJWTEtwVmY5YUY5cDZtUTI2WjNFOWpRSzJZMmQyaHJUS0VIamliM0NnPT0K",
-      "url": "https://github.com/snui1s/raku/releases/download/v1.0.6/Raku_1.0.6_x64-setup.exe"
+      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVTTE9ySWw2eHhJSDg1MjU0cTZ1Ukl4dmp0OGN0NDBNazBzTW9may9uRmlObzM5YiswN3lwQm1CSDdnV2NFQXRTRkVER3lrQURpTzEwcStyQkQyTDZ4ODlCb1krS2FzdUFvPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzkxOTU1MjM3CWZpbGU6UmFrdV8xLjEuMF94NjQtc2V0dXAuZXhlCmtvTDNENWpuZGM2N0hvMnhSTG5IZnUrMDZhdFltWE9aL1doL0RIaHQ4RkJJY0xvN2t5MGxnVjdNOVJGaUlVUE14NDJMeW15QlUxeTRCd2s3TENRa0JBPT0K",
+      "url": "https://github.com/snui1s/Raku/releases/download/v1.1.0/Raku_1.1.0_x64-setup.exe"
     }
   }
 }
