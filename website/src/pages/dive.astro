@@ -1,0 +1,165 @@
+---
+// PROTOTYPE (spike): hero -> the whole world rolls upside down -> a Persona-style features menu.
+// Lives on its own page so the real home page is untouched. Delete this page and src/scene/stage.ts to throw it away.
+import Base from "../layouts/Base.astro";
+import Nav from "../components/Nav.astro";
+import Download from "../components/Download.astro";
+import { loadRelease } from "../lib/release";
+import { STAGE, stageHeightVh } from "../scene/stage";
+
+const release = loadRelease();
+const features = [
+  ["Local first", "Notes, folders and images stay on your computer. No account, no cloud."],
+  ["Small", "A 5 MB installer. About 170 MB of memory when idle, WebView2 included."],
+  ["Rich text", "Headings, lists, checklists, quotes, highlights, fonts and colors."],
+  ["Quick search", "Press Ctrl K to jump to any note."],
+  ["Backup", "Export Markdown and PDF, or back up and restore everything."],
+];
+const minor = ["Folders", "Zoom and settings", "Themes", "Focus tools", "Auto-update"];
+---
+<Base title="Raku (dive prototype)" description="Prototype of the hero-to-features scroll.">
+  <meta name="robots" content="noindex" slot="head" />
+  <Nav />
+  <main>
+    <section id="stage" class="stage" style={`--stage-vh: ${stageHeightVh()}; --items: ${STAGE.items};`}>
+      <div class="frame">
+        <picture class="still" data-hero-still>
+          <source media="(max-width: 960px)" srcset="/hero/dark-sm.avif" type="image/avif" />
+          <source media="(max-width: 960px)" srcset="/hero/dark-sm.webp" type="image/webp" />
+          <source srcset="/hero/dark.avif" type="image/avif" />
+          <source srcset="/hero/dark.webp" type="image/webp" />
+          <img src="/hero/dark.webp" alt="" width="1920" height="1200" decoding="async" />
+        </picture>
+        <div id="stage-scene" class="scene" aria-hidden="true"></div>
+
+        <div class="copy">
+          <p class="eyebrow">Notes for Windows</p>
+          <h1>Raku <span>楽</span></h1>
+          <p class="tag">A fast, distraction-free note-taking app. No accounts. No cloud. Just write.</p>
+          <div class="cta">
+            <Download release={release} />
+            <a class="ghost" href="/docs/getting-started/">Read the docs</a>
+          </div>
+        </div>
+
+        <div class="reflection">
+          <h2 class="menu-title"><span>Features</span></h2>
+          <ol class="menu">
+            {features.map(([title, text], i) => (
+              <li data-index={i}>
+                <span class="slab" aria-hidden="true"></span>
+                <span class="num" aria-hidden="true">{String(i + 1).padStart(2, "0")}</span>
+                <h3>{title}</h3>
+                <p>{text}</p>
+              </li>
+            ))}
+          </ol>
+          <p class="minor">{minor.join("  ·  ")}</p>
+        </div>
+      </div>
+    </section>
+  </main>
+  <footer><span>Raku, MIT licensed. Prototype page.</span></footer>
+</Base>
+
+<style>
+  .stage { position: relative; }
+  .frame { position: relative; min-height: 100vh; overflow: hidden; background: #07070b; }
+  .still, .scene { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .still img { width: 100%; height: 100%; object-fit: cover; object-position: 70% bottom; display: block; }
+
+  /* hero text, same look as the home page */
+  .copy {
+    position: relative; z-index: 10; max-width: min(560px, 47vw);
+    min-height: 100vh; padding: 80px max(24px, 3vw) 0; margin-left: max(0px, 5vw);
+    display: flex; flex-direction: column; justify-content: center;
+    opacity: calc(1 - var(--hero-out, 0)); transform: translateY(calc(var(--hero-out, 0) * -40px));
+    pointer-events: var(--copy-events, auto);
+  }
+  .eyebrow { font-size: 13px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); margin: 0 0 18px; }
+  h1 { margin: 0; font-size: clamp(72px, 11vw, 132px); line-height: 0.95; letter-spacing: -0.03em; font-weight: 800; }
+  h1 span { color: var(--accent); font-weight: 400; margin-left: 0.12em; font-size: 0.62em; }
+  .tag { margin: 22px 0 0; font-size: 19px; line-height: 1.55; color: var(--muted); max-width: 420px; }
+  .cta { margin-top: 34px; display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+  .ghost { padding: 13px 22px; border-radius: 12px; font-size: 15px; font-weight: 600; color: var(--text); text-decoration: none; border: 1px solid var(--border); }
+
+  /* the reflection: the menu sits to the right of the river, the gate hangs from the top right (drawn by the scene) */
+  .reflection { position: relative; z-index: 10; padding: 120px max(24px, 3vw) 64px; }
+  .menu-title { margin: 0 0 22px; font-size: 20px; letter-spacing: 0.32em; text-transform: uppercase; font-style: italic; font-weight: 800; color: var(--accent); }
+  .menu { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; max-width: 520px; }
+  .menu li { position: relative; isolation: isolate; padding: 14px 22px 14px 56px; }
+  .menu h3 { margin: 0; font-size: 28px; font-style: italic; font-weight: 800; letter-spacing: 0.02em; text-transform: uppercase; color: #f4b6c6; }
+  .menu p { margin: 8px 0 0; color: var(--muted); font-size: 15px; line-height: 1.5; max-width: 40ch; }
+  .num { position: absolute; left: 14px; top: 18px; font-size: 14px; font-weight: 800; font-style: italic; color: var(--accent); }
+  .slab { position: absolute; inset: 0; background: var(--accent); transform: skewX(-12deg); z-index: -1; opacity: 0; }
+  .minor { margin: 28px 0 0; color: var(--muted); font-size: 13px; letter-spacing: 0.04em; }
+  footer { padding: 24px max(24px, 3vw); border-top: 1px solid var(--border); color: var(--muted); font-size: 13px; }
+
+  /* live: the stage is tall, the frame is pinned, and the scene + menu are driven by scroll */
+  .stage.live { height: calc(var(--stage-vh) * 100vh); }
+  .stage.live .frame { position: sticky; top: 0; height: 100vh; min-height: 0; }
+  .stage.live .reflection {
+    position: absolute; inset: 0; padding: 0; opacity: var(--ui, 0); pointer-events: none;
+  }
+  .stage.live .menu-title { position: absolute; left: 55vw; top: 14vh; margin: 0; transform: skewX(-12deg); }
+  .stage.live .menu { position: absolute; left: 55vw; top: 21vh; gap: 6px; }
+  .stage.live .menu li { opacity: var(--a, 0); transform: translateX(calc((1 - var(--a, 0)) * -70px)); transition: opacity 0.1s linear; }
+  .stage.live .menu li h3 { transition: font-size 0.25s ease, color 0.25s ease; }
+  .stage.live .menu li p { max-height: 0; opacity: 0; overflow: hidden; margin: 0; transition: max-height 0.3s ease, opacity 0.3s ease, margin 0.3s ease; }
+  .stage.live .menu li.active .slab { opacity: 1; }
+  .stage.live .menu li.active h3 { font-size: 40px; color: #07070b; }
+  .stage.live .menu li.active .num { color: #07070b; }
+  .stage.live .menu li.active p { max-height: 6em; opacity: 1; margin-top: 8px; color: #1a0b0b; }
+  .stage.live .minor { position: absolute; left: 55vw; bottom: 8vh; margin: 0; opacity: var(--minor, 0); }
+
+  /* no live scene (phones, reduced motion, no WebGL): the picture, then a plain list */
+  .stage:not(.live) .reflection { background: #07070b; }
+  .stage:not(.live) .menu li h3 { font-size: 26px; }
+  @media (max-width: 767px) {
+    .copy { max-width: none; min-height: 0; padding-top: 96px; padding-bottom: 12px; margin-left: 0; justify-content: flex-start; }
+    .still { position: relative; inset: auto; height: auto; aspect-ratio: 1 / 1; }
+    .scene { display: none; }
+  }
+</style>
+
+<script>
+  import { detectEnv, shouldRunScene } from "../scene/capabilities";
+  import { STAGE, stageTimeline } from "../scene/stage";
+
+  const stage = document.getElementById("stage");
+  const host = document.getElementById("stage-scene");
+  if (stage && host && shouldRunScene(detectEnv(window))) {
+    stage.classList.add("live");
+    const items = [...stage.querySelectorAll<HTMLElement>(".menu li")];
+    const clamp = (v: number, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+    const smoothstep = (a: number, b: number, v: number) => { const t = clamp((v - a) / (b - a)); return t * t * (3 - 2 * t); };
+    let state = stageTimeline(0);
+
+    const read = () => {
+      const vh = window.innerHeight;
+      const scrollVh = -stage.getBoundingClientRect().top / vh;
+      state = stageTimeline(scrollVh);
+      const s = stage.style;
+      s.setProperty("--hero-out", String(clamp(scrollVh / (STAGE.holdVh + STAGE.flipVh * 0.3))));
+      s.setProperty("--copy-events", scrollVh > STAGE.holdVh ? "none" : "auto"); // the faded-out buttons must not catch clicks
+      s.setProperty("--ui", String(smoothstep(0.7, 1, state.flip)));
+      s.setProperty("--feature", String(state.feature));
+      s.setProperty("--minor", String(clamp(state.feature - (STAGE.items - 1))));
+      const current = clamp(Math.floor(state.feature), 0, STAGE.items - 1);
+      items.forEach((li, i) => {
+        li.style.setProperty("--a", String(clamp(state.feature - i + 1)));
+        li.classList.toggle("active", i === current);
+      });
+    };
+    addEventListener("scroll", read, { passive: true });
+    addEventListener("resize", read);
+    read();
+
+    import("../scene/index")
+      .then(({ mountScene }) => mountScene(host, { stage: { getState: () => state }, onFail: () => stage.classList.remove("live") }))
+      .catch((err) => {
+        console.warn("The live scene could not start; showing the still image instead.", err);
+        stage.classList.remove("live");
+      });
+  }
+</script>
