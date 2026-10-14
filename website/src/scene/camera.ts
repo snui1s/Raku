@@ -1,8 +1,8 @@
 /** Low camera at the foot of the hill, looking up at the gate (same idea as mockups/landing-hero.html). */
 export const CAMERA = {
-  fov: 38,
+  fov: 44,
   position: [0, 0, 0] as [number, number, number],
-  target: [-2.4, 3.2, -17] as [number, number, number],
+  target: [-0.9, 3.9, -17] as [number, number, number],
 };
 
 const MAX_PARALLAX = 0.35;
