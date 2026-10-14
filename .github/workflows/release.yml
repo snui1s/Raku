@@ -126,11 +126,18 @@ jobs:
           test -f "$EXE.sig" || { echo "::error::Signature was not created"; exit 1; }
           echo "EXE=$EXE" >> "$GITHUB_ENV"
 
+      - name: Write SHA256SUMS
+        run: |
+          # lets users verify the download: Get-FileHash <file> -Algorithm SHA256
+          DIR=$(dirname "$EXE")
+          (cd "$DIR" && sha256sum "$(basename "$EXE")" > SHA256SUMS)
+          echo "SUMS=$DIR/SHA256SUMS" >> "$GITHUB_ENV"
+
       - name: Create GitHub release
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release create "$TAG" "$EXE" "$EXE.sig" \
+          gh release create "$TAG" "$EXE" "$EXE.sig" "$SUMS" \
             --title "Raku $TAG" \
             --generate-notes
 

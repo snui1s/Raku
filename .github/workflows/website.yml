@@ -1,0 +1,25 @@
+name: Website
+
+# Builds and tests the website (website/). Runs only when the website or update.json changes,
+# so app-only changes do not trigger it and website changes do not trigger the app jobs in ci.yml.
+on:
+  push:
+    branches: [main]
+    paths: ["website/**", "update.json", ".github/workflows/website.yml"]
+  pull_request:
+    paths: ["website/**", "update.json", ".github/workflows/website.yml"]
+
+jobs:
+  website:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: website
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+      - run: bun install --frozen-lockfile
+      - run: bun run test
+      - run: bun run check
+      - run: bun run build
+      - run: bun scripts/check-build.ts
