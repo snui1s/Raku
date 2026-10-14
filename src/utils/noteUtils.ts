@@ -33,11 +33,27 @@ export const hasTextContent = (content: string): boolean => {
   }
 };
 
+// Images are saved as <uuid>.<ext>. Matching on the uuid (any extension) keeps the check
+// safe for odd extensions and lets us scan every note once instead of once per file.
+const UUID_RE = /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/gi;
+
 // Image files on disk that no note references (safe to delete)
 export const findOrphanImages = (
   fileNames: string[],
   noteContents: string[]
 ): string[] => {
-  const all = noteContents.join("\n");
-  return fileNames.filter((name) => !all.includes(name));
+  const referenced = new Set<string>();
+  for (const content of noteContents) {
+    for (const m of content.matchAll(UUID_RE)) referenced.add(m[0].toLowerCase());
+  }
+
+  // Files whose name is not uuid-shaped fall back to a plain substring check
+  let joined: string | null = null;
+
+  return fileNames.filter((name) => {
+    const uuid = name.match(/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i);
+    if (uuid) return !referenced.has(uuid[0].toLowerCase());
+    joined ??= noteContents.join("\n");
+    return !joined.includes(name);
+  });
 };

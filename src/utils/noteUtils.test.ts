@@ -50,6 +50,16 @@ describe("findOrphanImages", () => {
   it("never flags files with unusual extensions that are referenced", () => {
     expect(findOrphanImages([usedSvg], contents)).toEqual([]);
   });
+  it("keeps an image whose note reference uses a different extension", () => {
+    expect(findOrphanImages(["11111111-1111-1111-1111-111111111111.svg+xml"], contents)).toEqual([]);
+  });
+  it("is case-insensitive for uuids", () => {
+    expect(findOrphanImages([used.toUpperCase()], contents)).toEqual([]);
+  });
+  it("uses a substring check for files without a uuid name", () => {
+    const c = [JSON.stringify({ src: "local-image:images/photo.png" })];
+    expect(findOrphanImages(["photo.png", "other.png"], c)).toEqual(["other.png"]);
+  });
   it("flags everything when there are no notes", () => {
     expect(findOrphanImages([used], [])).toEqual([used]);
   });

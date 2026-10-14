@@ -9,6 +9,7 @@
     "preview": "vite preview",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
+    "bench": "node --disable-warning=ExperimentalWarning bench/run.ts",
     "tauri": "tauri",
     "bump": "bun scripts/bump.ts",
     "bump:patch": "bun scripts/bump.ts patch",
