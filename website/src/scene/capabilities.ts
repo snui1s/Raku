@@ -25,3 +25,8 @@ export function detectEnv(win: Window): Env {
     coarsePointer: win.matchMedia("(pointer: coarse)").matches,
   };
 }
+
+/** Pixel ratio the renderer should use: the screen's ratio, capped at 2 to bound GPU work. */
+export function cappedPixelRatio(dpr: number | undefined): number {
+  return dpr && Number.isFinite(dpr) && dpr > 0 ? Math.min(dpr, 2) : 1;
+}

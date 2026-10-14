@@ -3,6 +3,7 @@ import {
   RedFormat, Scene, WebGLRenderer, Group, Vector3, type Object3D, type Texture,
 } from "three";
 import { CAMERA, parallaxOffset } from "./camera";
+import { cappedPixelRatio } from "./capabilities";
 import { PALETTE, type Palette, type Theme } from "./palette";
 import { buildHill } from "./hill";
 import { buildTorii } from "./torii";
@@ -86,9 +87,11 @@ export async function mountScene(host: HTMLElement, opts: SceneOptions): Promise
     camera.lookAt(target);
   }
 
+  let appliedDpr = 0;
   function resize() {
     const w = Math.max(1, host.clientWidth), h = Math.max(1, host.clientHeight);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    appliedDpr = window.devicePixelRatio;
+    renderer.setPixelRatio(cappedPixelRatio(appliedDpr));
     renderer.setSize(w, h, false);
     camera.aspect = w / h;
     camera.updateProjectionMatrix();
@@ -105,6 +108,7 @@ export async function mountScene(host: HTMLElement, opts: SceneOptions): Promise
   let raf = 0, last = 0, elapsed = 0, shown = false;
   function frame(now: number) {
     raf = requestAnimationFrame(frame);
+    if (window.devicePixelRatio !== appliedDpr) resize(); // window moved to a screen with another pixel ratio
     const dt = last ? Math.min(0.1, (now - last) / 1000) : 0; // clamp so a restored tab does not jump
     last = now;
     elapsed += dt;

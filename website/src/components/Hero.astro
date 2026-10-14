@@ -13,7 +13,7 @@ const { release } = Astro.props;
       <source media="(max-width: 960px)" srcset={`/hero/${t}-sm.webp`} type="image/webp" />
       <source srcset={`/hero/${t}.avif`} type="image/avif" />
       <source srcset={`/hero/${t}.webp`} type="image/webp" />
-      <img src={`/hero/${t}.webp`} alt="" width="1920" height="1200" fetchpriority="high" decoding="async" />
+      <img src={`/hero/${t}.webp`} alt="" width="1920" height="1200" loading="lazy" decoding="async" />
     </picture>
   ))}
   <div id="hero-scene" class="scene" aria-hidden="true"></div>
@@ -44,7 +44,7 @@ const { release } = Astro.props;
   :global(html[data-theme="dark"]) .still-light { display: none; }
   :global(html[data-theme="dark"]) .still-dark { display: block; }
   .copy {
-    position: relative; z-index: 10; max-width: 560px;
+    position: relative; z-index: 10; max-width: min(560px, 47vw);
     min-height: min(100vh, 960px); padding: 80px max(24px, 3vw) 0; margin-left: max(0px, 5vw);
     display: flex; flex-direction: column; justify-content: center;
   }
@@ -62,7 +62,12 @@ const { release } = Astro.props;
   .smartscreen { margin: 8px 0 0; font-size: 13px; color: var(--muted); max-width: 440px; line-height: 1.5; }
   .smartscreen a { color: var(--text); }
   @media (max-width: 767px) {
-    .copy { justify-content: flex-start; padding-top: 22vh; margin-left: 0; }
+    /* phones: text first, then the picture below it, so nothing is drawn over the gate */
+    .hero { display: flex; flex-direction: column; min-height: 0; }
+    .copy { order: 1; max-width: none; min-height: 0; padding-top: 96px; padding-bottom: 12px; margin-left: 0; justify-content: flex-start; }
+    .still { order: 2; position: relative; inset: auto; height: auto; aspect-ratio: 1 / 1; }
+    .still img { object-position: 68% bottom; }
+    .scene { display: none; }
   }
 </style>
 
