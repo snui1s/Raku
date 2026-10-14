@@ -2,11 +2,12 @@
 // Usage: bun run stills   (needs Google Chrome installed; no local web server is started)
 import { chromium } from "playwright-core";
 import sharp from "sharp";
+import { spawnSync } from "node:child_process";
 import { existsSync, mkdirSync, readFileSync, statSync } from "node:fs";
 import { extname, join, normalize, sep } from "node:path";
 
-const DIST = join(import.meta.dir, "..", "dist");
-const OUT = join(import.meta.dir, "..", "public", "hero");
+const DIST = join(import.meta.dirname, "..", "dist");
+const OUT = join(import.meta.dirname, "..", "public", "hero");
 const ORIGIN = "http://still.local";
 const SIZES = [
   { suffix: "", width: 1920, height: 1200 },
@@ -29,8 +30,8 @@ function fileFor(pathname: string): string | null {
 }
 
 // 1. Build the site so dist/ contains the current scene code
-const build = Bun.spawnSync(["bun", "run", "build"], { cwd: join(import.meta.dir, ".."), stdout: "inherit", stderr: "inherit" });
-if (build.exitCode !== 0) throw new Error("astro build failed");
+const build = spawnSync("bun", ["run", "build"], { cwd: join(import.meta.dirname, ".."), stdio: "inherit" });
+if (build.status !== 0) throw new Error("astro build failed");
 
 mkdirSync(OUT, { recursive: true });
 
