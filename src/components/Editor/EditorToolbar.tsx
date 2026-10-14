@@ -20,12 +20,10 @@ import {
   Palette,
   Type,
   ALargeSmall,
-  GripVertical,
   Eye,
   EyeOff,
-  RotateCcw,
 } from "lucide-react";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useReducer } from "react";
 import { AVAILABLE_FONTS, AVAILABLE_FONT_SIZES, PASTEL_COLORS } from "../../constants/app";
 
 interface EditorToolbarProps {
@@ -42,18 +40,6 @@ export function EditorToolbar({ editor, isDark }: EditorToolbarProps) {
   const [fontFamilyOpen, setFontFamilyOpen] = useState(false);
   const [fontSizeOpen, setFontSizeOpen] = useState(false);
 
-  // Draggable State
-  const [position, setPosition] = useState<{ x: number; y: number } | null>(() => {
-    try {
-      const saved = localStorage.getItem("raku-toolbar-position");
-      return saved ? JSON.parse(saved) : null;
-    } catch {
-      return null;
-    }
-  });
-  const [isDragging, setIsDragging] = useState(false);
-  const dragStartRef = useRef<{ startX: number; startY: number; initialX: number; initialY: number } | null>(null);
-
   // Visible State
   const [isVisible, setIsVisible] = useState<boolean>(() => {
     const saved = localStorage.getItem("raku-toolbar-visible");
@@ -61,6 +47,17 @@ export function EditorToolbar({ editor, isDark }: EditorToolbarProps) {
   });
 
   const toolbarRef = useRef<HTMLDivElement>(null);
+
+  // Re-render on every editor transaction so active states and the
+  // undo/redo disabled flags always reflect the current selection.
+  const [, forceRender] = useReducer((n: number) => n + 1, 0);
+  useEffect(() => {
+    if (!editor) return;
+    editor.on("transaction", forceRender);
+    return () => {
+      editor.off("transaction", forceRender);
+    };
+  }, [editor]);
 
   const closeAllDropdowns = () => {
     setHeadingOpen(false);
@@ -74,14 +71,6 @@ export function EditorToolbar({ editor, isDark }: EditorToolbarProps) {
   useEffect(() => {
     localStorage.setItem("raku-toolbar-visible", String(isVisible));
   }, [isVisible]);
-
-  useEffect(() => {
-    if (position) {
-      localStorage.setItem("raku-toolbar-position", JSON.stringify(position));
-    } else {
-      localStorage.removeItem("raku-toolbar-position");
-    }
-  }, [position]);
 
   // Keyboard shortcut Ctrl+Shift+T / Cmd+Shift+T to toggle toolbar
   useEffect(() => {
@@ -108,57 +97,6 @@ export function EditorToolbar({ editor, isDark }: EditorToolbarProps) {
     };
   }, []);
 
-  // Handle Dragging
-  const handleMouseDown = (e: React.MouseEvent) => {
-    if (e.button !== 0) return; // Only left click
-    closeAllDropdowns();
-
-    const rect = toolbarRef.current?.getBoundingClientRect();
-    const initialX = rect ? rect.left : (window.innerWidth - 600) / 2;
-    const initialY = rect ? rect.top : 60;
-
-    dragStartRef.current = {
-      startX: e.clientX,
-      startY: e.clientY,
-      initialX,
-      initialY,
-    };
-    setIsDragging(true);
-
-    const handleMouseMove = (moveEvent: MouseEvent) => {
-      if (!dragStartRef.current) return;
-      const dx = moveEvent.clientX - dragStartRef.current.startX;
-      const dy = moveEvent.clientY - dragStartRef.current.startY;
-
-      let newX = dragStartRef.current.initialX + dx;
-      let newY = dragStartRef.current.initialY + dy;
-
-      // Clamp inside window boundaries
-      const toolbarWidth = toolbarRef.current?.offsetWidth || 500;
-      const toolbarHeight = toolbarRef.current?.offsetHeight || 50;
-
-      newX = Math.max(10, Math.min(window.innerWidth - toolbarWidth - 10, newX));
-      newY = Math.max(10, Math.min(window.innerHeight - toolbarHeight - 10, newY));
-
-      setPosition({ x: newX, y: newY });
-    };
-
-    const handleMouseUp = () => {
-      setIsDragging(false);
-      dragStartRef.current = null;
-      window.removeEventListener("mousemove", handleMouseMove);
-      window.removeEventListener("mouseup", handleMouseUp);
-    };
-
-    window.addEventListener("mousemove", handleMouseMove);
-    window.addEventListener("mouseup", handleMouseUp);
-  };
-
-  const resetPosition = () => {
-    setPosition(null);
-    localStorage.removeItem("raku-toolbar-position");
-  };
-
   if (!editor) return null;
 
   if (!isVisible) {
@@ -171,44 +109,23 @@ export function EditorToolbar({ editor, isDark }: EditorToolbarProps) {
         >
           <Eye size={14} className="text-accent" />
           <span className="font-medium">Show Toolbar</span>
-          <span className="text-[10px] opacity-60 font-mono bg-app-tertiary px-1.5 py-0.5 rounded">Ctrl+Shift+T</span>
+          <span className="text-[0.625rem] opacity-60 font-mono bg-app-tertiary px-1.5 py-0.5 rounded">Ctrl+Shift+T</span>
         </button>
       </div>
     );
   }
 
-  const toolbarStyle: React.CSSProperties = position
-    ? {
-        position: "fixed",
-        left: `${position.x}px`,
-        top: `${position.y}px`,
-        zIndex: 40,
-        margin: 0,
-      }
-    : {};
-
   return (
-    <div
-      className={`flex justify-center py-3 relative z-20 ${
-        isDragging ? "select-none" : ""
-      }`}
-      style={toolbarStyle}
-    >
+    <div className="flex justify-center px-6 pt-1 pb-4 relative z-20 raku-fade">
       <div
         ref={toolbarRef}
-        className="flex items-center gap-0.5 px-2 py-1 backdrop-blur-md rounded-lg border border-app-border bg-app-toolbar shadow-md transition-colors duration-200"
+        // Keep focus and the text selection in the editor while using the toolbar
+        onMouseDown={(e) => {
+          if ((e.target as HTMLElement).closest('input[type="color"]')) return;
+          e.preventDefault();
+        }}
+        className="flex flex-wrap items-center justify-center gap-0.5 p-1.5 rounded-2xl backdrop-blur-xl border border-app-border bg-app-toolbar shadow-xl shadow-black/10 transition-colors duration-200"
       >
-        {/* Drag Handle */}
-        <div
-          onMouseDown={handleMouseDown}
-          onDoubleClick={resetPosition}
-          className="cursor-grab active:cursor-grabbing p-1.5 text-app-muted hover:text-accent rounded transition-colors"
-          title="Drag to move toolbar (Double-click to reset position)"
-        >
-          <GripVertical size={16} />
-        </div>
-
-        <div className="w-px h-4 border-app-border mx-0.5 border-r" />
         {/* Undo / Redo */}
         <button
           onClick={() => {
@@ -216,7 +133,7 @@ export function EditorToolbar({ editor, isDark }: EditorToolbarProps) {
             editor?.chain().focus().undo().run();
           }}
           disabled={!editor?.can().undo()}
-          className="p-2 rounded transition-colors disabled:opacity-30 text-app-muted hover:bg-app-tertiary hover:text-app-text"
+          className="p-2 rounded-xl transition-[background-color,color,transform] duration-150 active:scale-90 disabled:opacity-30 text-app-muted hover:bg-app-tertiary hover:text-app-text"
           title="Undo"
         >
           <Undo2 size={16} />
@@ -227,13 +144,13 @@ export function EditorToolbar({ editor, isDark }: EditorToolbarProps) {
             editor?.chain().focus().redo().run();
           }}
           disabled={!editor?.can().redo()}
-          className="p-2 rounded transition-colors disabled:opacity-30 text-app-muted hover:bg-app-tertiary hover:text-app-text"
+          className="p-2 rounded-xl transition-[background-color,color,transform] duration-150 active:scale-90 disabled:opacity-30 text-app-muted hover:bg-app-tertiary hover:text-app-text"
           title="Redo"
         >
           <Redo2 size={16} />
         </button>
 
-        <div className="w-px h-4 border-app-border mx-1 border-r" />
+        <div className="w-px h-5 bg-app-border mx-1" />
 
         {/* Font Family Dropdown */}
         <div className="relative">
@@ -243,7 +160,7 @@ export function EditorToolbar({ editor, isDark }: EditorToolbarProps) {
               closeAllDropdowns();
               setFontFamilyOpen(next);
             }}
-            className="p-2 rounded transition-colors flex items-center gap-1 text-app-muted hover:bg-app-tertiary hover:text-app-text"
+            className="p-2 rounded-xl transition-[background-color,color,transform] duration-150 active:scale-90 flex items-center gap-1 text-app-muted hover:bg-app-tertiary hover:text-app-text"
             title="Font Family"
           >
             <Type size={16} />
@@ -251,7 +168,7 @@ export function EditorToolbar({ editor, isDark }: EditorToolbarProps) {
           </button>
           {fontFamilyOpen && (
             <div
-              className="absolute top-full left-0 mt-1 py-1 rounded-lg shadow-xl z-50 min-w-[180px] max-h-72 overflow-y-auto bg-app-dropdown border-app-border text-app-text border"
+              className="absolute top-full left-0 mt-1 py-1 rounded-xl shadow-2xl z-50 min-w-[11.25rem] max-h-72 overflow-y-auto bg-app-dropdown border-app-border text-app-text border raku-pop"
             >
               {AVAILABLE_FONTS.map((font) => {
                 const isActive = editor?.getAttributes("textStyle").fontFamily === font.family;
@@ -286,7 +203,7 @@ export function EditorToolbar({ editor, isDark }: EditorToolbarProps) {
               closeAllDropdowns();
               setFontSizeOpen(next);
             }}
-            className="p-2 rounded transition-colors flex items-center gap-1 text-app-muted hover:bg-app-tertiary hover:text-app-text"
+            className="p-2 rounded-xl transition-[background-color,color,transform] duration-150 active:scale-90 flex items-center gap-1 text-app-muted hover:bg-app-tertiary hover:text-app-text"
             title="Font Size"
           >
             <ALargeSmall size={16} />
@@ -294,7 +211,7 @@ export function EditorToolbar({ editor, isDark }: EditorToolbarProps) {
           </button>
           {fontSizeOpen && (
             <div
-              className="absolute top-full left-0 mt-1 py-1 rounded-lg shadow-xl z-50 min-w-[100px] bg-app-dropdown border-app-border text-app-text border"
+              className="absolute top-full left-0 mt-1 py-1 rounded-xl shadow-2xl z-50 min-w-[6.25rem] bg-app-dropdown border-app-border text-app-text border raku-pop"
             >
               {AVAILABLE_FONT_SIZES.map((size) => {
                 const currentSizeStr = editor?.getAttributes("textStyle").fontSize;
@@ -326,7 +243,7 @@ export function EditorToolbar({ editor, isDark }: EditorToolbarProps) {
           )}
         </div>
 
-        <div className="w-px h-4 border-app-border mx-1 border-r" />
+        <div className="w-px h-5 bg-app-border mx-1" />
 
         {/* Structure */}
         {/* Heading Dropdown */}
@@ -345,7 +262,7 @@ export function EditorToolbar({ editor, isDark }: EditorToolbarProps) {
           </button>
           {headingOpen && (
             <div
-              className="absolute top-full left-0 mt-1 py-1 rounded-lg shadow-xl z-50 min-w-[120px] bg-app-dropdown border-app-border text-app-text border"
+              className="absolute top-full left-0 mt-1 py-1 rounded-xl shadow-2xl z-50 min-w-[7.5rem] bg-app-dropdown border-app-border text-app-text border raku-pop"
             >
               <button
                 className={`w-full flex items-center gap-2 px-3 py-1.5 text-sm transition-colors ${
@@ -419,7 +336,7 @@ export function EditorToolbar({ editor, isDark }: EditorToolbarProps) {
           </button>
           {listOpen && (
             <div
-              className="absolute top-full left-0 mt-1 py-1 rounded-lg shadow-xl z-50 min-w-[120px] bg-app-dropdown border-app-border text-app-text border"
+              className="absolute top-full left-0 mt-1 py-1 rounded-xl shadow-2xl z-50 min-w-[7.5rem] bg-app-dropdown border-app-border text-app-text border raku-pop"
             >
               <button
                 className={`w-full flex items-center gap-2 px-3 py-1.5 text-sm transition-colors ${
@@ -468,7 +385,7 @@ export function EditorToolbar({ editor, isDark }: EditorToolbarProps) {
             closeAllDropdowns();
             editor?.chain().focus().toggleBlockquote().run();
           }}
-          className={`p-2 rounded transition-colors ${
+          className={`p-2 rounded-xl transition-[background-color,color,transform] duration-150 active:scale-90 ${
             editor?.isActive("blockquote")
               ? "bg-accent-muted text-accent font-semibold"
               : "text-app-muted hover:bg-app-tertiary hover:text-app-text"
@@ -482,7 +399,7 @@ export function EditorToolbar({ editor, isDark }: EditorToolbarProps) {
             closeAllDropdowns();
             editor?.chain().focus().toggleCodeBlock().run();
           }}
-          className={`p-2 rounded transition-colors ${
+          className={`p-2 rounded-xl transition-[background-color,color,transform] duration-150 active:scale-90 ${
             editor?.isActive("codeBlock")
               ? "bg-accent-muted text-accent font-semibold"
               : "text-app-muted hover:bg-app-tertiary hover:text-app-text"
@@ -492,7 +409,7 @@ export function EditorToolbar({ editor, isDark }: EditorToolbarProps) {
           <Code size={16} />
         </button>
 
-        <div className="w-px h-4 border-app-border mx-1 border-r" />
+        <div className="w-px h-5 bg-app-border mx-1" />
 
         {/* Highlight Dropdown */}
         <div className="relative">
@@ -502,7 +419,7 @@ export function EditorToolbar({ editor, isDark }: EditorToolbarProps) {
               closeAllDropdowns();
               setHighlightOpen(next);
             }}
-            className={`p-2 rounded transition-colors flex items-center gap-0.5 ${
+            className={`p-2 rounded-xl transition-[background-color,color,transform] duration-150 active:scale-90 flex items-center gap-0.5 ${
               editor.isActive("highlight")
                 ? "bg-accent-muted text-accent font-semibold"
                 : "text-app-muted hover:bg-app-tertiary hover:text-app-text"
@@ -515,7 +432,7 @@ export function EditorToolbar({ editor, isDark }: EditorToolbarProps) {
 
           {highlightOpen && (
             <div
-              className="absolute top-full left-1/2 -translate-x-1/2 mt-2 p-2 rounded-lg shadow-xl z-50 flex gap-1.5 bg-app-dropdown border-app-border text-app-text border"
+              className="absolute top-full left-1/2 -translate-x-1/2 mt-2 p-2 rounded-xl shadow-2xl z-50 flex gap-1.5 bg-app-dropdown border-app-border text-app-text border raku-pop"
             >
               {/* Unset Button */}
               <button
@@ -568,7 +485,7 @@ export function EditorToolbar({ editor, isDark }: EditorToolbarProps) {
               closeAllDropdowns();
               setTextColorOpen(next);
             }}
-            className={`p-2 rounded transition-colors flex items-center gap-0.5 ${
+            className={`p-2 rounded-xl transition-[background-color,color,transform] duration-150 active:scale-90 flex items-center gap-0.5 ${
               editor.getAttributes("textStyle").color
                 ? "text-accent font-semibold"
                 : "text-app-muted hover:bg-app-tertiary hover:text-app-text"
@@ -581,7 +498,7 @@ export function EditorToolbar({ editor, isDark }: EditorToolbarProps) {
 
           {textColorOpen && (
             <div
-              className="absolute top-full left-1/2 -translate-x-1/2 mt-2 p-2 rounded-lg shadow-xl z-50 flex gap-1.5 bg-app-dropdown border-app-border text-app-text border"
+              className="absolute top-full left-1/2 -translate-x-1/2 mt-2 p-2 rounded-xl shadow-2xl z-50 flex gap-1.5 bg-app-dropdown border-app-border text-app-text border raku-pop"
             >
               {/* Unset Button */}
               <button
@@ -635,7 +552,7 @@ export function EditorToolbar({ editor, isDark }: EditorToolbarProps) {
           )}
         </div>
 
-        <div className="w-px h-4 border-app-border mx-1 border-r" />
+        <div className="w-px h-5 bg-app-border mx-1" />
 
         {/* Text Formatting */}
         <button
@@ -643,7 +560,7 @@ export function EditorToolbar({ editor, isDark }: EditorToolbarProps) {
             closeAllDropdowns();
             editor?.chain().focus().toggleBold().run();
           }}
-          className={`p-2 rounded transition-colors ${
+          className={`p-2 rounded-xl transition-[background-color,color,transform] duration-150 active:scale-90 ${
             editor?.isActive("bold")
               ? "bg-accent-muted text-accent font-semibold"
               : "text-app-muted hover:bg-app-tertiary hover:text-app-text"
@@ -657,7 +574,7 @@ export function EditorToolbar({ editor, isDark }: EditorToolbarProps) {
             closeAllDropdowns();
             editor?.chain().focus().toggleItalic().run();
           }}
-          className={`p-2 rounded transition-colors ${
+          className={`p-2 rounded-xl transition-[background-color,color,transform] duration-150 active:scale-90 ${
             editor?.isActive("italic")
               ? "bg-accent-muted text-accent font-semibold"
               : "text-app-muted hover:bg-app-tertiary hover:text-app-text"
@@ -671,7 +588,7 @@ export function EditorToolbar({ editor, isDark }: EditorToolbarProps) {
             closeAllDropdowns();
             editor?.chain().focus().toggleStrike().run();
           }}
-          className={`p-2 rounded transition-colors ${
+          className={`p-2 rounded-xl transition-[background-color,color,transform] duration-150 active:scale-90 ${
             editor?.isActive("strike")
               ? "bg-accent-muted text-accent font-semibold"
               : "text-app-muted hover:bg-app-tertiary hover:text-app-text"
@@ -685,7 +602,7 @@ export function EditorToolbar({ editor, isDark }: EditorToolbarProps) {
             closeAllDropdowns();
             editor?.chain().focus().toggleUnderline().run();
           }}
-          className={`p-2 rounded transition-colors ${
+          className={`p-2 rounded-xl transition-[background-color,color,transform] duration-150 active:scale-90 ${
             editor?.isActive("underline")
               ? "bg-accent-muted text-accent font-semibold"
               : "text-app-muted hover:bg-app-tertiary hover:text-app-text"
@@ -695,18 +612,7 @@ export function EditorToolbar({ editor, isDark }: EditorToolbarProps) {
           <Underline size={16} />
         </button>
 
-        <div className="w-px h-4 border-app-border mx-0.5 border-r" />
-
-        {/* Reset Position Button (shown if dragged) */}
-        {position !== null && (
-          <button
-            onClick={resetPosition}
-            className="p-1.5 rounded transition-colors text-app-muted hover:text-accent hover:bg-app-tertiary"
-            title="Reset Position"
-          >
-            <RotateCcw size={14} />
-          </button>
-        )}
+        <div className="w-px h-5 bg-app-border mx-0.5" />
 
         {/* Hide Toolbar Button */}
         <button

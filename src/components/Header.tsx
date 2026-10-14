@@ -1,5 +1,16 @@
-import { PanelLeft, Sun, Moon, Palette, Check, Sparkles, Download } from "lucide-react";
+import {
+  PanelLeft,
+  Sun,
+  Moon,
+  Palette,
+  Check,
+  Maximize2,
+  Timer,
+  Minus,
+  Plus,
+} from "lucide-react";
 import { useState, useRef, useEffect } from "react";
+import type { ReactNode } from "react";
 import { usePomodoro } from "../hooks/usePomodoro";
 import { THEMES } from "../constants/themes";
 
@@ -8,25 +19,30 @@ interface HeaderProps {
   setIsDark: (isDark: boolean) => void;
   sidebarOpen: boolean;
   setSidebarOpen: (open: boolean) => void;
-  currentTime: Date;
   currentTheme: string;
   setCurrentTheme: (theme: string) => void;
   zenMode: boolean;
   setZenMode: (zen: boolean) => void;
-  onOpenExport: () => void;
+  exportMenu: ReactNode;
+  settingsMenu: ReactNode;
+  crumbs: string[];
 }
+
+const iconBtn =
+  "w-9 h-9 flex items-center justify-center rounded-xl transition-[background-color,color,transform] duration-150 active:scale-90 text-app-muted hover:text-app-text hover:bg-app-tertiary";
 
 export function Header({
   isDark,
   setIsDark,
   sidebarOpen,
   setSidebarOpen,
-  currentTime,
   currentTheme,
   setCurrentTheme,
   zenMode,
   setZenMode,
-  onOpenExport,
+  exportMenu,
+  settingsMenu,
+  crumbs,
 }: HeaderProps) {
   const { isRunning, startPomodoro, adjustMinutes, formatPomodoro } =
     usePomodoro();
@@ -44,177 +60,149 @@ export function Header({
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
-
-  const formatTime = (date: Date) => {
-    return date.toLocaleTimeString("en-US", {
-      hour: "2-digit",
-      minute: "2-digit",
-      hour12: false,
-    });
-  };
-
-  const formatDate = (date: Date) => {
-    return date.toLocaleDateString("en-US", {
-      weekday: "short",
-      day: "numeric",
-      month: "short",
-    });
-  };
 
   const activeThemeObj = THEMES.find((t) => t.id === currentTheme);
 
   return (
-    <header
-      className="h-12 shrink-0 flex items-center justify-between px-8 border-b relative z-50 transition-colors duration-200 border-app-border bg-app-main"
-    >
-      {/* Left: Sidebar Toggle (when closed) + Dark Mode + Theme Picker + Clock */}
-      <div className="flex items-center gap-2">
-        {!sidebarOpen && (
+    <header className="h-14 shrink-0 flex items-center gap-1 px-5 relative z-50 raku-fade">
+      {/* Left: sidebar toggle + breadcrumb */}
+      {!sidebarOpen && (
+        <button
+          onClick={() => setSidebarOpen(true)}
+          className={iconBtn}
+          title="Show Sidebar"
+        >
+          <PanelLeft size={17} />
+        </button>
+      )}
+      <nav
+        className="ml-2 flex items-center gap-2 min-w-0 text-xs font-mono text-app-muted"
+        aria-label="Location"
+      >
+        {crumbs.map((c, i) => (
+          <span key={i} className="flex items-center gap-2 min-w-0">
+            {i > 0 && <span className="opacity-40">/</span>}
+            <span
+              className={`truncate ${
+                i === crumbs.length - 1 ? "text-app-text font-medium" : ""
+              }`}
+            >
+              {c}
+            </span>
+          </span>
+        ))}
+      </nav>
+
+      <div className="flex-1" />
+
+      {/* Pomodoro */}
+      <div
+        className={`flex items-center h-8 mr-1 rounded-full border text-xs font-mono transition-all ${
+          isRunning
+            ? "bg-accent border-accent text-white shadow-lg shadow-accent/30"
+            : "border-app-border text-app-muted hover:border-accent"
+        }`}
+      >
+        {!isRunning && (
           <button
-            onClick={() => setSidebarOpen(true)}
-            className="p-1.5 rounded-md transition-colors text-app-muted hover:text-accent hover:bg-app-tertiary"
-            title="Show Sidebar"
+            onClick={() => adjustMinutes(-5)}
+            className="pl-2 pr-0.5 h-full hover:text-accent"
+            title="-5 min"
+            aria-label="Decrease minutes"
           >
-            <PanelLeft size={16} />
+            <Minus size={12} />
           </button>
         )}
         <button
-          onClick={() => setIsDark(!isDark)}
-          className="p-1.5 rounded-md transition-colors text-app-muted hover:text-accent hover:bg-app-tertiary"
-          title={isDark ? "Switch to Light Mode" : "Switch to Dark Mode"}
-        >
-          {isDark ? <Sun size={16} /> : <Moon size={16} />}
-        </button>
-
-        {/* Theme Picker Dropdown */}
-        <div className="relative" ref={themeMenuRef}>
-          <button
-            onClick={() => setThemeOpen(!themeOpen)}
-            className="p-1.5 rounded-md transition-colors flex items-center gap-1.5 text-app-muted hover:text-accent hover:bg-app-tertiary"
-            title="Theme Palette"
-          >
-            <Palette size={16} />
-            <span
-              className="w-2.5 h-2.5 rounded-full inline-block border border-black/20 transition-colors"
-              style={{ backgroundColor: activeThemeObj?.accent || "#F25C54" }}
-            />
-          </button>
-
-          {themeOpen && (
-            <div
-              className="absolute top-full left-0 mt-2 p-2 rounded-xl shadow-2xl z-[100] min-w-[210px] backdrop-blur-md bg-app-dropdown border-app-border text-app-text border"
-            >
-              <div className="px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-app-muted">
-                Select Theme Palette
-              </div>
-              <div className="space-y-1 mt-1">
-                {THEMES.map((t) => (
-                  <button
-                    key={t.id}
-                    onClick={() => {
-                      setCurrentTheme(t.id);
-                      setThemeOpen(false);
-                    }}
-                    className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg text-xs font-medium transition-colors ${
-                      currentTheme === t.id
-                        ? "bg-app-tertiary text-app-text font-semibold shadow-xs"
-                        : "text-app-muted hover:bg-app-tertiary hover:text-app-text"
-                    }`}
-                  >
-                    <div className="flex items-center gap-2.5">
-                      <span
-                        className="w-3.5 h-3.5 rounded-full border border-black/20 shrink-0 shadow-xs"
-                        style={{ backgroundColor: t.accent }}
-                      />
-                      <span>{t.name}</span>
-                    </div>
-                    {currentTheme === t.id && (
-                      <Check size={14} className="text-accent shrink-0" />
-                    )}
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
-        </div>
-
-        {/* Zen Focus Mode Toggle */}
-        <button
-          onClick={() => setZenMode(!zenMode)}
-          className={`p-1.5 rounded-md transition-colors flex items-center gap-1.5 text-xs font-medium ${
-            zenMode
-              ? "bg-accent-muted text-accent font-semibold"
-              : "text-app-muted hover:text-accent hover:bg-app-tertiary"
-          }`}
-          title="Zen Focus Mode (Ctrl+Shift+Z)"
-        >
-          <Sparkles size={16} />
-          <span className="hidden sm:inline">Zen Mode</span>
-        </button>
-
-        {/* Export Note Button */}
-        <button
-          onClick={onOpenExport}
-          className="p-1.5 rounded-md transition-colors flex items-center gap-1.5 text-xs font-medium text-app-muted hover:text-accent hover:bg-app-tertiary"
-          title="Export Note (.md / PDF)"
-        >
-          <Download size={16} />
-          <span className="hidden sm:inline">Export</span>
-        </button>
-
-        <div className="w-px h-3.5 border-app-border mx-1" />
-
-        <div
-          className="text-xs text-app-muted"
-        >
-          <span className="font-medium">{formatDate(currentTime)}</span>
-          <span
-            className="mx-2 opacity-50"
-          >
-            •
-          </span>
-          <span className="font-mono">{formatTime(currentTime)}</span>
-        </div>
-      </div>
-
-      {/* Right: Pomodoro */}
-      <div className="flex items-center gap-2">
-        <span className="text-sm">🍅</span>
-        <button
-          onClick={() => adjustMinutes(-5)}
-          disabled={isRunning}
-          className="w-6 h-6 flex items-center justify-center rounded disabled:opacity-30 transition-colors text-sm font-bold bg-app-tertiary text-app-text hover:opacity-80"
-        >
-          −
-        </button>
-        <span
-          className="font-mono text-sm w-12 text-center text-app-text"
-        >
-          {formatPomodoro()}
-        </span>
-        <button
-          onClick={() => adjustMinutes(5)}
-          disabled={isRunning}
-          className="w-6 h-6 flex items-center justify-center rounded disabled:opacity-30 transition-colors text-sm font-bold bg-app-tertiary text-app-text hover:opacity-80"
-        >
-          +
-        </button>
-        <button
           onClick={startPomodoro}
-          className={`ml-2 px-3 py-1 rounded text-xs font-semibold transition-colors ${
-            isRunning
-              ? "bg-app-tertiary text-app-muted hover:opacity-80"
-              : "bg-accent-muted text-accent hover:opacity-80"
-          }`}
+          className="flex items-center gap-1.5 px-2.5 h-full tabular-nums"
+          title={isRunning ? "Stop focus timer" : "Start focus timer"}
         >
-          {isRunning ? "Stop" : "Focus"}
+          <Timer size={14} />
+          {formatPomodoro()}
         </button>
+        {!isRunning && (
+          <button
+            onClick={() => adjustMinutes(5)}
+            className="pr-2 pl-0.5 h-full hover:text-accent"
+            title="+5 min"
+            aria-label="Increase minutes"
+          >
+            <Plus size={12} />
+          </button>
+        )}
       </div>
+
+      {/* Theme Picker */}
+      <div className="relative" ref={themeMenuRef}>
+        <button
+          onClick={() => setThemeOpen(!themeOpen)}
+          className={`${iconBtn} relative`}
+          title="Theme palette"
+        >
+          <Palette size={17} />
+          <span
+            className="absolute bottom-1.5 right-1.5 w-2 h-2 rounded-full ring-2 ring-app-sidebar"
+            style={{ backgroundColor: activeThemeObj?.accent || "#F25C54" }}
+          />
+        </button>
+
+        {themeOpen && (
+          <div className="absolute top-full right-0 mt-2 p-2 rounded-2xl shadow-2xl z-100 min-w-55 backdrop-blur-xl bg-app-dropdown border-app-border text-app-text border raku-pop">
+            <div className="px-2.5 py-1 text-[0.625rem] font-bold uppercase tracking-wider text-app-muted">
+              Theme
+            </div>
+            <div className="space-y-0.5 mt-1">
+              {THEMES.map((t) => (
+                <button
+                  key={t.id}
+                  onClick={() => {
+                    setCurrentTheme(t.id);
+                    setThemeOpen(false);
+                  }}
+                  className={`w-full flex items-center justify-between px-2.5 py-2 rounded-xl text-xs font-medium transition-colors ${
+                    currentTheme === t.id
+                      ? "bg-app-tertiary text-app-text font-semibold"
+                      : "text-app-muted hover:bg-app-tertiary hover:text-app-text"
+                  }`}
+                >
+                  <div className="flex items-center gap-2.5">
+                    <span
+                      className="w-3.5 h-3.5 rounded-full shrink-0"
+                      style={{ backgroundColor: t.accent }}
+                    />
+                    <span>{t.name}</span>
+                  </div>
+                  {currentTheme === t.id && (
+                    <Check size={14} className="text-accent shrink-0" />
+                  )}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+
+      <button
+        onClick={() => setIsDark(!isDark)}
+        className={iconBtn}
+        title={isDark ? "Switch to light mode" : "Switch to dark mode"}
+      >
+        {isDark ? <Sun size={17} /> : <Moon size={17} />}
+      </button>
+
+      {exportMenu}
+      {settingsMenu}
+
+      <button
+        onClick={() => setZenMode(!zenMode)}
+        className={`${iconBtn} ${zenMode ? "bg-accent-muted! text-accent!" : ""}`}
+        title="Zen mode (Ctrl+Shift+Z)"
+      >
+        <Maximize2 size={17} />
+      </button>
     </header>
   );
 }
-

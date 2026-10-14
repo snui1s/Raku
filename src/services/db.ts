@@ -1,6 +1,6 @@
 import Database from "@tauri-apps/plugin-sql";
 import { runGarbageCollection } from "../utils/imageUtils";
-import { Note } from "../hooks/useNotes";
+import { Note, Folder } from "../hooks/useNotes";
 
 const STORAGE_KEY = "raku-notes"; // Legacy storage key
 const ACTIVE_NOTE_KEY = "raku-active-note";
@@ -10,17 +10,48 @@ const generateId = () =>
 
 // Versioned schema migrations, tracked with SQLite's PRAGMA user_version.
 // Append new entries; never edit or reorder existing ones.
-const MIGRATIONS: { version: number; columns: [string, string][] }[] = [
+type Migration = { version: number; up: (db: Database) => Promise<void> };
+
+const addMissingColumns = async (db: Database, columns: [string, string][]) => {
+  const existing = await db.select<{ name: string }[]>(
+    "PRAGMA table_info(notes)"
+  );
+  const have = new Set(existing.map((c) => c.name));
+  for (const [name, def] of columns) {
+    if (!have.has(name)) {
+      await db.execute(`ALTER TABLE notes ADD COLUMN ${name} ${def}`);
+    }
+  }
+};
+
+const MIGRATIONS: Migration[] = [
   {
     // Columns added over v1.0.x. Older installs may already have some of them,
     // so each is only added when missing.
     version: 1,
-    columns: [
-      ["is_manual_title", "INTEGER DEFAULT 0"],
-      ["font_family", "TEXT DEFAULT 'LineSeed'"],
-      ["font_size", "INTEGER DEFAULT 16"],
-      ["is_pinned", "INTEGER DEFAULT 0"],
-    ],
+    up: (db) =>
+      addMissingColumns(db, [
+        ["is_manual_title", "INTEGER DEFAULT 0"],
+        ["font_family", "TEXT DEFAULT 'LineSeed'"],
+        ["font_size", "INTEGER DEFAULT 16"],
+        ["is_pinned", "INTEGER DEFAULT 0"],
+      ]),
+  },
+  {
+    // Folders: notes may belong to one folder (NULL = Inbox)
+    version: 2,
+    up: async (db) => {
+      await db.execute(`
+        CREATE TABLE IF NOT EXISTS folders (
+          id TEXT PRIMARY KEY,
+          name TEXT NOT NULL,
+          color TEXT NOT NULL,
+          sort_order INTEGER DEFAULT 0,
+          created_at INTEGER
+        )
+      `);
+      await addMissingColumns(db, [["folder_id", "TEXT"]]);
+    },
   },
 ];
 
@@ -30,15 +61,7 @@ const migrateSchema = async (db: Database) => {
   >("PRAGMA user_version");
 
   for (const m of MIGRATIONS.filter((m) => m.version > current)) {
-    const existing = await db.select<{ name: string }[]>(
-      "PRAGMA table_info(notes)"
-    );
-    const have = new Set(existing.map((c) => c.name));
-    for (const [name, def] of m.columns) {
-      if (!have.has(name)) {
-        await db.execute(`ALTER TABLE notes ADD COLUMN ${name} ${def}`);
-      }
-    }
+    await m.up(db);
     await db.execute(`PRAGMA user_version = ${m.version}`);
   }
 };
@@ -46,6 +69,7 @@ const migrateSchema = async (db: Database) => {
 export const initDatabase = async (): Promise<{
   db: Database;
   notes: Note[];
+  folders: Folder[];
   activeNoteId: string | null;
 }> => {
   try {
@@ -108,6 +132,16 @@ export const initDatabase = async (): Promise<{
       updatedAt: row.updated_at,
       isManualTitle: !!row.is_manual_title,
       isPinned: !!row.is_pinned,
+      folderId: row.folder_id ?? null,
+    }));
+
+    const folderRows = await dbInstance.select<any[]>(
+      "SELECT * FROM folders ORDER BY sort_order ASC, created_at ASC"
+    );
+    const loadedFolders: Folder[] = folderRows.map((r) => ({
+      id: r.id,
+      name: r.name,
+      color: r.color,
     }));
 
     let activeId = localStorage.getItem(ACTIVE_NOTE_KEY);
@@ -143,7 +177,12 @@ export const initDatabase = async (): Promise<{
     // Run Garbage Collection in background
     runGarbageCollection(dbInstance);
 
-    return { db: dbInstance, notes: loadedNotes, activeNoteId: activeId };
+    return {
+      db: dbInstance,
+      notes: loadedNotes,
+      folders: loadedFolders,
+      activeNoteId: activeId,
+    };
 
   } catch (error) {
     console.error("Failed to initialize database:", error);
