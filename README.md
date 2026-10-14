@@ -101,6 +101,24 @@ src-tauri/     # Tauri/Rust backend
 
 ---
 
+## Code signing policy
+
+Free code signing for Windows releases is provided by [SignPath.io](https://about.signpath.io/), with a certificate from the [SignPath Foundation](https://signpath.org/).
+
+- **Author, reviewer and approver:** [snui1s](https://github.com/snui1s) (the project owner)
+- Release installers are built from this repository by the public GitHub Actions workflow in `.github/workflows/release.yml` and signed only after the build has run typecheck and tests.
+- Only builds of tagged releases are submitted for signing.
+
+### Privacy policy
+
+Raku does not collect, transmit or sell any personal data. There are no accounts and no telemetry.
+
+- Your notes, folders and images are stored only on your computer (SQLite database and image folder in the app data directory).
+- The app makes these network requests: checking `update.json` on GitHub for new versions (and downloading an update only when you accept it), and loading web fonts from Google Fonts and jsDelivr when you are online and use a font that is not bundled. Those services can see your IP address as for any web request.
+- Backups are files you create and keep yourself.
+
+---
+
 <p align="center">
   <b>Raku</b> — Write with ease.<br>
   Made with 楽 (Raku/รัก) by <a href="https://github.com/snui1s">snui1s</a>
