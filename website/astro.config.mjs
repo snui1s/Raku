@@ -1,10 +1,13 @@
 import { defineConfig } from "astro/config";
 import starlight from "@astrojs/starlight";
 import tailwindcss from "@tailwindcss/vite";
+import sitemap from "@astrojs/sitemap";
 
 export default defineConfig({
   site: "https://raku.snui1s.com",
   integrations: [
+    // the /still page only exists to render the hero images; keep it out of the sitemap
+    sitemap({ filter: (page) => !page.includes("/still") }),
     starlight({
       title: "Raku",
       description: "A fast, distraction-free note-taking app for Windows.",

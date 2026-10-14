@@ -9,6 +9,8 @@ const { release } = Astro.props;
   <!-- Still image first: always visible, and the fallback when the live scene is not used -->
   {(["light", "dark"] as const).map((t) => (
     <picture class={`still still-${t}`} data-hero-still>
+      <source media="(max-width: 960px)" srcset={`/hero/${t}-sm.avif`} type="image/avif" />
+      <source media="(max-width: 960px)" srcset={`/hero/${t}-sm.webp`} type="image/webp" />
       <source srcset={`/hero/${t}.avif`} type="image/avif" />
       <source srcset={`/hero/${t}.webp`} type="image/webp" />
       <img src={`/hero/${t}.webp`} alt="" width="1920" height="1200" fetchpriority="high" decoding="async" />
@@ -37,7 +39,7 @@ const { release } = Astro.props;
 <style>
   .hero { position: relative; min-height: min(100vh, 960px); overflow: hidden; }
   .still, .scene { position: absolute; inset: 0; width: 100%; height: 100%; }
-  .still img { width: 100%; height: 100%; object-fit: cover; object-position: right bottom; display: block; }
+  .still img { width: 100%; height: 100%; object-fit: cover; object-position: 70% bottom; display: block; }
   .still-dark { display: none; }
   :global(html[data-theme="dark"]) .still-light { display: none; }
   :global(html[data-theme="dark"]) .still-dark { display: block; }
