@@ -2,7 +2,7 @@
 export const CAMERA = {
   fov: 38,
   position: [0, 0, 0] as [number, number, number],
-  target: [1.2, 2.2, -14] as [number, number, number],
+  target: [-2.4, 3.2, -17] as [number, number, number],
 };
 
 const MAX_PARALLAX = 0.35;
