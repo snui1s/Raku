@@ -14,8 +14,7 @@
 </p>
 
 <p align="center">
-  <img src="docs/screenshots/light.png" alt="Raku in light mode" width="49%" />
-  <img src="docs/screenshots/dark.png" alt="Raku in dark mode" width="49%" />
+  <img src="docs/screenshots/light.png" alt="Raku in light mode" width="100%" />
 </p>
 
 ## Features
