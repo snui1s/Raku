@@ -1,16 +1,24 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Editor } from "@tiptap/react";
-import { Download, FileText, FileCode, X, Check, Loader2 } from "lucide-react";
+import {
+  Download,
+  FileText,
+  FileCode,
+  Check,
+  Loader2,
+  DatabaseBackup,
+  Upload,
+} from "lucide-react";
 import JSZip from "jszip";
 import { readFile, writeFile, BaseDirectory } from "@tauri-apps/plugin-fs";
 import { Note } from "../hooks/useNotes";
+import { createBackup, restoreBackup } from "../services/backup";
 
-interface ExportModalProps {
-  isOpen: boolean;
-  onClose: () => void;
+interface ExportMenuProps {
+  open: boolean;
+  setOpen: (open: boolean) => void;
   activeNote: Note | null;
   editor: Editor | null;
-  isDark?: boolean;
 }
 
 // Convert TipTap HTML / DOM to clean Markdown string
@@ -88,18 +96,44 @@ function convertHtmlToMarkdown(html: string): string {
   return Array.from(div.childNodes).map(parseNode).join("").trim();
 }
 
-export function ExportModal({
-  isOpen,
-  onClose,
+export function ExportMenu({
+  open,
+  setOpen,
   activeNote,
   editor,
-}: ExportModalProps) {
+}: ExportMenuProps) {
   const [isExporting, setIsExporting] = useState(false);
   const [exportSuccess, setExportSuccess] = useState<string | null>(null);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const rootRef = useRef<HTMLDivElement>(null);
+  const fileRef = useRef<HTMLInputElement>(null);
 
-  if (!isOpen || !activeNote || !editor) return null;
+  useEffect(() => {
+    if (!open) return;
+    const onDown = (e: MouseEvent) => {
+      if (rootRef.current && !rootRef.current.contains(e.target as Node)) {
+        setOpen(false);
+      }
+    };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setOpen(false);
+    };
+    document.addEventListener("mousedown", onDown);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("mousedown", onDown);
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [open, setOpen]);
 
-  const noteTitle = activeNote.title || "Untitled";
+  useEffect(() => {
+    if (open) {
+      setExportSuccess(null);
+      setErrorMsg(null);
+    }
+  }, [open]);
+
+  const noteTitle = activeNote?.title || "Untitled";
   const sanitizeFilename = (name: string) =>
     name.replace(/[/\\?%*:|"<>]/g, "_").trim() || "Untitled";
 
@@ -131,6 +165,7 @@ export function ExportModal({
 
   // 1. EXPORT MARKDOWN (.md / ZIP with images)
   const handleExportMarkdown = async () => {
+    if (!editor || !activeNote) return;
     setIsExporting(true);
     setExportSuccess(null);
 
@@ -224,6 +259,7 @@ export function ExportModal({
 
   // 2. EXPORT PDF (.pdf directly to Downloads & print fallback)
   const handleExportPDF = async () => {
+    if (!editor || !activeNote) return;
     setIsExporting(true);
     setExportSuccess(null);
 
@@ -374,96 +410,137 @@ startxref
     }
   };
 
+  const handleBackup = async () => {
+    setIsExporting(true);
+    setExportSuccess(null);
+    setErrorMsg(null);
+    try {
+      const { blob, filename } = await createBackup();
+      triggerDownload(blob, filename);
+      setExportSuccess(`Backup saved: ${filename}`);
+    } catch (err) {
+      console.error("Backup failed:", err);
+      setErrorMsg("Backup failed. See console for details.");
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
+  const handleRestore = async (file: File) => {
+    if (
+      !window.confirm(
+        "Restore from this backup? Notes in the backup are added to your current notes (same notes are overwritten). Nothing is deleted."
+      )
+    ) {
+      return;
+    }
+    setIsExporting(true);
+    setExportSuccess(null);
+    setErrorMsg(null);
+    try {
+      const count = await restoreBackup(file);
+      setExportSuccess(`Restored ${count} notes`);
+      setTimeout(() => window.location.reload(), 800);
+    } catch (err) {
+      console.error("Restore failed:", err);
+      setErrorMsg(err instanceof Error ? err.message : "Restore failed");
+      setIsExporting(false);
+    }
+  };
+
+  const canExport = !!editor && !!activeNote && !isExporting;
+  const item =
+    "w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left text-sm text-app-text transition-colors hover:bg-app-tertiary disabled:opacity-40 disabled:hover:bg-transparent";
+
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-      <div className="p-6 rounded-2xl shadow-2xl max-w-md w-full bg-app-dropdown border border-app-border text-app-text relative transition-all">
-        {/* Close Button */}
-        <button
-          onClick={onClose}
-          className="absolute top-4 right-4 p-1.5 rounded-full text-app-muted hover:text-app-text hover:bg-app-tertiary transition-colors"
+    <div className="relative" ref={rootRef}>
+      <button
+        onClick={() => setOpen(!open)}
+        className={`w-9 h-9 flex items-center justify-center rounded-xl transition-[background-color,color,transform] duration-150 active:scale-90 hover:bg-app-tertiary ${
+          open ? "bg-app-tertiary text-app-text" : "text-app-muted hover:text-app-text"
+        }`}
+        title="Export & Backup"
+        aria-haspopup="menu"
+        aria-expanded={open}
+      >
+        <Download size={17} />
+      </button>
+
+      {open && (
+        <div
+          role="menu"
+          className="absolute right-0 top-full mt-2 w-64 p-1.5 rounded-2xl border border-app-border bg-app-dropdown backdrop-blur-xl shadow-2xl z-[100] raku-pop"
         >
-          <X size={18} />
-        </button>
-
-        {/* Modal Header */}
-        <div className="flex items-center gap-3 mb-5">
-          <div className="p-2.5 rounded-xl bg-accent-muted text-accent">
-            <Download size={22} />
+          <div className="px-3 pt-2 pb-1 text-[0.625rem] font-bold uppercase tracking-widest text-app-muted">
+            Export note
           </div>
-          <div>
-            <h2 className="text-lg font-bold">Export Note</h2>
-            <p className="text-xs text-app-muted truncate max-w-[260px]">
-              {noteTitle}
-            </p>
-          </div>
-        </div>
-
-        {/* Success Alert */}
-        {exportSuccess && (
-          <div className="mb-4 p-3 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-emerald-500 text-xs flex items-center gap-2">
-            <Check size={14} />
-            <span>{exportSuccess}</span>
-          </div>
-        )}
-
-        {/* Export Format Options */}
-        <div className="space-y-3 mb-6">
-          {/* 1. Markdown Export Option */}
-          <button
-            onClick={handleExportMarkdown}
-            disabled={isExporting}
-            className="w-full p-4 rounded-xl border border-app-border bg-app-tertiary/50 hover:bg-app-tertiary hover:border-accent/50 transition-all text-left flex items-start gap-3.5 group cursor-pointer disabled:opacity-50"
-          >
-            <div className="p-2 rounded-lg bg-blue-500/10 text-blue-500 group-hover:scale-110 transition-transform">
-              <FileCode size={20} />
-            </div>
-            <div className="flex-1">
-              <div className="flex items-center justify-between">
-                <span className="font-semibold text-sm">Markdown (.md / ZIP)</span>
-                <span className="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-500">
-                  .md / .zip
-                </span>
-              </div>
-              <p className="text-xs text-app-muted mt-1 leading-relaxed">
-                Includes all images in a zip package. Perfect for Obsidian, Notion & VS Code.
-              </p>
-            </div>
+          <button role="menuitem" onClick={handleExportMarkdown} disabled={!canExport} className={item}>
+            <FileCode size={16} className="text-app-muted" />
+            <span className="flex-1">Markdown</span>
+            <span className="text-[0.6875rem] font-mono text-app-muted">.md / .zip</span>
+          </button>
+          <button role="menuitem" onClick={handleExportPDF} disabled={!canExport} className={item}>
+            <FileText size={16} className="text-app-muted" />
+            <span className="flex-1">PDF</span>
+            <span className="text-[0.6875rem] font-mono text-app-muted">.pdf</span>
           </button>
 
-          {/* 2. PDF Export Option */}
-          <button
-            onClick={handleExportPDF}
-            disabled={isExporting}
-            className="w-full p-4 rounded-xl border border-app-border bg-app-tertiary/50 hover:bg-app-tertiary hover:border-accent/50 transition-all text-left flex items-start gap-3.5 group cursor-pointer disabled:opacity-50"
-          >
-            <div className="p-2 rounded-lg bg-rose-500/10 text-rose-500 group-hover:scale-110 transition-transform">
-              <FileText size={20} />
-            </div>
-            <div className="flex-1">
-              <div className="flex items-center justify-between">
-                <span className="font-semibold text-sm">PDF Document (.pdf)</span>
-                <span className="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-rose-500/20 text-rose-500">
-                  .pdf
-                </span>
-              </div>
-              <p className="text-xs text-app-muted mt-1 leading-relaxed">
-                Formatted document with images and styles. Ideal for printing & sharing.
-              </p>
-            </div>
-          </button>
-        </div>
+          <div className="my-1.5 h-px bg-app-border" />
 
-        {/* Footer Info */}
-        <div className="flex items-center justify-between text-[11px] text-app-muted pt-3 border-t border-app-border/50">
-          <span>Choose a format to download</span>
-          {isExporting && (
-            <span className="flex items-center gap-1.5 text-accent font-medium">
-              <Loader2 size={12} className="animate-spin" />
-              Exporting...
-            </span>
+          <div className="px-3 pt-1 pb-1 text-[0.625rem] font-bold uppercase tracking-widest text-app-muted">
+            All notes
+          </div>
+          <button role="menuitem" onClick={handleBackup} disabled={isExporting} className={item}>
+            <DatabaseBackup size={16} className="text-app-muted" />
+            <span className="flex-1">Backup</span>
+            <span className="text-[0.6875rem] font-mono text-app-muted">.zip</span>
+          </button>
+          <button
+            role="menuitem"
+            onClick={() => fileRef.current?.click()}
+            disabled={isExporting}
+            className={item}
+          >
+            <Upload size={16} className="text-app-muted" />
+            <span className="flex-1">Restore</span>
+          </button>
+          <input
+            ref={fileRef}
+            type="file"
+            accept=".zip"
+            className="hidden"
+            onChange={(e) => {
+              const f = e.target.files?.[0];
+              e.target.value = "";
+              if (f) handleRestore(f);
+            }}
+          />
+
+          {(isExporting || exportSuccess || errorMsg) && (
+            <div
+              className={`mt-1.5 px-3 py-2 rounded-xl text-xs flex items-center gap-2 ${
+                errorMsg
+                  ? "bg-red-500/10 text-red-500"
+                  : "bg-app-tertiary text-app-muted"
+              }`}
+            >
+              {isExporting ? (
+                <>
+                  <Loader2 size={13} className="animate-spin text-accent" />
+                  Working...
+                </>
+              ) : errorMsg ? (
+                errorMsg
+              ) : (
+                <>
+                  <Check size={13} className="text-accent shrink-0" />
+                  <span className="truncate">{exportSuccess}</span>
+                </>
+              )}
+            </div>
           )}
         </div>
-      </div>
+      )}
     </div>
   );
 }

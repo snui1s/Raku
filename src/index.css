@@ -1,5 +1,42 @@
 @import "tailwindcss";
 
+/* LINE Seed Sans TH ships with the app so it works offline */
+@font-face {
+  font-family: "LINE Seed Sans TH";
+  src: url("./assets/fonts/LINESeedSansTH_Th.ttf") format("truetype");
+  font-weight: 100;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "LINE Seed Sans TH";
+  src: url("./assets/fonts/LINESeedSansTH_Rg.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "LINE Seed Sans TH";
+  src: url("./assets/fonts/LINESeedSansTH_Bd.ttf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "LINE Seed Sans TH";
+  src: url("./assets/fonts/LINESeedSansTH_XBd.ttf") format("truetype");
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "LINE Seed Sans TH";
+  src: url("./assets/fonts/LINESeedSansTH_He.ttf") format("truetype");
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
 @theme {
   --color-accent: var(--raku-accent);
   --color-accent-hover: var(--raku-accent-hover);
@@ -359,4 +396,156 @@ body {
 
 .ProseMirror a:hover {
   color: var(--raku-accent-hover);
+}
+/* ============================================
+   MOTION (transform/opacity only, so it stays smooth)
+   ============================================ */
+@keyframes raku-pop {
+  from { opacity: 0; transform: translateY(-6px) scale(0.96); }
+  to   { opacity: 1; transform: none; }
+}
+@keyframes raku-fade {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes raku-rise {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: none; }
+}
+
+.raku-pop {
+  transform-origin: top;
+  animation: raku-pop 160ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+.raku-fade {
+  animation: raku-fade 200ms ease-out both;
+}
+.raku-rise {
+  animation: raku-rise 260ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+/* Theme / dark-mode switch: fade colours instead of snapping */
+body,
+aside,
+header,
+main {
+  transition: background-color 250ms ease, border-color 250ms ease, color 250ms ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .raku-pop,
+  .raku-fade,
+  .raku-rise {
+    animation: none;
+  }
+  * {
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ============================================
+   EDITOR TYPOGRAPHY
+   (the app has no @tailwindcss/typography plugin, so the editor styles its own
+   headings, lists and task lists; Tailwind's reset would otherwise flatten them)
+   ============================================ */
+.ProseMirror {
+  /* --zoom comes from the paper zoom setting; headings/lists use em so they scale with it */
+  font-size: calc(17px * var(--zoom, 1));
+  line-height: var(--raku-line-height, 1.85);
+}
+.ProseMirror p {
+  margin: 0 0 0.9em;
+}
+.ProseMirror h1,
+.ProseMirror h2,
+.ProseMirror h3,
+.ProseMirror h4 {
+  font-weight: 700;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+  margin: 1.4em 0 0.5em;
+  text-wrap: balance;
+}
+.ProseMirror > :first-child {
+  margin-top: 0;
+}
+.ProseMirror h1 { font-size: 1.88em; letter-spacing: -0.02em; }
+.ProseMirror h2 { font-size: 1.41em; }
+.ProseMirror h3 { font-size: 1.18em; }
+.ProseMirror h4 { font-size: 1.035em; }
+
+.ProseMirror ul,
+.ProseMirror ol {
+  margin: 0 0 0.9em;
+  padding-left: 1.6em;
+}
+.ProseMirror ul { list-style: disc; }
+.ProseMirror ol { list-style: decimal; }
+.ProseMirror li { margin: 0.2em 0; }
+.ProseMirror li > p { margin: 0; }
+.ProseMirror li::marker { color: var(--raku-accent); }
+
+.ProseMirror ul[data-type="taskList"] {
+  list-style: none;
+  padding-left: 0.2em;
+}
+.ProseMirror ul[data-type="taskList"] li {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6em;
+}
+.ProseMirror ul[data-type="taskList"] li > label {
+  /* same height as one text line, so the checkbox centres on the first line */
+  flex: none;
+  display: flex;
+  align-items: center;
+  height: calc(var(--raku-line-height, 1.85) * 1em);
+  margin: 0;
+  user-select: none;
+}
+.ProseMirror ul[data-type="taskList"] li > div {
+  flex: 1;
+  min-width: 0;
+}
+.ProseMirror ul[data-type="taskList"] input[type="checkbox"] {
+  accent-color: var(--raku-accent);
+  display: block;
+  width: 1.05em;
+  height: 1.05em;
+  margin: 0;
+  cursor: pointer;
+}
+.ProseMirror ul[data-type="taskList"] li[data-checked="true"] > div {
+  color: var(--raku-text-muted);
+  text-decoration: line-through;
+}
+.ProseMirror hr {
+  border: 0;
+  border-top: 1px solid var(--raku-border);
+  margin: 1.6em 0;
+}
+.ProseMirror mark {
+  border-radius: 4px;
+  padding: 0 0.15em;
+}
+
+/* While dragging a note in the sidebar */
+body.raku-dragging,
+body.raku-dragging * {
+  cursor: grabbing !important;
+  user-select: none !important;
+}
+
+/* Settings > Reduce animations */
+html.raku-no-motion *,
+html.raku-no-motion *::before,
+html.raku-no-motion *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+}
+
+/* Interface scale: icons are sized in px by lucide, so scale them with the UI */
+svg.lucide {
+  zoom: var(--ui-scale, 1);
 }

@@ -1,0 +1,146 @@
+name: Release
+
+# Two ways to release:
+#   1. Actions -> Release -> "Run workflow" on main, pick patch / minor / major.
+#      The workflow bumps the version, commits, tags, builds, signs and publishes.
+#   2. Push a tag yourself (git tag v1.2.3 && git push --tags). The tag must match
+#      the version in package.json.
+#
+# Required secrets, stored in the GitHub environment named "release"
+# (Settings -> Environments -> release -> Environment secrets):
+#   TAURI_SIGNING_PRIVATE_KEY            the updater signing key (contents of the .key file)
+#   TAURI_SIGNING_PRIVATE_KEY_PASSWORD   its password (leave empty if it has none)
+
+on:
+  workflow_dispatch:
+    inputs:
+      bump:
+        description: "Version bump"
+        type: choice
+        options: [patch, minor, major]
+        default: patch
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  prepare:
+    # Only for manual runs: bump versions, commit to main and create the tag
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.bump.outputs.version }}
+      tag: ${{ steps.bump.outputs.tag }}
+    steps:
+      - name: Only release from main
+        if: github.ref != 'refs/heads/main'
+        run: |
+          echo "::error::Run this workflow from the main branch."
+          exit 1
+
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Bump version
+        id: bump
+        run: node .github/scripts/bump-version.mjs "${{ inputs.bump }}"
+
+      - name: Commit and tag
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add package.json src-tauri/tauri.conf.json src-tauri/Cargo.toml src-tauri/Cargo.lock
+          git commit -m "chore(release): bump version to ${{ steps.bump.outputs.tag }}"
+          git tag "${{ steps.bump.outputs.tag }}"
+          git push origin main
+          git push origin "${{ steps.bump.outputs.tag }}"
+
+  build:
+    needs: [prepare]
+    # Run after a successful prepare (manual) or directly for a pushed tag
+    if: ${{ !cancelled() && (needs.prepare.result == 'success' || needs.prepare.result == 'skipped') }}
+    runs-on: windows-latest
+    # Secrets live in the "release" environment (Settings -> Environments -> release)
+    environment: release
+    defaults:
+      run:
+        shell: bash
+    env:
+      TAG: ${{ needs.prepare.outputs.tag || github.ref_name }}
+      TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+      TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.prepare.outputs.tag || github.ref }}
+
+      - name: Check signing key is configured
+        run: |
+          if [ -z "$TAURI_SIGNING_PRIVATE_KEY" ]; then
+            echo "::error::Secret TAURI_SIGNING_PRIVATE_KEY is not set (Settings -> Secrets and variables -> Actions)."
+            exit 1
+          fi
+
+      - name: Check tag matches package.json
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          if [ "v$VERSION" != "$TAG" ]; then
+            echo "::error::Tag $TAG does not match package.json version $VERSION"
+            exit 1
+          fi
+          echo "VERSION=$VERSION" >> "$GITHUB_ENV"
+
+      - uses: oven-sh/setup-bun@v2
+      - run: bun install --frozen-lockfile
+
+      # Never ship something CI would reject
+      - run: bun run typecheck
+      - run: bun run test
+
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: swatinem/rust-cache@v2
+        with:
+          workspaces: src-tauri
+
+      - name: Build installer
+        run: bun run tauri build
+
+      - name: Sign installer
+        run: |
+          EXE="src-tauri/target/release/bundle/nsis/Raku_${VERSION}_x64-setup.exe"
+          test -f "$EXE" || { echo "::error::Installer not found: $EXE"; exit 1; }
+          bunx tauri signer sign "$EXE"
+          test -f "$EXE.sig" || { echo "::error::Signature was not created"; exit 1; }
+          echo "EXE=$EXE" >> "$GITHUB_ENV"
+
+      - name: Create GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$TAG" "$EXE" "$EXE.sig" \
+            --title "Raku $TAG" \
+            --generate-notes
+
+      - name: Publish update.json for the in-app updater
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          # Move to the latest main first so the commit lands on top of it
+          git fetch origin main
+          git checkout -f -B main origin/main
+          node .github/scripts/gen-update-json.mjs "$VERSION" "$EXE" "${{ github.repository }}" "Release $TAG"
+          git add update.json
+          git commit -m "chore(release): update update.json for $TAG" || echo "update.json unchanged"
+          git push origin main
