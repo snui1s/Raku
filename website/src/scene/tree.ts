@@ -5,6 +5,7 @@ import {
 } from "three";
 import { hillHeight } from "./hill";
 import { mulberry32 } from "./rng";
+import { windGust } from "./wind";
 import type { Palette } from "./palette";
 import type { ScenePart } from "./index";
 
@@ -170,7 +171,7 @@ export function buildTree(palette: Palette, toon?: Texture, seed = 7): ScenePart
     object: o,
     stats: { blossoms, leaves, branches: BRANCHES.length },
     update: (t) => {
-      canopy.rotation.z = Math.sin(t * 0.7) * 0.006; // gentle sway around the fork
+      canopy.rotation.z = Math.sin(t * 0.7) * 0.006 + windGust(t + 1) * 0.02; // sways around the fork, leaning left in gusts
     },
   };
 }

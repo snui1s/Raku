@@ -20,7 +20,9 @@ const { release } = Astro.props;
 
   <div class="copy">
     <p class="eyebrow">Notes for Windows</p>
-    <h1>Raku<span>楽</span></h1>
+    <h1 class="flex items-baseline gap-2 text-4xl">
+      Raku <span class="text-9xl!">楽</span>
+    </h1> 
     <p class="tag">A fast, distraction-free note-taking app. No accounts. No cloud. Just write.</p>
     <div class="cta">
       <Download release={release} />

@@ -4,6 +4,7 @@ import {
 } from "three";
 import { hillHeight } from "./hill";
 import { mulberry32 } from "./rng";
+import { windGust } from "./wind";
 import type { Palette } from "./palette";
 import type { ScenePart } from "./index";
 
@@ -44,13 +45,13 @@ export function createPetals(count: number, seed = 3): PetalState {
   return s;
 }
 
-export function stepPetals(s: PetalState, dt: number): void {
+export function stepPetals(s: PetalState, dt: number, gust = 0): void {
   const d = Math.min(Math.max(dt, 0), MAX_DT);
   for (let i = 0; i < s.count; i++) {
     s.phase[i] += d * (1.4 + (i % 5) * 0.25);
     const sway = Math.sin(s.phase[i]) * 0.5;
-    s.pos[i * 3] += (s.vel[i * 3] + sway * 0.4) * d;
-    s.pos[i * 3 + 1] += (s.vel[i * 3 + 1] + Math.cos(s.phase[i] * 0.8) * 0.15) * d;
+    s.pos[i * 3] += (s.vel[i * 3] * (1 + gust * 1.6) + sway * 0.4) * d; // gusts blow petals faster to the left
+    s.pos[i * 3 + 1] += (s.vel[i * 3 + 1] * (1 - gust * 0.6) + Math.cos(s.phase[i] * 0.8) * 0.15 + gust * 0.5) * d;
     s.pos[i * 3 + 2] += s.vel[i * 3 + 2] * d;
     const x = s.pos[i * 3], y = s.pos[i * 3 + 1], z = s.pos[i * 3 + 2];
     if (x < PETAL_BOUNDS.xMin || y < Math.max(PETAL_BOUNDS.yMin, hillHeight(x, z) + 0.05)) respawn(s, i, false);
@@ -84,8 +85,8 @@ export function buildPetals(palette: Palette, toon?: Texture, count = 90, seed =
   write();
   return {
     object: mesh,
-    update: (_t, dt) => {
-      stepPetals(state, dt);
+    update: (t, dt) => {
+      stepPetals(state, dt, windGust(t));
       write();
     },
   };

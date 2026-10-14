@@ -10,6 +10,8 @@ import { buildTorii } from "./torii";
 import { buildTree } from "./tree";
 import { buildGrass } from "./grass";
 import { buildPetals } from "./petals";
+import { buildStars } from "./stars";
+import { buildMoon } from "./moon";
 
 export interface SceneOptions {
   getTheme: () => Theme;
@@ -26,7 +28,7 @@ export interface ScenePart {
 
 /** Builders for each piece of the world; later tasks add torii, tree, grass and petals here. */
 type Builder = (palette: Palette, toon: Texture) => ScenePart | Object3D;
-const BUILDERS: Builder[] = [(p, toon) => buildHill(p, toon), (p, toon) => buildTorii(p, toon), (p, toon) => buildTree(p, toon),
+const BUILDERS: Builder[] = [(p) => buildStars(p), (p) => buildMoon(p), (p, toon) => buildHill(p, toon), (p, toon) => buildTorii(p, toon), (p, toon) => buildTree(p, toon),
   (p, toon) => buildGrass(p, toon), (p, toon) => buildPetals(p, toon)];
 
 function toonGradient(): Texture {

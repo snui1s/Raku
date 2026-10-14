@@ -4,6 +4,7 @@ import {
 } from "three";
 import { hillHeight } from "./hill";
 import { mulberry32 } from "./rng";
+import { windGust } from "./wind";
 import type { Palette } from "./palette";
 import type { ScenePart } from "./index";
 
@@ -72,7 +73,7 @@ export function buildGrass(palette: Palette, toon?: Texture, seed = 11): ScenePa
     count: layers.reduce((n, l) => n + l.count, 0),
     update: (t) => {
       for (const { mesh, blades } of all) {
-        blades.forEach((b, i) => compose(mesh, i, b, Math.sin(t * 1.3 + b.phase) * 0.07));
+        blades.forEach((b, i) => compose(mesh, i, b, Math.sin(t * 1.3 + b.phase) * 0.05 + windGust(t + b.x * 0.08) * 0.32));
         mesh.instanceMatrix.needsUpdate = true;
       }
     },
