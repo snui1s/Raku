@@ -1,0 +1,420 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Raku — landing hero mockup</title>
+<style>
+  :root {
+    --bg: #faf9f7;
+    --text: #171717;
+    --muted: #6b6b6b;
+    --accent: #f25c54;
+    --accent-hover: #e04d45;
+    --hill-far: #ece8e1;
+    --hill: #e3ddd2;
+    --grass: #7fae7a;
+    --grass-dark: #5f9a5d;
+    --grass-lite: #98c98e;
+    --b1: #e98fab; --b2: #f2aac0; --b3: #f8c9d8; --b4: #fde6ed;
+    --leaf: #9fbf8a;
+    --bark: #6b4636; --bark-hi: #8a604a; --bark-lo: #4a2f25;
+    --shadow: rgba(60, 40, 30, .14);
+    --petal: #f4b6c6;
+    --nav-bg: rgba(250, 249, 247, 0.8);
+    --border: rgba(0, 0, 0, 0.08);
+  }
+  :root[data-theme="dark"] {
+    --bg: #171717;
+    --text: #f2f2f2;
+    --muted: #9a9a9a;
+    --hill-far: #1f1f1f;
+    --hill: #262626;
+    --grass: #4d7a4b;
+    --grass-dark: #3d6340;
+    --grass-lite: #5f9a5d;
+    --b1: #a85f79; --b2: #bd7b92; --b3: #d09aac; --b4: #e2b8c5;
+    --leaf: #5f7d57;
+    --bark: #4a3228; --bark-hi: #624336; --bark-lo: #32211b;
+    --shadow: rgba(0, 0, 0, .35);
+    --petal: #d99bb0;
+    --nav-bg: rgba(23, 23, 23, 0.8);
+    --border: rgba(255, 255, 255, 0.1);
+  }
+  * { box-sizing: border-box; margin: 0; }
+  html, body { height: 100%; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: "LINE Seed Sans", "LINE Seed JP", "Segoe UI", system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+
+  nav {
+    position: fixed; inset: 0 0 auto 0; z-index: 20;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 32px;
+    background: var(--nav-bg);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border);
+  }
+  .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 17px; }
+  .brand svg { width: 28px; height: 28px; }
+  .links { display: flex; align-items: center; gap: 26px; font-size: 14px; color: var(--muted); }
+  .links a { color: inherit; text-decoration: none; transition: color .15s; }
+  .links a:hover { color: var(--text); }
+  .theme {
+    width: 34px; height: 34px; border-radius: 10px; border: 1px solid var(--border);
+    background: transparent; color: var(--text); cursor: pointer; font-size: 15px;
+  }
+
+  .hero { position: relative; min-height: 100vh; overflow: hidden; }
+  .scene { position: absolute; inset: 0; width: 100%; height: 100%; }
+
+  .copy {
+    position: relative; z-index: 10;
+    max-width: 520px;
+    padding: 0 32px;
+    margin-left: max(32px, 7vw);
+    height: 100vh; min-height: 640px;
+    display: flex; flex-direction: column; justify-content: center;
+    transform: translateY(-4vh);
+  }
+  .eyebrow { font-size: 13px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin-bottom: 18px; }
+  h1 {
+    font-size: clamp(72px, 11vw, 132px);
+    line-height: .95; letter-spacing: -0.03em; font-weight: 800;
+  }
+  h1 .kanji { color: var(--accent); font-weight: 500; margin-left: .12em; font-size: .62em; }
+  .tag { margin-top: 22px; font-size: 19px; line-height: 1.55; color: var(--muted); max-width: 420px; }
+  .cta { margin-top: 34px; display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 9px;
+    padding: 13px 22px; border-radius: 12px; font-size: 15px; font-weight: 600;
+    text-decoration: none; transition: transform .15s, background .15s;
+  }
+  .btn.primary { background: var(--accent); color: #fff; }
+  .btn.primary:hover { background: var(--accent-hover); transform: translateY(-1px); }
+  .btn.ghost { color: var(--text); border: 1px solid var(--border); }
+  .btn.ghost:hover { background: var(--border); }
+  .meta { margin-top: 14px; font-size: 13px; color: var(--muted); }
+
+  /* falling petals: right -> left */
+  .petals { position: absolute; inset: 0; z-index: 5; pointer-events: none; overflow: hidden; }
+  .petal {
+    position: absolute; top: var(--y); right: -40px;
+    width: var(--s); height: calc(var(--s) * .72);
+    background: var(--petal);
+    border-radius: 80% 0 80% 0;
+    opacity: 0;
+    animation: drift var(--d) linear var(--delay) infinite;
+    will-change: transform, opacity;
+  }
+  @keyframes drift {
+    0%   { transform: translate3d(0, 0, 0) rotate(0deg); opacity: 0; }
+    8%   { opacity: .9; }
+    50%  { transform: translate3d(calc(var(--dx) * -.5), calc(var(--dy) * .45 + 30px), 0) rotate(200deg); }
+    92%  { opacity: .9; }
+    100% { transform: translate3d(calc(var(--dx) * -1), var(--dy), 0) rotate(420deg); opacity: 0; }
+  }
+
+  .canopy { transform-origin: 1290px 400px; animation: sway 8s ease-in-out infinite; }
+  @keyframes sway { 0%,100% { transform: rotate(-.5deg); } 50% { transform: rotate(.6deg); } }
+  .blade { transform-box: fill-box; transform-origin: 50% 100%; animation: blade var(--bd) ease-in-out var(--bdelay) infinite; }
+  @keyframes blade { 0%,100% { transform: skewX(-3deg); } 50% { transform: skewX(4deg); } }
+
+  @media (max-width: 800px) {
+    .links a { display: none; }
+    .copy { margin-left: 0; justify-content: flex-start; padding-top: 22vh; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .petal, .canopy, .blade { animation: none; }
+  }
+</style>
+</head>
+<body>
+<nav>
+  <div class="brand">
+    <svg viewBox="0 0 512 512"><circle cx="256" cy="256" r="256" fill="#262626"/><g transform="translate(106,106) scale(4.68)"><path d="M4 12 C4 8, 32 4, 60 12" stroke="#F25C54" stroke-width="4" stroke-linecap="round" fill="none"/><rect x="8" y="16" width="48" height="4" rx="1" fill="#F25C54"/><rect x="12" y="20" width="6" height="40" rx="1" fill="#F25C54"/><rect x="46" y="20" width="6" height="40" rx="1" fill="#F25C54"/></g></svg>
+    Raku
+  </div>
+  <div class="links">
+    <a href="#">Features</a><a href="#">Docs</a><a href="#">Changelog</a><a href="#">GitHub</a>
+    <button class="theme" id="theme" aria-label="Toggle theme">☾</button>
+  </div>
+</nav>
+
+<section class="hero">
+  <svg class="scene" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
+    <defs>
+      <!-- five-petal blossom -->
+      <symbol id="bl" viewBox="-10 -10 20 20" overflow="visible">
+        <g>
+          <ellipse cx="0" cy="-5" rx="3.7" ry="5.4"/>
+          <ellipse cx="0" cy="-5" rx="3.7" ry="5.4" transform="rotate(72)"/>
+          <ellipse cx="0" cy="-5" rx="3.7" ry="5.4" transform="rotate(144)"/>
+          <ellipse cx="0" cy="-5" rx="3.7" ry="5.4" transform="rotate(216)"/>
+          <ellipse cx="0" cy="-5" rx="3.7" ry="5.4" transform="rotate(288)"/>
+        </g>
+      </symbol>
+    </defs>
+
+    <!-- far hill + main hill (low on the left, rising to the right) -->
+    <path d="M0 700 C 240 650, 420 690, 640 650 S 1000 560, 1440 600 L1440 900 L0 900Z" fill="var(--hill-far)"/>
+    <path d="M0 790 C 200 770, 360 790, 520 770 C 640 752, 700 690, 860 662 C 1040 632, 1260 640, 1440 628 L1440 900 L0 900Z" fill="var(--hill)"/>
+
+    <!-- soft ground shadows -->
+    <ellipse cx="940" cy="668" rx="190" ry="12" fill="var(--shadow)"/>
+    <ellipse cx="1300" cy="734" rx="150" ry="14" fill="var(--shadow)"/>
+
+    <!-- torii: built in 3D and projected with a real perspective camera (see script) -->
+    <g id="torii" transform="translate(770 330)"></g>
+
+    <g id="tree"></g>
+    <g id="grass"></g>
+  </svg>
+
+  <div class="petals" id="petals"></div>
+
+  <div class="copy">
+    <div class="eyebrow">Notes for Windows</div>
+    <h1>Raku<span class="kanji">楽</span></h1>
+    <p class="tag">A fast, distraction-free note-taking app. No accounts. No cloud. Just write.</p>
+    <div class="cta">
+      <a class="btn primary" href="#">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg>
+        Download for Windows
+      </a>
+      <a class="btn ghost" href="#">Read the docs</a>
+    </div>
+    <p class="meta">v1.1.1 · 4.6 MB · Free and open source</p>
+  </div>
+</section>
+
+<script>
+  // ---- falling petals: spawn at the right edge, drift left ----
+  const host = document.getElementById("petals");
+  for (let i = 0; i < 38; i++) {
+    const p = document.createElement("span");
+    p.className = "petal";
+    const r = (a, b) => a + Math.random() * (b - a);
+    p.style.setProperty("--y", r(-5, 60) + "%");
+    p.style.setProperty("--s", r(8, 16) + "px");
+    p.style.setProperty("--dx", r(70, 120) + "vw");
+    p.style.setProperty("--dy", r(200, 420) + "px");
+    p.style.setProperty("--d", r(11, 20) + "s");
+    p.style.setProperty("--delay", -r(0, 20) + "s");
+    host.appendChild(p);
+  }
+
+
+  // ---- procedural tree + grass (seeded, so it always looks the same) ----
+  const NS = "http://www.w3.org/2000/svg";
+  let seed = 7;
+  const rnd = () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
+  const rr = (a, b) => a + rnd() * (b - a);
+  const el = (n, attrs, parent) => {
+    const e = document.createElementNS(NS, n);
+    for (const k in attrs) e.setAttribute(k, attrs[k]);
+    if (parent) parent.appendChild(e);
+    return e;
+  };
+
+  // tapered shape along a cubic bezier; `off` shifts it sideways (bark light / shade)
+  function taper(P, w0, w1, off = 0, n = 28) {
+    const pt = (t) => {
+      const u = 1 - t;
+      return [0, 1].map((i) => u*u*u*P[0][i] + 3*u*u*t*P[1][i] + 3*u*t*t*P[2][i] + t*t*t*P[3][i]);
+    };
+    const L = [], R = [];
+    for (let i = 0; i <= n; i++) {
+      const t = i / n, a = pt(t), b = pt(Math.min(1, t + .01)), c = pt(Math.max(0, t - .01));
+      let dx = b[0] - c[0], dy = b[1] - c[1];
+      const m = Math.hypot(dx, dy) || 1; dx /= m; dy /= m;
+      const w = (w0 + (w1 - w0) * t) / 2, nx = -dy, ny = dx, o = off * w;
+      L.push([a[0] + nx * (w + o), a[1] + ny * (w + o)]);
+      R.push([a[0] - nx * (w - o), a[1] - ny * (w - o)]);
+    }
+    return "M" + L.map((p) => p.join(",")).join("L") + "L" + R.reverse().map((p) => p.join(",")).join("L") + "Z";
+  }
+
+  const tree = document.getElementById("tree");
+  const plant = el("g", { transform: "translate(0 44)" }, tree);
+  const wood = el("g", {}, plant);
+  const canopy = el("g", { class: "canopy" }, plant);
+
+  const trunk = [[1292, 700], [1282, 570], [1270, 470], [1262, 392]];
+  const branches = [
+    [[[1268, 440], [1210, 410], [1130, 380], [1050, 330]], 36, 7],
+    [[[1264, 410], [1236, 330], [1190, 260], [1120, 205]], 32, 6],
+    [[[1262, 430], [1320, 380], [1380, 320], [1436, 262]], 32, 6],
+    [[[1262, 400], [1280, 320], [1292, 230], [1302, 150]], 28, 5],
+    [[[1150, 385], [1120, 410], [1080, 424], [1046, 420]], 12, 3],
+    [[[1210, 275], [1230, 230], [1250, 205], [1262, 170]], 14, 3],
+  ];
+  // flared roots
+  el("path", { d: "M1218 706 C1250 696 1262 676 1258 640 L1330 640 C1322 676 1340 696 1372 706Z", fill: "var(--bark)" }, wood);
+  [[trunk, 104, 50]].concat(branches).forEach(([p, a, b]) => {
+    el("path", { d: taper(p, a, b), fill: "var(--bark)" }, wood);
+    el("path", { d: taper(p, a * .5, b * .5, .5), fill: "var(--bark-lo)", opacity: ".5" }, wood);          // shaded side
+    el("path", { d: taper(p, a * .3, b * .3, -.45), fill: "var(--bark-hi)", opacity: ".8" }, wood); // lit side
+  });
+  // bark lines on the trunk
+  for (let i = 0; i < 16; i++) {
+    const x = rr(1250, 1318), y = rr(480, 690), h = rr(22, 54);
+    el("path", {
+      d: `M${x},${y} q${rr(-5, 5)},${h / 2} ${rr(-4, 4)},${h}`,
+      stroke: "var(--bark-lo)", "stroke-width": rr(1.4, 2.6), fill: "none", "stroke-linecap": "round", opacity: ".45",
+    }, wood);
+  }
+
+  // blossoms are sampled inside overlapping clouds and drawn back -> front
+  const clouds = [
+    [1120, 262, 140, 74], [1250, 182, 180, 96], [1385, 238, 112, 112],
+    [1215, 318, 150, 52], [1060, 330, 70, 40], [1318, 120, 90, 60],
+  ];
+  const inside = (x, y, k) => clouds.some(([cx, cy, rx, ry]) => ((x - cx) / (rx * k)) ** 2 + ((y - cy) / (ry * k)) ** 2 <= 1);
+  function scatter(parent, count, colors, size, k) {
+    const g = el("g", {}, parent);
+    let n = 0, tries = 0;
+    while (n < count && tries++ < count * 40) {
+      const x = rr(960, 1440), y = rr(60, 400);
+      if (!inside(x, y, k)) continue;
+      const s = size * rr(.8, 1.35);
+      el("use", {
+        href: "#bl", x: -10, y: -10, width: 20, height: 20,
+        fill: colors[Math.floor(rnd() * colors.length)],
+        transform: `translate(${x} ${y}) rotate(${rr(0, 72)}) scale(${s / 20})`,
+      }, g);
+      n++;
+    }
+  }
+  scatter(canopy, 230, ["var(--b1)", "var(--b2)"], 30, 1.02);     // deep back layer
+  const mid = el("g", {}, canopy);                                // branches show through the middle
+  branches.slice(0, 4).forEach(([p, a, b]) => el("path", { d: taper(p, a * .9, b), fill: "var(--bark)" }, mid));
+  scatter(canopy, 320, ["var(--b2)", "var(--b3)"], 26, .98);      // middle layer
+  (() => {                                                        // a few young leaves
+    const g = el("g", {}, canopy);
+    let n = 0;
+    while (n < 40) {
+      const x = rr(980, 1440), y = rr(70, 400);
+      if (!inside(x, y, .98)) continue;
+      el("path", {
+        d: "M0 0 C 5 -4 10 -4 16 0 C 10 4 5 4 0 0Z", fill: "var(--leaf)", opacity: ".85",
+        transform: `translate(${x} ${y}) rotate(${rr(0, 360)})`,
+      }, g);
+      n++;
+    }
+  })();
+  scatter(canopy, 240, ["var(--b3)", "var(--b4)"], 22, .94);      // light front layer
+  scatter(canopy, 60, ["var(--b4)"], 16, 1.08);                   // sparkles at the edge
+
+  // grass: three layers, taller and lighter toward the front
+  const grass = document.getElementById("grass");
+  [
+    ["var(--grass-dark)", 90, 42, 120, .8],
+    ["var(--grass)", 80, 60, 150, 1],
+    ["var(--grass-lite)", 60, 70, 190, 1.1],
+  ].forEach(([fill, count, hmin, hmax, ws]) => {
+    const g = el("g", {}, grass);
+    for (let i = 0; i < count; i++) {
+      const x = rr(-20, 1460), h = rr(hmin, hmax), w = rr(5, 10) * ws, lean = rr(-26, 26), b = 905;
+      el("path", {
+        d: `M${x - w},${b} C${x - w * .4},${b - h * .5} ${x + lean * .5},${b - h * .85} ${x + lean},${b - h} C${x + lean * .6},${b - h * .6} ${x + w * .6},${b - h * .3} ${x + w},${b}Z`,
+        fill, class: "blade",
+        style: `--bd:${rr(3.5, 6.5).toFixed(2)}s;--bdelay:-${rr(0, 6).toFixed(2)}s`,
+      }, g);
+    }
+  });
+  const fallen = el("g", { fill: "var(--petal)", opacity: ".85" }, grass);
+  for (let i = 0; i < 40; i++) {
+    el("ellipse", { cx: rr(0, 1440), cy: rr(800, 890), rx: rr(3, 5), ry: rr(1.8, 3) }, fallen);
+  }
+
+  // ---- torii: a small 3D model projected through a pinhole camera ----
+  // The camera sits at the foot of the hill looking up at the gate, so every horizontal
+  // beam rises toward the near (right) side and converges to one vanishing point.
+  (function buildTorii() {
+    const YAW = 24 * Math.PI / 180, DIST = 13, LIFT = 3.4;           // gate rotation, camera distance, hill height
+    const A = 2.15, H = 4.5;                                          // half spacing between pillars, pillar height
+    const cs = Math.cos(YAW), sn = Math.sin(YAW);
+    const world = (x, y, z) => [x * cs + z * sn, y + LIFT, DIST - x * sn + z * cs];
+    const project = (p) => [p[0] / p[2], p[1] / p[2]];
+    const g = document.getElementById("torii");
+
+    // fit: right pillar is ~285px tall, left pillar base lands at (52, 335)
+    const lb = project(world(-A, 0, 0)), rb = project(world(A, 0, 0)), rt = project(world(A - .1, H, 0));
+    const S = 285 / (rt[1] - rb[1]);
+    const scr = (x, y, z) => { const q = project(world(x, y, z)); return [52 + (q[0] - lb[0]) * S, 335 - (q[1] - lb[1]) * S]; };
+    const depth = (x, y, z) => world(x, y, z)[2];
+    const dot = (u, v) => u[0]*v[0] + u[1]*v[1] + u[2]*v[2];
+    const sub = (u, v) => [u[0]-v[0], u[1]-v[1], u[2]-v[2]];
+    const cross = (u, v) => [u[1]*v[2]-u[2]*v[1], u[2]*v[0]-u[0]*v[2], u[0]*v[1]-u[1]*v[0]];
+    const poly = (pts, fill, op) => el("path", { d: "M" + pts.map((p) => p[0].toFixed(1) + "," + p[1].toFixed(1)).join("L") + "Z", fill, opacity: op ?? 1 }, g);
+
+    // draw one face if it faces the camera; centre = interior point used to orient the normal.
+    // tri = indices of three corners that span the face (needed for long strips)
+    function face(P, centre, fill, tri = [0, 1, 2]) {
+      const W = P.map((p) => world(...p)), C = world(...centre);
+      const wc = [0, 1, 2].map((i) => W.reduce((s, p) => s + p[i], 0) / W.length);
+      let n = cross(sub(W[tri[1]], W[tri[0]]), sub(W[tri[2]], W[tri[0]]));
+      if (dot(n, sub(wc, C)) < 0) n = n.map((v) => -v);
+      if (dot(n, sub([0, 0, 0], wc)) <= 0) return null;               // facing away
+      const len = Math.hypot(...n); n = n.map((v) => v / len);
+      const lit = Math.max(0, dot(n, [-.35, .55, -.75]));            // light from upper-left, near the camera
+      return { P: P.map((p) => scr(...p)), z: wc[2], fill, shade: (1 - Math.min(1, .35 + lit)) * .55 };
+    }
+
+    // a beam swept along x; each side is ONE polygon so there are no seams. curve() lifts the ends
+    function beam(x0, x1, yb, yt, z0, z1, curve, N, split) {
+      const xs = Array.from({ length: N + 1 }, (_, i) => x0 + (x1 - x0) * i / N);
+      const lift = (x) => (curve ? curve(x) : 0);
+      const ce = [(x0 + x1) / 2, (yb + yt) / 2, (z0 + z1) / 2];
+      const at = (x, k, z) => [x, yb + (yt - yb) * k + lift(x), z];
+      const side = (k0, k1, z, fill) => face(xs.map((x) => at(x, k1, z)).concat(xs.slice().reverse().map((x) => at(x, k0, z))), ce, fill, [0, N, N + 1]);
+      const out = [];
+      out.push(split ? side(0, 1 - split, z0, "var(--accent)") : side(0, 1, z0, "var(--accent)"));
+      if (split) out.push(side(1 - split, 1, z0, "#262626"));
+      // underside and top: strips between the front and back edges
+      const strip = (k, fill) => face(xs.map((x) => at(x, k, z0)).concat(xs.slice().reverse().map((x) => at(x, k, z1))), ce, fill, [0, N, N + 1]);
+      out.push(strip(0, "var(--accent)"), strip(1, split ? "#262626" : "var(--accent)"));
+      [x0, x1].forEach((x) => out.push(face([at(x, 0, z0), at(x, 1, z0), at(x, 1, z1), at(x, 0, z1)], ce, "var(--accent)")));
+      return out.filter(Boolean);
+    }
+    const paint = (faces) => faces.sort((p, q) => q.z - p.z).forEach((f) => {
+      poly(f.P, f.fill);
+      if (f.shade > .01) poly(f.P, "#000", f.shade);
+    });
+
+    // cylinder pillar: silhouette between two circles, right half in shade
+    function pillar(sx) {
+      const lean = sx > 0 ? -.12 : .12;
+      const pb = world(sx, 0, 0), pt = world(sx + lean, H, 0);
+      const b = scr(sx, 0, 0), t = scr(sx + lean, H, 0);
+      const rb0 = .3 * S / pb[2], rt0 = .22 * S / pt[2];
+      poly([[b[0] - rb0, b[1]], [t[0] - rt0, t[1]], [t[0] + rt0, t[1]], [b[0] + rb0, b[1]]], "var(--accent)");
+      poly([[b[0] + rb0 * .05, b[1]], [t[0] + rt0 * .05, t[1]], [t[0] + rt0, t[1]], [b[0] + rb0, b[1]]], "#000", .16);
+      poly([[b[0] - rb0, b[1]], [t[0] - rt0, t[1]], [t[0] - rt0 * .55, t[1]], [b[0] - rb0 * .55, b[1]]], "#fff", .1);
+      // black base block
+      const bt = scr(sx, .32, 0), bw = .33 * S / pb[2];
+      poly([[b[0] - bw, b[1] + 3], [bt[0] - bw * .92, bt[1]], [bt[0] + bw * .92, bt[1]], [b[0] + bw, b[1] + 3]], "#262626");
+    }
+
+    const KW = A + 1.1;
+    paint(beam(-(A + .4), A + .4, 3.15, 3.42, -.12, .12, null, 1));                    // nuki (lower tie beam)
+    pillar(-A); pillar(A);
+    paint(beam(-.17, .17, 3.42, 4.1, -.09, .09, null, 1));                             // gakuzuka (strut)
+    paint(beam(-(A + .55), A + .55, 4.1, 4.36, -.2, .2, null, 1));                     // shimaki
+    paint(beam(-KW, KW, 4.36, 4.82, -.5, .5, (x) => .5 * Math.pow(Math.abs(x) / KW, 2.4), 18, .3)); // kasagi (curved top beam)
+  })();
+
+
+  const root = document.documentElement, btn = document.getElementById("theme");
+  const dark = matchMedia("(prefers-color-scheme: dark)").matches;
+  const set = (t) => { root.dataset.theme = t; btn.textContent = t === "dark" ? "☀" : "☾"; };
+  set(dark ? "dark" : "light");
+  btn.onclick = () => set(root.dataset.theme === "dark" ? "light" : "dark");
+</script>
+</body>
+</html>
