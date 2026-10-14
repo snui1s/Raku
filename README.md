@@ -21,7 +21,7 @@
 ## Features
 
 - **Local first:** notes, folders and images stay on your computer
-- **Small:** the installer is about 4.6 MB
+- **Small:** the installer is about 4.6 MB, and the app uses about 170 MB of memory when idle (WebView2 included)
 - **Rich text:** headings, lists, checklists, quotes, highlights, fonts and colors
 - **Folders:** organize notes and move them with drag and drop
 - **Quick search:** `Ctrl K` jumps to any note
@@ -30,6 +30,8 @@
 - **Export and backup:** Markdown, PDF, and full backup and restore
 - **Focus tools:** zen mode and a Pomodoro timer
 - **Auto-update:** new versions install from within the app
+
+Measured on a Core Ultra 7 laptop with 32 GB RAM: the window appears in under 0.1 s and the app finishes starting in about 2 s. See [bench/](bench/README.md) to measure your own machine.
 
 ## Development
 
