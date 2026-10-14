@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { Box3, Object3D } from "three";
+import { Box3, Object3D, Vector3 } from "three";
 import { PALETTE } from "./palette";
 import { hillHeight } from "./hill";
 import { FOX, buildFox } from "./fox";
@@ -38,6 +38,18 @@ describe("buildFox", () => {
     const a = tail.rotation.y;
     update!(12.5, 1 / 60);
     expect(tail.rotation.y).toBe(a);
+  });
+
+  it("sits at the chosen spot, facing left and a little toward the camera, with the tail on the camera side", () => {
+    const { object } = fox();
+    const world = (n: string) => object.getObjectByName(n)!.getWorldPosition(new Vector3());
+    const head = world("fox-head"), tail = world("fox-tail"), root = object.getWorldPosition(new Vector3());
+    expect(root.x).toBeCloseTo(FOX.position[0], 5);
+    expect(root.z).toBeCloseTo(FOX.position[2], 5);
+    expect(head.x).toBeLessThan(tail.x - 0.3); // the head is left of the tail
+    expect(head.z).toBeGreaterThan(tail.z); // and nearer to the camera
+    const tailTip = new Box3().setFromObject(object.getObjectByName("fox-tail")!).getCenter(new Vector3());
+    expect(tailTip.z).toBeGreaterThan(root.z); // the curled tail is on the camera side, not hidden behind the body
   });
 
   it("works in both themes", () => {

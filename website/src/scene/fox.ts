@@ -8,8 +8,8 @@ import { taperedTube } from "./tree";
 import type { Palette } from "./palette";
 import type { ScenePart } from "./index";
 
-/** A fox sitting on the hill to the left of the gate, facing it (+x) and turned a little toward the camera. */
-export const FOX = { position: [-1.3, 0, -12.6] as [number, number, number], yaw: -0.45 };
+/** A fox sitting on the hill between the gate and the tree, facing left and a little toward the camera. */
+export const FOX = { position: [4.45, 0, -14.2] as [number, number, number], yaw: -2.6 };
 
 export function buildFox(palette: Palette, toon?: Texture): ScenePart {
   const mat = (c: number) => new MeshToonMaterial({ color: c, gradientMap: toon ?? null });
@@ -84,7 +84,9 @@ export function buildFox(palette: Palette, toon?: Texture): ScenePart {
   const [fx, , fz] = FOX.position;
   root.position.set(fx, hillHeight(fx, fz) - 0.02, fz);
   root.rotation.y = FOX.yaw;
-  root.scale.setScalar(1.25); // stylized: bigger than life so it reads from across the hill
+  // stylized: bigger than life so it reads from across the hill. z is mirrored so that, turned to face left,
+  // the curled tail stays on the camera side (three.js flips the face winding for mirrored objects)
+  root.scale.set(1.25, 1.25, -1.25);
 
   const earBase = ears[1].rotation.z;
   return {
