@@ -6,7 +6,8 @@ name: Release
 #   2. Push a tag yourself (git tag v1.2.3 && git push --tags). The tag must match
 #      the version in package.json.
 #
-# Required repository secrets (Settings -> Secrets and variables -> Actions):
+# Required secrets, stored in the GitHub environment named "release"
+# (Settings -> Environments -> release -> Environment secrets):
 #   TAURI_SIGNING_PRIVATE_KEY            the updater signing key (contents of the .key file)
 #   TAURI_SIGNING_PRIVATE_KEY_PASSWORD   its password (leave empty if it has none)
 
@@ -71,6 +72,8 @@ jobs:
     # Run after a successful prepare (manual) or directly for a pushed tag
     if: ${{ !cancelled() && (needs.prepare.result == 'success' || needs.prepare.result == 'skipped') }}
     runs-on: windows-latest
+    # Secrets live in the "release" environment (Settings -> Environments -> release)
+    environment: release
     defaults:
       run:
         shell: bash
