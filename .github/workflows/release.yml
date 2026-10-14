@@ -121,7 +121,8 @@ jobs:
         run: |
           EXE="src-tauri/target/release/bundle/nsis/Raku_${VERSION}_x64-setup.exe"
           test -f "$EXE" || { echo "::error::Installer not found: $EXE"; exit 1; }
-          bunx tauri signer sign "$EXE"
+          # `signer sign` does not read TAURI_SIGNING_* itself, so pass them explicitly
+          bunx tauri signer sign --private-key "$TAURI_SIGNING_PRIVATE_KEY" --password "$TAURI_SIGNING_PRIVATE_KEY_PASSWORD" "$EXE"
           test -f "$EXE.sig" || { echo "::error::Signature was not created"; exit 1; }
           echo "EXE=$EXE" >> "$GITHUB_ENV"
 
