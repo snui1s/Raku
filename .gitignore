@@ -40,4 +40,4 @@ src-tauri/gen
 # Cargo.lock - already handled by src-tauri/.gitignore
 
 # OS files
-Thumbs.db
+Thumbs.db.astro

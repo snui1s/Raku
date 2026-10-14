@@ -1,0 +1,26 @@
+{
+  "name": "raku-website",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "check": "astro check",
+    "test": "vitest run",
+    "stills": "bun scripts/render-stills.ts"
+  },
+  "dependencies": {
+    "@astrojs/starlight": "0.42.6",
+    "@tailwindcss/vite": "4.3.3",
+    "astro": "7.3.8",
+    "tailwindcss": "4.3.3",
+    "three": "0.186.1"
+  },
+  "devDependencies": {
+    "@astrojs/check": "0.9.10",
+    "@types/three": "0.186.0",
+    "typescript": "7.0.2",
+    "vitest": "5.0.4"
+  }
+}
