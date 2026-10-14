@@ -63,3 +63,22 @@ const { release } = Astro.props;
     .copy { justify-content: flex-start; padding-top: 22vh; margin-left: 0; }
   }
 </style>
+
+<script>
+  import { detectEnv, shouldRunScene } from "../scene/capabilities";
+
+  const host = document.getElementById("hero-scene");
+  if (host && shouldRunScene(detectEnv(window))) {
+    const getTheme = () => (document.documentElement.dataset.theme === "dark" ? "dark" : "light") as "light" | "dark";
+    // Three.js is a separate chunk, loaded only here, after the still has painted
+    import("../scene/index")
+      .then(({ mountScene }) => mountScene(host, { getTheme }))
+      .then((handle) => {
+        // Reduced motion switched on while the page is open: drop the live scene, the still stays
+        window.matchMedia("(prefers-reduced-motion: reduce)").addEventListener("change", (e) => {
+          if (e.matches) handle.dispose();
+        });
+      })
+      .catch(() => {});
+  }
+</script>
