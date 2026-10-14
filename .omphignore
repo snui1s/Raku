@@ -1,0 +1,33 @@
+# .omphignore
+
+# Files and directories to ignore when scanning codebase symbols.
+
+# Uses gitignore pattern syntax.
+
+# Version control & environments
+
+.git/
+.venv/
+venv/
+node_modules/
+.preview-tmp/
+
+# Cache & build outputs
+
+**pycache**/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+dist/
+build/
+\*.egg-info/
+
+# Omphalos cache & output
+
+.omphcache
+INDEX.md
+
+# Locks & minified files
+
+_.lock
+_.min.js

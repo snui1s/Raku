@@ -1,0 +1,2163 @@
+{
+  "version": 5,
+  "files": {
+    ".github/scripts/bump-version.mjs": {
+      "hash": "ad73306da7a25a66bf8fa33ebf391180feacd33e51ae9745d35175a9525ecc67",
+      "data": {
+        "symbols": [
+          {
+            "kind": "constant",
+            "name": "[arg, flag]",
+            "label": "const `[arg, flag]`",
+            "line": 6,
+            "doc": "",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "constant",
+            "name": "dry",
+            "label": "const `dry`",
+            "line": 7,
+            "doc": "",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "constant",
+            "name": "read",
+            "label": "const `read()`",
+            "line": 8,
+            "doc": "",
+            "exported": false,
+            "children": [],
+            "calls": [
+              "fs.readFileSync"
+            ]
+          },
+          {
+            "kind": "constant",
+            "name": "write",
+            "label": "const `write()`",
+            "line": 9,
+            "doc": "",
+            "exported": false,
+            "children": [],
+            "calls": [
+              "fs.writeFileSync"
+            ]
+          },
+          {
+            "kind": "constant",
+            "name": "pkgPath",
+            "label": "const `pkgPath`",
+            "line": 11,
+            "doc": "",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "constant",
+            "name": "pkg",
+            "label": "const `pkg`",
+            "line": 12,
+            "doc": "",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "function",
+            "name": "nextVersion",
+            "label": "export function `nextVersion()`",
+            "line": 14,
+            "doc": "",
+            "exported": true,
+            "children": [],
+            "calls": [
+              "test",
+              "current.match",
+              "map",
+              "m.slice"
+            ],
+            "raises": [
+              "Error"
+            ]
+          },
+          {
+            "kind": "constant",
+            "name": "version",
+            "label": "const `version`",
+            "line": 26,
+            "doc": "",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "constant",
+            "name": "pkgRaw",
+            "label": "const `pkgRaw`",
+            "line": 29,
+            "doc": "",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "constant",
+            "name": "confPath",
+            "label": "const `confPath`",
+            "line": 33,
+            "doc": "",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "constant",
+            "name": "confRaw",
+            "label": "const `confRaw`",
+            "line": 34,
+            "doc": "",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "constant",
+            "name": "tomlPath",
+            "label": "const `tomlPath`",
+            "line": 38,
+            "doc": "",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "constant",
+            "name": "tomlRaw",
+            "label": "const `tomlRaw`",
+            "line": 39,
+            "doc": "",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "constant",
+            "name": "lockPath",
+            "label": "const `lockPath`",
+            "line": 43,
+            "doc": "",
+            "exported": false,
+            "children": []
+          }
+        ]
+      }
+    },
+    ".github/scripts/gen-update-json.mjs": {
+      "hash": "428ae3d2be9cf976c7145e4b98bb2da640a2bed392145c5d9f2080e3e04631ca",
+      "data": {
+        "symbols": [
+          {
+            "kind": "constant",
+            "name": "[version, exePath, repo, notes]",
+            "label": "const `[version, exePath, repo, notes]`",
+            "line": 6,
+            "doc": "",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "constant",
+            "name": "sigPath",
+            "label": "const `sigPath`",
+            "line": 12,
+            "doc": "",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "constant",
+            "name": "update",
+            "label": "const `update`",
+            "line": 18,
+            "doc": "",
+            "exported": false,
+            "children": []
+          }
+        ]
+      }
+    },
+    "release.js": {
+      "hash": "26084d2dbae3c3ecb89c8cdce0a649c43a18cc288df33ef4274bc31b59dc32c0",
+      "data": {
+        "symbols": [
+          {
+            "kind": "variable",
+            "name": "privateKey",
+            "label": "let `privateKey`",
+            "line": 7,
+            "doc": "",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "variable",
+            "name": "privateKeyPassword",
+            "label": "let `privateKeyPassword`",
+            "line": 8,
+            "doc": "",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "constant",
+            "name": "packageJson",
+            "label": "const `packageJson`",
+            "line": 31,
+            "doc": "",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "constant",
+            "name": "version",
+            "label": "const `version`",
+            "line": 32,
+            "doc": "",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "constant",
+            "name": "tauriConfPath",
+            "label": "const `tauriConfPath`",
+            "line": 36,
+            "doc": "",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "constant",
+            "name": "tauriConf",
+            "label": "const `tauriConf`",
+            "line": 37,
+            "doc": "",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "constant",
+            "name": "sigPath",
+            "label": "const `sigPath`",
+            "line": 72,
+            "doc": "",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "constant",
+            "name": "signature",
+            "label": "const `signature`",
+            "line": 86,
+            "doc": "",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "constant",
+            "name": "updateData",
+            "label": "const `updateData`",
+            "line": 90,
+            "doc": "",
+            "exported": false,
+            "children": []
+          }
+        ]
+      }
+    },
+    "src/App.tsx": {
+      "hash": "3e8254a535cf27352914addfe83d5dbd37e87cd4ac3b8e49d036df1c01f4afc2",
+      "data": {
+        "symbols": [
+          {
+            "kind": "function",
+            "name": "App",
+            "label": "function `App()`",
+            "line": 22,
+            "doc": "",
+            "exported": false,
+            "children": [],
+            "calls": [
+              "useState",
+              "localStorage.getItem",
+              "useEffect",
+              "e.key.toLowerCase",
+              "e.preventDefault",
+              "setZenMode",
+              "window.addEventListener",
+              "window.removeEventListener",
+              "document.documentElement.classList.add",
+              "document.documentElement.classList.remove",
+              "document.documentElement.setAttribute",
+              "localStorage.setItem",
+              "useAppUpdate",
+              "useEditorConfig",
+              "useNotes",
+              "useSettings",
+              "useRef",
+              "useCallback",
+              "setZoomHint",
+              "window.clearTimeout",
+              "window.setTimeout",
+              "showZoomHint",
+              "Math.trunc",
+              "zoomBy",
+              "el.addEventListener",
+              "el.removeEventListener",
+              "editor?.view.dom.setAttribute",
+              "String",
+              "resetZoom",
+              "setPaletteOpen",
+              "folders.find",
+              "clearTimeout",
+              "JSON.stringify",
+              "editor.getJSON",
+              "updateNote",
+              "editor.on",
+              "editor.off",
+              "selectNote",
+              "JSON.parse",
+              "editor.commands.setContent",
+              "createNote",
+              "folderNameOf",
+              "run",
+              "focus",
+              "editor?.chain",
+              "toLocaleString",
+              "Date",
+              "createFolder",
+              "setIsDark",
+              "setIsExportOpen"
+            ]
+          }
+        ]
+      }
+    },
+    "src/components/CommandPalette.tsx": {
+      "hash": "e9cdc5fc79e0cb5bef5e97b81f27429dc5c009ff04e8404440bbea9028b982c2",
+      "data": {
+        "symbols": [
+          {
+            "kind": "interface",
+            "name": "CommandPaletteProps",
+            "label": "interface `CommandPaletteProps`",
+            "line": 13,
+            "doc": "",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "interface",
+            "name": "Item",
+            "label": "interface `Item`",
+            "line": 26,
+            "doc": "",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "function",
+            "name": "CommandPalette",
+            "label": "export function `CommandPalette()`",
+            "line": 34,
+            "doc": "",
+            "exported": true,
+            "children": [],
+            "calls": [
+              "useState",
+              "useRef",
+              "useEffect",
+              "setQuery",
+              "setIndex",
+              "setTimeout",
+              "inputRef.current?.focus",
+              "useMemo",
+              "toLowerCase",
+              "query.trim",
+              "folders.find",
+              "map",
+              "slice",
+              "sort",
+              "notes\n      .filter",
+              "includes",
+              "folderName",
+              "onSelectNote",
+              "filter",
+              "a.label.toLowerCase",
+              "Math.min",
+              "Math.max",
+              "onClose",
+              "item.run",
+              "e.preventDefault",
+              "runItem",
+              "items.map"
+            ]
+          }
+        ]
+      }
+    },
+    "src/components/Editor/EditorToolbar.test.tsx": {
+      "hash": "9c984522dbc618c74b9c61237899cefab37951c5310e2f20f1693b665f346b48",
+      "data": {
+        "symbols": [
+          {
+            "kind": "variable",
+            "name": "editor",
+            "label": "let `editor`",
+            "line": 8,
+            "doc": "",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "constant",
+            "name": "click",
+            "label": "const `click()`",
+            "line": 24,
+            "doc": "",
+            "exported": false,
+            "children": [],
+            "calls": [
+              "fireEvent.click",
+              "screen.getByTitle"
+            ]
+          }
+        ]
+      }
+    },
+    "src/components/Editor/EditorToolbar.tsx": {
+      "hash": "e44f3c6295e263837d5607379df7c5b7030abe6bfffab75d22a08e3d067267f5",
+      "data": {
+        "symbols": [
+          {
+            "kind": "interface",
+            "name": "EditorToolbarProps",
+            "label": "interface `EditorToolbarProps`",
+            "line": 29,
+            "doc": "",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "function",
+            "name": "EditorToolbar",
+            "label": "export function `EditorToolbar()`",
+            "line": 34,
+            "doc": "",
+            "exported": true,
+            "children": [],
+            "calls": [
+              "useState",
+              "localStorage.getItem",
+              "useRef",
+              "useReducer",
+              "useEffect",
+              "editor.on",
+              "editor.off",
+              "setHeadingOpen",
+              "setListOpen",
+              "setHighlightOpen",
+              "setTextColorOpen",
+              "setFontFamilyOpen",
+              "setFontSizeOpen",
+              "localStorage.setItem",
+              "String",
+              "e.key.toLowerCase",
+              "e.preventDefault",
+              "setIsVisible",
+              "window.addEventListener",
+              "window.removeEventListener",
+              "toolbarRef.current.contains",
+              "closeAllDropdowns",
+              "document.addEventListener",
+              "document.removeEventListener",
+              "closest",
+              "run",
+              "undo",
+              "focus",
+              "editor?.chain",
+              "editor?.can",
+              "redo",
+              "AVAILABLE_FONTS.map",
+              "editor?.getAttributes",
+              "setFontFamily",
+              "AVAILABLE_FONT_SIZES.map",
+              "parseInt",
+              "setMark",
+              "editor\n                        ?.chain",
+              "editor?.isActive",
+              "toggleHeading",
+              "toggleBulletList",
+              "toggleOrderedList",
+              "toggleTaskList",
+              "toggleBlockquote",
+              "toggleCodeBlock",
+              "editor.isActive",
+              "unsetHighlight",
+              "editor.chain",
+              "PASTEL_COLORS.map",
+              "setColor",
+              "setHighlight",
+              "editor\n                      .chain",
+              "editor.getAttributes",
+              "unsetColor",
+              "toggleBold",
+              "toggleItalic",
+              "toggleStrike",
+              "toggleUnderline"
+            ]
+          }
+        ]
+      }
+    },
+    "src/components/ErrorBoundary.tsx": {
+      "hash": "0b7a20a273941cd8f17a81bd0e87de417ee7c3e25b47f660acf563b55e8094ff",
+      "data": {
+        "symbols": [
+          {
+            "kind": "interface",
+            "name": "State",
+            "label": "interface `State`",
+            "line": 3,
+            "doc": "",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "class",
+            "name": "ErrorBoundary",
+            "label": "export class `ErrorBoundary`",
+            "line": 7,
+            "doc": "",
+            "exported": true,
+            "children": [
+              {
+                "kind": "method",
+                "name": "getDerivedStateFromError",
+                "label": "`getDerivedStateFromError()`",
+                "line": 10,
+                "doc": "",
+                "exported": false,
+                "children": []
+              },
+              {
+                "kind": "method",
+                "name": "componentDidCatch",
+                "label": "`componentDidCatch()`",
+                "line": 14,
+                "doc": "",
+                "exported": false,
+                "children": [],
+                "calls": [
+                  "console.error"
+                ]
+              },
+              {
+                "kind": "method",
+                "name": "render",
+                "label": "`render()`",
+                "line": 18,
+                "doc": "",
+                "exported": false,
+                "children": [],
+                "calls": [
+                  "window.location.reload"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "src/components/ExportMenu.test.tsx": {
+      "hash": "6cd02d651a581c465d982d25d8a5d95b38cc82604625d22a15b74d9c92273e58",
+      "data": {
+        "symbols": []
+      }
+    },
+    "src/components/ExportMenu.tsx": {
+      "hash": "6e169abc6d0b2b576953f93f5bcf39ff4817d24d00b1a451c173087c14417c67",
+      "data": {
+        "symbols": [
+          {
+            "kind": "interface",
+            "name": "ExportMenuProps",
+            "label": "interface `ExportMenuProps`",
+            "line": 17,
+            "doc": "",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "function",
+            "name": "convertHtmlToMarkdown",
+            "label": "function `convertHtmlToMarkdown()`",
+            "line": 25,
+            "doc": "",
+            "exported": false,
+            "children": [],
+            "calls": [
+              "document.createElement",
+              "el.tagName.toLowerCase",
+              "join",
+              "map",
+              "Array.from",
+              "children.trim",
+              "el.parentElement?.tagName.toLowerCase",
+              "el.getAttribute",
+              "trim"
+            ]
+          },
+          {
+            "kind": "function",
+            "name": "ExportMenu",
+            "label": "export function `ExportMenu()`",
+            "line": 99,
+            "doc": "",
+            "exported": true,
+            "children": [],
+            "calls": [
+              "useState",
+              "useRef",
+              "useEffect",
+              "rootRef.current.contains",
+              "setOpen",
+              "document.addEventListener",
+              "document.removeEventListener",
+              "setExportSuccess",
+              "setErrorMsg",
+              "trim",
+              "name.replace",
+              "URL.createObjectURL",
+              "document.createElement",
+              "document.body.appendChild",
+              "a.click",
+              "document.body.removeChild",
+              "URL.revokeObjectURL",
+              "blob.arrayBuffer",
+              "Uint8Array",
+              "writeFile",
+              "console.warn",
+              "triggerDownload",
+              "setIsExporting",
+              "editor.getHTML",
+              "convertHtmlToMarkdown",
+              "imgRegex.exec",
+              "images.push",
+              "Blob",
+              "sanitizeFilename",
+              "saveToDownloads",
+              "JSZip",
+              "zip.folder",
+              "src.startsWith",
+              "src.replace",
+              "pop",
+              "relativePath.split",
+              "readFile",
+              "console.error",
+              "src.match",
+              "atob",
+              "binaryStr.charCodeAt",
+              "imgFolder.file",
+              "updatedMarkdown.replace",
+              "zip.file",
+              "zip.generateAsync",
+              "alert",
+              "editor.getText",
+              "div.querySelectorAll",
+              "Array.from",
+              "img.getAttribute",
+              "btoa",
+              "join",
+              "map",
+              "String.fromCharCode",
+              "img.setAttribute",
+              "TextEncoder",
+              "str.replace",
+              "filter",
+              "textContent.split",
+              "l.trim",
+              "sanitize",
+              "line.match",
+              "encoder.encode",
+              "document.getElementById",
+              "iframe.remove",
+              "doc.open",
+              "doc.write",
+              "doc.close",
+              "createBackup",
+              "window.confirm",
+              "restoreBackup",
+              "setTimeout",
+              "window.location.reload",
+              "fileRef.current?.click",
+              "handleRestore"
+            ]
+          }
+        ]
+      }
+    },
+    "src/components/Header.tsx": {
+      "hash": "f967d25cf2cc9d89101798bcfb34ed161c952e3f8e2b74b7f2874d2cf89c2c6c",
+      "data": {
+        "symbols": [
+          {
+            "kind": "interface",
+            "name": "HeaderProps",
+            "label": "interface `HeaderProps`",
+            "line": 17,
+            "doc": "",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "constant",
+            "name": "iconBtn",
+            "label": "const `iconBtn`",
+            "line": 31,
+            "doc": "",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "function",
+            "name": "Header",
+            "label": "export function `Header()`",
+            "line": 34,
+            "doc": "",
+            "exported": true,
+            "children": [],
+            "calls": [
+              "usePomodoro",
+              "useState",
+              "useRef",
+              "useEffect",
+              "themeMenuRef.current.contains",
+              "setThemeOpen",
+              "document.addEventListener",
+              "document.removeEventListener",
+              "THEMES.find",
+              "setSidebarOpen",
+              "crumbs.map",
+              "adjustMinutes",
+              "formatPomodoro",
+              "THEMES.map",
+              "setCurrentTheme",
+              "setIsDark",
+              "setZenMode"
+            ]
+          }
+        ]
+      }
+    },
+    "src/components/ResizableImage.tsx": {
+      "hash": "c683eda44b17518c04102edc6d2b8d328bf8e3cfe758256f5ae2454fe3dd89a2",
+      "data": {
+        "symbols": [
+          {
+            "kind": "constant",
+            "name": "ResizableImage",
+            "label": "export const `ResizableImage()`",
+            "line": 5,
+            "doc": "",
+            "exported": true,
+            "children": [],
+            "calls": [
+              "useState",
+              "useRef",
+              "useEffect",
+              "setWidth",
+              "src.startsWith",
+              "src.replace",
+              "catch",
+              "then",
+              "readFile",
+              "Blob",
+              "URL.createObjectURL",
+              "setImgSrc",
+              "console.error",
+              "useCallback",
+              "e.preventDefault",
+              "e.stopPropagation",
+              "setIsResizing",
+              "Math.max",
+              "document.removeEventListener",
+              "props.updateAttributes",
+              "document.addEventListener"
+            ]
+          }
+        ]
+      }
+    },
+    "src/components/SettingsMenu.test.tsx": {
+      "hash": "a94c3bf317e66844eb649e7d94af50a56109349d6240c0df3a151a7e74da862c",
+      "data": {
+        "symbols": [
+          {
+            "kind": "constant",
+            "name": "setup",
+            "label": "const `setup()`",
+            "line": 9,
+            "doc": "",
+            "exported": false,
+            "children": [],
+            "calls": [
+              "vi.fn",
+              "render"
+            ]
+          }
+        ]
+      }
+    },
+    "src/components/SettingsMenu.tsx": {
+      "hash": "acf1d9de0c5d3bd6a18b93d845d0dd3e04a0ecb6f1e012192104fefac38c4535",
+      "data": {
+        "symbols": [
+          {
+            "kind": "interface",
+            "name": "SettingsMenuProps",
+            "label": "interface `SettingsMenuProps`",
+            "line": 15,
+            "doc": "",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "constant",
+            "name": "WIDTHS",
+            "label": "const `WIDTHS`",
+            "line": 29,
+            "doc": "",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "constant",
+            "name": "SHORTCUTS",
+            "label": "const `SHORTCUTS`",
+            "line": 36,
+            "doc": "",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "function",
+            "name": "Section",
+            "label": "function `Section()`",
+            "line": 45,
+            "doc": "",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "function",
+            "name": "Row",
+            "label": "function `Row()`",
+            "line": 62,
+            "doc": "",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "function",
+            "name": "Segmented",
+            "label": "function `Segmented()`",
+            "line": 77,
+            "doc": "",
+            "exported": false,
+            "children": [],
+            "calls": [
+              "options.map",
+              "String",
+              "onChange"
+            ]
+          },
+          {
+            "kind": "function",
+            "name": "Toggle",
+            "label": "function `Toggle()`",
+            "line": 113,
+            "doc": "",
+            "exported": false,
+            "children": [],
+            "calls": [
+              "onChange"
+            ]
+          },
+          {
+            "kind": "function",
+            "name": "SettingsMenu",
+            "label": "export function `SettingsMenu()`",
+            "line": 141,
+            "doc": "",
+            "exported": true,
+            "children": [],
+            "calls": [
+              "useRef",
+              "useEffect",
+              "rootRef.current.contains",
+              "setOpen",
+              "document.addEventListener",
+              "document.removeEventListener",
+              "update",
+              "Number",
+              "LINE_HEIGHTS.map",
+              "AUTOSAVE_DELAYS.map",
+              "UI_SCALES.map",
+              "THEMES.map",
+              "setCurrentTheme",
+              "SHORTCUTS.map"
+            ]
+          }
+        ]
+      }
+    },
+    "src/components/Sidebar.test.tsx": {
+      "hash": "9f8e29718aeb49d7c0e3ea8166009c9d093c788d28ec8865c1e00443c829308f",
+      "data": {
+        "symbols": [
+          {
+            "kind": "constant",
+            "name": "folders",
+            "label": "const `folders`",
+            "line": 9,
+            "doc": "",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "constant",
+            "name": "notes",
+            "label": "const `notes`",
+            "line": 10,
+            "doc": "",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "constant",
+            "name": "setup",
+            "label": "const `setup()`",
+            "line": 15,
+            "doc": "",
+            "exported": false,
+            "children": [],
+            "calls": [
+              "vi.fn",
+              "render"
+            ]
+          },
+          {
+            "kind": "constant",
+            "name": "dropOn",
+            "label": "const `dropOn()`",
+            "line": 44,
+            "doc": "",
+            "exported": false,
+            "children": []
+          }
+        ]
+      }
+    },
+    "src/components/Sidebar.tsx": {
+      "hash": "3a36346c7e0e0b267b168be2132fdd802d4046f0c7b37ae5f5602c2aa23c789a",
+      "data": {
+        "symbols": [
+          {
+            "kind": "interface",
+            "name": "SidebarProps",
+            "label": "interface `SidebarProps`",
+            "line": 18,
+            "doc": "",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "constant",
+            "name": "formatNoteDate",
+            "label": "const `formatNoteDate()`",
+            "line": 39,
+            "doc": "",
+            "exported": false,
+            "children": [],
+            "calls": [
+              "Date",
+              "Math.floor",
+              "Date.now",
+              "getDate",
+              "d.getDate",
+              "d.toLocaleTimeString",
+              "d.toLocaleDateString"
+            ]
+          },
+          {
+            "kind": "constant",
+            "name": "smallBtn",
+            "label": "const `smallBtn`",
+            "line": 49,
+            "doc": "",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "constant",
+            "name": "sectionLabel",
+            "label": "const `sectionLabel`",
+            "line": 52,
+            "doc": "",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "function",
+            "name": "Sidebar",
+            "label": "export function `Sidebar()`",
+            "line": 55,
+            "doc": "",
+            "exported": true,
+            "children": [],
+            "calls": [
+              "useState",
+              "JSON.parse",
+              "localStorage.getItem",
+              "useRef",
+              "document.elementFromPoint",
+              "el?.closest",
+              "window.removeEventListener",
+              "document.body.classList.remove",
+              "window.clearTimeout",
+              "setDrag",
+              "setOverTarget",
+              "Math.hypot",
+              "document.body.classList.add",
+              "findTarget",
+              "window.setTimeout",
+              "setOpenFolders",
+              "notes.find",
+              "moveNote",
+              "cleanup",
+              "window.addEventListener",
+              "useEffect",
+              "localStorage.setItem",
+              "JSON.stringify",
+              "menuRef.current.contains",
+              "setMoveMenuFor",
+              "document.addEventListener",
+              "document.removeEventListener",
+              "sort",
+              "notes.filter",
+              "newFolderName.trim",
+              "createFolder",
+              "setNewFolderName",
+              "setAddingFolder",
+              "folders.map",
+              "startPointerDrag",
+              "handleSelectNote",
+              "setRenameValue",
+              "renameValue.trim",
+              "renameNote",
+              "setRenamingNoteId",
+              "e.stopPropagation",
+              "formatNoteDate",
+              "togglePinNote",
+              "deleteNote",
+              "moveTargets.map",
+              "setSidebarOpen",
+              "createNote",
+              "pinnedNotes.map",
+              "submitFolder",
+              "notes\n              .filter",
+              "isOpen",
+              "zoneClass",
+              "setFolderRename",
+              "renameFolder",
+              "setRenamingFolderId",
+              "deleteFolder",
+              "setPendingDeleteFolder",
+              "setTimeout",
+              "items.map",
+              "inboxNotes.map"
+            ]
+          }
+        ]
+      }
+    },
+    "src/components/UpdateModal.tsx": {
+      "hash": "451744ef0748652a47b6438994c3ee17cf63fae5e16db467ee709dcb47222082",
+      "data": {
+        "symbols": [
+          {
+            "kind": "interface",
+            "name": "UpdateModalProps",
+            "label": "interface `UpdateModalProps`",
+            "line": 1,
+            "doc": "",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "function",
+            "name": "UpdateModal",
+            "label": "export function `UpdateModal()`",
+            "line": 12,
+            "doc": "",
+            "exported": true,
+            "children": [],
+            "calls": [
+              "setUpdateAvailable"
+            ]
+          }
+        ]
+      }
+    },
+    "src/constants/app.ts": {
+      "hash": "7097f40b63d11b2e7da227e96a4349ed16063f05a5189e4f2ffb6071907eb9ad",
+      "data": {
+        "symbols": [
+          {
+            "kind": "constant",
+            "name": "AVAILABLE_FONTS",
+            "label": "export const `AVAILABLE_FONTS`",
+            "line": 2,
+            "doc": "",
+            "exported": true,
+            "children": []
+          },
+          {
+            "kind": "constant",
+            "name": "AVAILABLE_FONT_SIZES",
+            "label": "export const `AVAILABLE_FONT_SIZES`",
+            "line": 17,
+            "doc": "",
+            "exported": true,
+            "children": []
+          },
+          {
+            "kind": "constant",
+            "name": "PASTEL_COLORS",
+            "label": "export const `PASTEL_COLORS`",
+            "line": 20,
+            "doc": "",
+            "exported": true,
+            "children": []
+          }
+        ]
+      }
+    },
+    "src/constants/themes.ts": {
+      "hash": "3797f88d23b9a62e65e4dbe771819b5db09199715bfb0063f9d8958455df5d6c",
+      "data": {
+        "symbols": [
+          {
+            "kind": "interface",
+            "name": "ThemeOption",
+            "label": "export interface `ThemeOption`",
+            "line": 1,
+            "doc": "",
+            "exported": true,
+            "children": []
+          },
+          {
+            "kind": "constant",
+            "name": "THEMES",
+            "label": "export const `THEMES`",
+            "line": 8,
+            "doc": "",
+            "exported": true,
+            "children": []
+          }
+        ]
+      }
+    },
+    "src/hooks/useAppUpdate.ts": {
+      "hash": "31bf13ebb3ff112e619b2645666c0785b5898e725ff5a82b25d714983553ed58",
+      "data": {
+        "symbols": [
+          {
+            "kind": "function",
+            "name": "useAppUpdate",
+            "label": "export function `useAppUpdate()`",
+            "line": 4,
+            "doc": "",
+            "exported": true,
+            "children": [],
+            "calls": [
+              "useState",
+              "useEffect",
+              "check",
+              "setUpdateAvailable",
+              "setIsUpdating",
+              "update.downloadAndInstall",
+              "console.error",
+              "checkForUpdates"
+            ]
+          }
+        ]
+      }
+    },
+    "src/hooks/useEditorConfig.ts": {
+      "hash": "c497f8bacafd5a758071b50579e4de6830b4856093bb4449b33ce976ec84f005",
+      "data": {
+        "symbols": [
+          {
+            "kind": "function",
+            "name": "useEditorConfig",
+            "label": "export function `useEditorConfig()`",
+            "line": 7,
+            "doc": "",
+            "exported": true,
+            "children": [],
+            "calls": [
+              "useEditor",
+              "createEditorExtensions",
+              "ReactNodeViewRenderer",
+              "Array.from",
+              "items.find",
+              "item.type.startsWith",
+              "event.preventDefault",
+              "item.getAsFile",
+              "catch",
+              "then",
+              "saveImage",
+              "view.state.schema.nodes.image.create",
+              "view.state.tr.replaceSelectionWith",
+              "view.dispatch",
+              "console.error",
+              "alert",
+              "files.find",
+              "file.type.startsWith",
+              "view.posAtCoords",
+              "view.state.tr.insert"
+            ]
+          }
+        ]
+      }
+    },
+    "src/hooks/useNotes.ts": {
+      "hash": "e9e75ba1cd6361c1f129a1701d2def6f8f4e40ec6964bf8c6e60bbc778fc6988",
+      "data": {
+        "symbols": [
+          {
+            "kind": "interface",
+            "name": "Note",
+            "label": "export interface `Note`",
+            "line": 6,
+            "doc": "",
+            "exported": true,
+            "children": []
+          },
+          {
+            "kind": "interface",
+            "name": "Folder",
+            "label": "export interface `Folder`",
+            "line": 17,
+            "doc": "",
+            "exported": true,
+            "children": []
+          },
+          {
+            "kind": "constant",
+            "name": "FOLDER_COLORS",
+            "label": "export const `FOLDER_COLORS`",
+            "line": 23,
+            "doc": "",
+            "exported": true,
+            "children": []
+          },
+          {
+            "kind": "constant",
+            "name": "ACTIVE_NOTE_KEY",
+            "label": "const `ACTIVE_NOTE_KEY`",
+            "line": 32,
+            "doc": "",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "constant",
+            "name": "generateId",
+            "label": "const `generateId()`",
+            "line": 35,
+            "doc": "",
+            "exported": false,
+            "children": [],
+            "calls": [
+              "Date.now",
+              "slice",
+              "toString",
+              "Math.random"
+            ]
+          },
+          {
+            "kind": "function",
+            "name": "useNotes",
+            "label": "export function `useNotes()`",
+            "line": 38,
+            "doc": "",
+            "exported": true,
+            "children": [],
+            "calls": [
+              "useState",
+              "useRef",
+              "useEffect",
+              "initDatabase",
+              "setDb",
+              "setNotes",
+              "setFolders",
+              "setActiveNoteId",
+              "setIsLoaded",
+              "console.error",
+              "setLoadError",
+              "String",
+              "init",
+              "localStorage.setItem",
+              "useCallback",
+              "generateId",
+              "Date.now",
+              "db.execute",
+              "setSaveError",
+              "notesRef.current.find",
+              "hasTextContent",
+              "extractTitle",
+              "prev.map",
+              "prev.filter",
+              "slice",
+              "toString",
+              "Math.random",
+              "name.trim",
+              "notes.find"
+            ]
+          }
+        ]
+      }
+    },
+    "src/hooks/usePomodoro.ts": {
+      "hash": "a4c2913c845dd0ada54a3c50b443cb6189e83f69e8e30fdb5b94434cea433d83",
+      "data": {
+        "symbols": [
+          {
+            "kind": "function",
+            "name": "usePomodoro",
+            "label": "export function `usePomodoro()`",
+            "line": 4,
+            "doc": "",
+            "exported": true,
+            "children": [],
+            "calls": [
+              "useState",
+              "useRef",
+              "useEffect",
+              "window.setInterval",
+              "setSecondsLeft",
+              "setIsRunning",
+              "setTimeout",
+              "confetti",
+              "clearInterval",
+              "setPomodoroMinutes",
+              "Math.max",
+              "Math.min",
+              "Math.floor",
+              "padStart",
+              "mins.toString",
+              "secs\r\n        .toString",
+              "pomodoroMinutes.toString"
+            ]
+          }
+        ]
+      }
+    },
+    "src/hooks/useSettings.ts": {
+      "hash": "0f9c57f438ff030f6b17503db734b297345e7620c5e78b3af50b2ee458946f83",
+      "data": {
+        "symbols": [
+          {
+            "kind": "constant",
+            "name": "STORAGE_KEY",
+            "label": "const `STORAGE_KEY`",
+            "line": 9,
+            "doc": "",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "constant",
+            "name": "load",
+            "label": "const `load()`",
+            "line": 11,
+            "doc": "",
+            "exported": false,
+            "children": [],
+            "calls": [
+              "localStorage.getItem",
+              "sanitizeSettings",
+              "JSON.parse"
+            ]
+          },
+          {
+            "kind": "function",
+            "name": "useSettings",
+            "label": "export function `useSettings()`",
+            "line": 20,
+            "doc": "",
+            "exported": true,
+            "children": [],
+            "calls": [
+              "useState",
+              "useEffect",
+              "localStorage.setItem",
+              "JSON.stringify",
+              "document.documentElement.classList.toggle",
+              "document.documentElement.style.setProperty",
+              "String",
+              "useCallback",
+              "setSettings",
+              "sanitizeSettings",
+              "clampZoom"
+            ]
+          }
+        ]
+      }
+    },
+    "src/main.tsx": {
+      "hash": "1f5a6eae9b673fa06ee97e5866e1074eb96fd6d56674da56343a7cbf12a5c146",
+      "data": {
+        "symbols": []
+      }
+    },
+    "src/services/backup.ts": {
+      "hash": "ff231da07a90a2d6f8aa52761d92ec0eff8ca77086aaa31d80cbf6d792c66002",
+      "data": {
+        "symbols": [
+          {
+            "kind": "constant",
+            "name": "IMAGES_DIR",
+            "label": "const `IMAGES_DIR`",
+            "line": 12,
+            "doc": "",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "constant",
+            "name": "BACKUP_VERSION",
+            "label": "const `BACKUP_VERSION`",
+            "line": 13,
+            "doc": "",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "interface",
+            "name": "BackupNote",
+            "label": "interface `BackupNote`",
+            "line": 15,
+            "doc": "",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "interface",
+            "name": "BackupFolder",
+            "label": "interface `BackupFolder`",
+            "line": 28,
+            "doc": "",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "constant",
+            "name": "isSafeImageName",
+            "label": "const `isSafeImageName()`",
+            "line": 37,
+            "doc": "",
+            "exported": false,
+            "children": [],
+            "calls": [
+              "test"
+            ]
+          },
+          {
+            "kind": "function",
+            "name": "createBackup",
+            "label": "export function `createBackup()`",
+            "line": 40,
+            "doc": "Build a .zip containing every note (notes.json) and every image.",
+            "exported": true,
+            "children": [],
+            "calls": [
+              "Database.load",
+              "await db.select",
+              "JSZip",
+              "zip.file",
+              "JSON.stringify",
+              "Date.now",
+              "exists",
+              "zip.folder",
+              "readDir",
+              "readFile",
+              "folder.file",
+              "zip.generateAsync",
+              "slice",
+              "toISOString",
+              "Date"
+            ]
+          },
+          {
+            "kind": "function",
+            "name": "restoreBackup",
+            "label": "export function `restoreBackup()`",
+            "line": 72,
+            "doc": "Merge a backup into the current database. Notes with the same id are",
+            "exported": true,
+            "children": [],
+            "calls": [
+              "JSZip.loadAsync",
+              "file.arrayBuffer",
+              "zip.file",
+              "JSON.parse",
+              "notesFile.async",
+              "Array.isArray",
+              "exists",
+              "mkdir",
+              "pop",
+              "img.name.split",
+              "isSafeImageName",
+              "writeFile",
+              "img.async",
+              "Database.load",
+              "db.execute",
+              "Date.now"
+            ],
+            "raises": [
+              "Error"
+            ]
+          }
+        ]
+      }
+    },
+    "src/services/db.ts": {
+      "hash": "3df91f386addfa6334588a5cf9ceeb0b9db4fc8d0e2cdf7fab35d459cead5ecb",
+      "data": {
+        "symbols": [
+          {
+            "kind": "constant",
+            "name": "STORAGE_KEY",
+            "label": "const `STORAGE_KEY`",
+            "line": 5,
+            "doc": "",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "constant",
+            "name": "ACTIVE_NOTE_KEY",
+            "label": "const `ACTIVE_NOTE_KEY`",
+            "line": 6,
+            "doc": "",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "constant",
+            "name": "generateId",
+            "label": "const `generateId()`",
+            "line": 8,
+            "doc": "",
+            "exported": false,
+            "children": [],
+            "calls": [
+              "Date.now",
+              "slice",
+              "toString",
+              "Math.random"
+            ]
+          },
+          {
+            "kind": "type",
+            "name": "Migration",
+            "label": "type `Migration`",
+            "line": 13,
+            "doc": "",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "constant",
+            "name": "addMissingColumns",
+            "label": "const `addMissingColumns()`",
+            "line": 15,
+            "doc": "",
+            "exported": false,
+            "children": [],
+            "calls": [
+              "await db.select",
+              "Set",
+              "existing.map",
+              "have.has",
+              "db.execute"
+            ]
+          },
+          {
+            "kind": "constant",
+            "name": "MIGRATIONS",
+            "label": "const `MIGRATIONS`",
+            "line": 27,
+            "doc": "",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "constant",
+            "name": "migrateSchema",
+            "label": "const `migrateSchema()`",
+            "line": 58,
+            "doc": "",
+            "exported": false,
+            "children": [],
+            "calls": [
+              "await db.select",
+              "MIGRATIONS.filter",
+              "m.up",
+              "db.execute"
+            ]
+          },
+          {
+            "kind": "constant",
+            "name": "initDatabase",
+            "label": "export const `initDatabase()`",
+            "line": 69,
+            "doc": "",
+            "exported": true,
+            "children": [],
+            "calls": [
+              "Database.load",
+              "dbInstance.execute",
+              "migrateSchema",
+              "localStorage.getItem",
+              "JSON.parse",
+              "console.error",
+              "localStorage.removeItem",
+              "await dbInstance.select",
+              "result.map",
+              "folderRows.map",
+              "loadedNotes.find",
+              "generateId",
+              "Date.now",
+              "loadedNotes.push",
+              "runGarbageCollection"
+            ],
+            "raises": [
+              "error"
+            ]
+          }
+        ]
+      }
+    },
+    "src/utils/editorExtensions.ts": {
+      "hash": "48dcb9491f3578d0acad0ba7de93257db6442805b68c416676e66d1ba4d7120d",
+      "data": {
+        "symbols": [
+          {
+            "kind": "function",
+            "name": "createEditorExtensions",
+            "label": "export function `createEditorExtensions()`",
+            "line": 18,
+            "doc": "",
+            "exported": true,
+            "children": [],
+            "calls": [
+              "StarterKit.configure",
+              "Dropcursor.configure",
+              "Highlight.configure",
+              "TextStyle.extend",
+              "this.parent",
+              "element.style.fontSize?.replace",
+              "Extension.create",
+              "editor.state.selection.$from.after",
+              "run",
+              "focus",
+              "insertContentAt",
+              "editor\r\n              .chain",
+              "editor.isActive",
+              "unsetHighlight",
+              "splitBlock",
+              "editor.chain",
+              "editor.getAttributes",
+              "unsetColor",
+              "BulletList.extend",
+              "$anchor.start",
+              "this.editor.isActive",
+              "liftListItem",
+              "this.editor\r\n                  .chain",
+              "editor.commands.splitListItem",
+              "OrderedList.extend",
+              "Placeholder.configure",
+              "configure",
+              "TaskItem.extend",
+              "Image.extend"
+            ]
+          }
+        ]
+      }
+    },
+    "src/utils/editorToolbar.test.ts": {
+      "hash": "b1c592d43d03b6744c6278d625936874637a41b51453637648705236056787be",
+      "data": {
+        "symbols": [
+          {
+            "kind": "variable",
+            "name": "editor",
+            "label": "let `editor`",
+            "line": 8,
+            "doc": "",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "constant",
+            "name": "make",
+            "label": "const `make()`",
+            "line": 10,
+            "doc": "",
+            "exported": false,
+            "children": [],
+            "calls": [
+              "Editor",
+              "createEditorExtensions"
+            ]
+          }
+        ]
+      }
+    },
+    "src/utils/imageUtils.ts": {
+      "hash": "ef11c07a5d40b8aa1a788b5b2f3c8224aa4fe5fd50c6fcee225ae8c3c0a27410",
+      "data": {
+        "symbols": [
+          {
+            "kind": "constant",
+            "name": "IMAGES_DIR",
+            "label": "const `IMAGES_DIR`",
+            "line": 12,
+            "doc": "",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "function",
+            "name": "saveImage",
+            "label": "export function `saveImage()`",
+            "line": 15,
+            "doc": "",
+            "exported": true,
+            "children": [],
+            "calls": [
+              "exists",
+              "mkdir",
+              "blob.arrayBuffer",
+              "Uint8Array",
+              "split",
+              "blob.type.split",
+              "test",
+              "rawExt.toLowerCase",
+              "crypto.randomUUID",
+              "writeFile",
+              "console.error",
+              "Promise",
+              "FileReader",
+              "resolve",
+              "reader.readAsDataURL"
+            ]
+          },
+          {
+            "kind": "function",
+            "name": "runGarbageCollection",
+            "label": "export function `runGarbageCollection()`",
+            "line": 60,
+            "doc": "",
+            "exported": true,
+            "children": [],
+            "calls": [
+              "db.select",
+              "exists",
+              "readDir",
+              "map",
+              "entries.filter",
+              "findOrphanImages",
+              "notes.map",
+              "remove",
+              "console.error"
+            ]
+          }
+        ]
+      }
+    },
+    "src/utils/noteUtils.test.ts": {
+      "hash": "f904c37c8dfe4513bc2b2a4d02771799d46fca7427d19123c18355556b348fd0",
+      "data": {
+        "symbols": [
+          {
+            "kind": "constant",
+            "name": "doc",
+            "label": "const `doc()`",
+            "line": 4,
+            "doc": "",
+            "exported": false,
+            "children": [],
+            "calls": [
+              "JSON.stringify"
+            ]
+          }
+        ]
+      }
+    },
+    "src/utils/noteUtils.ts": {
+      "hash": "aae38dc80e8419aad2f44982ed0aa4a498c4783f620be7959258730ab53dd8a8",
+      "data": {
+        "symbols": [
+          {
+            "kind": "constant",
+            "name": "extractTitle",
+            "label": "export const `extractTitle()`",
+            "line": 5,
+            "doc": "",
+            "exported": true,
+            "children": [],
+            "calls": [
+              "JSON.parse",
+              "trim",
+              "text.slice"
+            ]
+          },
+          {
+            "kind": "constant",
+            "name": "hasTextContent",
+            "label": "export const `hasTextContent()`",
+            "line": 20,
+            "doc": "",
+            "exported": true,
+            "children": [],
+            "calls": [
+              "JSON.parse",
+              "node.text.trim",
+              "Array.isArray",
+              "node.content.some",
+              "checkNode"
+            ]
+          },
+          {
+            "kind": "constant",
+            "name": "findOrphanImages",
+            "label": "export const `findOrphanImages()`",
+            "line": 37,
+            "doc": "",
+            "exported": true,
+            "children": [],
+            "calls": [
+              "noteContents.join",
+              "fileNames.filter",
+              "all.includes"
+            ]
+          }
+        ]
+      }
+    },
+    "src/utils/settings.test.ts": {
+      "hash": "5aa14f4e07adaff2ec011841c280338b2d9bf58ba7892278753b7cdc452539de",
+      "data": {
+        "symbols": []
+      }
+    },
+    "src/utils/settings.ts": {
+      "hash": "540f028ff9c97e99d9e46711b91575b859846f08666aea523f20fc6ef1b452aa",
+      "data": {
+        "symbols": [
+          {
+            "kind": "type",
+            "name": "PaperWidth",
+            "label": "export type `PaperWidth`",
+            "line": 3,
+            "doc": "",
+            "exported": true,
+            "children": []
+          },
+          {
+            "kind": "interface",
+            "name": "Settings",
+            "label": "export interface `Settings`",
+            "line": 5,
+            "doc": "",
+            "exported": true,
+            "children": []
+          },
+          {
+            "kind": "constant",
+            "name": "ZOOM_MIN",
+            "label": "export const `ZOOM_MIN`",
+            "line": 16,
+            "doc": "",
+            "exported": true,
+            "children": []
+          },
+          {
+            "kind": "constant",
+            "name": "ZOOM_MAX",
+            "label": "export const `ZOOM_MAX`",
+            "line": 17,
+            "doc": "",
+            "exported": true,
+            "children": []
+          },
+          {
+            "kind": "constant",
+            "name": "ZOOM_STEP",
+            "label": "export const `ZOOM_STEP`",
+            "line": 18,
+            "doc": "",
+            "exported": true,
+            "children": []
+          },
+          {
+            "kind": "constant",
+            "name": "UI_SCALE_MIN",
+            "label": "export const `UI_SCALE_MIN`",
+            "line": 20,
+            "doc": "",
+            "exported": true,
+            "children": []
+          },
+          {
+            "kind": "constant",
+            "name": "UI_SCALE_MAX",
+            "label": "export const `UI_SCALE_MAX`",
+            "line": 21,
+            "doc": "",
+            "exported": true,
+            "children": []
+          },
+          {
+            "kind": "constant",
+            "name": "UI_SCALES",
+            "label": "export const `UI_SCALES`",
+            "line": 22,
+            "doc": "",
+            "exported": true,
+            "children": []
+          },
+          {
+            "kind": "constant",
+            "name": "PAPER_WIDTHS",
+            "label": "export const `PAPER_WIDTHS`",
+            "line": 24,
+            "doc": "",
+            "exported": true,
+            "children": []
+          },
+          {
+            "kind": "constant",
+            "name": "LINE_HEIGHTS",
+            "label": "export const `LINE_HEIGHTS`",
+            "line": 31,
+            "doc": "",
+            "exported": true,
+            "children": []
+          },
+          {
+            "kind": "constant",
+            "name": "AUTOSAVE_DELAYS",
+            "label": "export const `AUTOSAVE_DELAYS`",
+            "line": 37,
+            "doc": "",
+            "exported": true,
+            "children": []
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_SETTINGS",
+            "label": "export const `DEFAULT_SETTINGS`",
+            "line": 43,
+            "doc": "",
+            "exported": true,
+            "children": []
+          },
+          {
+            "kind": "constant",
+            "name": "clampUiScale",
+            "label": "export const `clampUiScale()`",
+            "line": 54,
+            "doc": "",
+            "exported": true,
+            "children": [],
+            "calls": [
+              "Math.min",
+              "Math.max",
+              "Math.round"
+            ]
+          },
+          {
+            "kind": "constant",
+            "name": "clampZoom",
+            "label": "export const `clampZoom()`",
+            "line": 57,
+            "doc": "",
+            "exported": true,
+            "children": [],
+            "calls": [
+              "Math.min",
+              "Math.max",
+              "Math.round"
+            ]
+          },
+          {
+            "kind": "constant",
+            "name": "oneOf",
+            "label": "const `oneOf()`",
+            "line": 60,
+            "doc": "",
+            "exported": false,
+            "children": [],
+            "calls": [
+              "allowed.includes"
+            ]
+          },
+          {
+            "kind": "function",
+            "name": "sanitizeSettings",
+            "label": "export function `sanitizeSettings()`",
+            "line": 64,
+            "doc": "Turn whatever was stored (possibly old, partial or corrupted) into valid settings.",
+            "exported": true,
+            "children": [],
+            "calls": [
+              "Number.isFinite",
+              "clampZoom",
+              "oneOf",
+              "Object.keys",
+              "LINE_HEIGHTS.map",
+              "AUTOSAVE_DELAYS.map",
+              "clampUiScale"
+            ]
+          }
+        ]
+      }
+    },
+    "src/vite-env.d.ts": {
+      "hash": "ae203934840a6d4ee7156df534d0513f2e66d8dc16c965ed7e86e2c1144c2d43",
+      "data": {
+        "symbols": []
+      }
+    },
+    "src-tauri/build.rs": {
+      "hash": "4ae2333b11623039cc115e29b696e7ff5cdfcd5b7d628280ddf48fa733e6418d",
+      "data": {
+        "symbols": [
+          {
+            "kind": "function",
+            "name": "main",
+            "label": "fn `main()`",
+            "line": 1,
+            "doc": "",
+            "exported": false,
+            "children": [],
+            "calls": [
+              "tauri_build::build"
+            ]
+          }
+        ]
+      }
+    },
+    "src-tauri/src/lib.rs": {
+      "hash": "df2a11f3ca1942e7dd57834a21f668acfa49ab8c6ecdafa06e72c1961a15e362",
+      "data": {
+        "symbols": [
+          {
+            "kind": "function",
+            "name": "get_images_dir",
+            "label": "fn `get_images_dir()`",
+            "line": 5,
+            "doc": "",
+            "exported": false,
+            "children": [],
+            "calls": [
+              "map_err",
+              "map",
+              "app_data_dir",
+              "app_handle\r\n        .path",
+              "to_string",
+              "to_string_lossy",
+              "path.join",
+              "e.to_string"
+            ]
+          },
+          {
+            "kind": "function",
+            "name": "run",
+            "label": "pub fn `run()`",
+            "line": 14,
+            "doc": "",
+            "exported": false,
+            "children": [],
+            "calls": [
+              "expect",
+              "run",
+              "invoke_handler",
+              "plugin",
+              "tauri::Builder::default",
+              "build",
+              "tauri_plugin_updater::Builder::new",
+              "tauri_plugin_fs::init",
+              "tauri_plugin_opener::init",
+              "tauri_plugin_sql::Builder::default"
+            ]
+          }
+        ]
+      }
+    },
+    "src-tauri/src/main.rs": {
+      "hash": "1b1f968a12900bbd9747ac7028a5a974beb7daa7394afce1ef9d67cce966697e",
+      "data": {
+        "symbols": [
+          {
+            "kind": "function",
+            "name": "main",
+            "label": "fn `main()`",
+            "line": 4,
+            "doc": "",
+            "exported": false,
+            "children": [],
+            "calls": [
+              "raku_app_lib::run"
+            ]
+          }
+        ]
+      }
+    },
+    "tailwind.config.js": {
+      "hash": "b3dfe933192b8f0a735ef98b543a0471291fbe58e480e7eb5e866aa248810198",
+      "data": {
+        "symbols": []
+      }
+    },
+    "vite.config.ts": {
+      "hash": "c81ef15c5c7cc8a54a732f70e397910eb379c49f93dacf80727eb3b5c26b4f31",
+      "data": {
+        "symbols": [
+          {
+            "kind": "constant",
+            "name": "host",
+            "label": "const `host`",
+            "line": 6,
+            "doc": "",
+            "exported": false,
+            "children": []
+          }
+        ]
+      }
+    }
+  }
+}
