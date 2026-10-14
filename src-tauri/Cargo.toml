@@ -1,6 +1,6 @@
 [package]
 name = "raku-app"
-version = "1.0.7"
+version = "1.1.0"
 description = "Raku - a fast, distraction-free note-taking app"
 authors = ["snui1s"]
 edition = "2021"
