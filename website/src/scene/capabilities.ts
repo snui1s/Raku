@@ -30,3 +30,12 @@ export function detectEnv(win: Window): Env {
 export function cappedPixelRatio(dpr: number | undefined): number {
   return dpr && Number.isFinite(dpr) && dpr > 0 ? Math.min(dpr, 2) : 1;
 }
+
+const SLOW_FRAME_MS = 26; // slower than about 38 fps
+const MIN_SCALE = 0.6;
+
+/** Render scale for the next period: step down 25% when the average frame is slow, never below the floor. */
+export function adaptPixelRatioScale(scale: number, avgFrameMs: number): number {
+  if (!Number.isFinite(avgFrameMs) || avgFrameMs <= 0) return scale;
+  return avgFrameMs > SLOW_FRAME_MS ? Math.max(MIN_SCALE, scale - 0.25) : scale;
+}

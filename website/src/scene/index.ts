@@ -3,7 +3,7 @@ import {
   RedFormat, Scene, WebGLRenderer, Group, Vector3, type Object3D, type Texture,
 } from "three";
 import { CAMERA, parallaxOffset } from "./camera";
-import { cappedPixelRatio } from "./capabilities";
+import { adaptPixelRatioScale, cappedPixelRatio } from "./capabilities";
 import { PALETTE, type Palette, type Theme } from "./palette";
 import { buildHill } from "./hill";
 import { buildTorii } from "./torii";
@@ -13,6 +13,8 @@ import { buildPetals } from "./petals";
 import { buildStars } from "./stars";
 import { buildMoon } from "./moon";
 import { buildRiver } from "./river";
+import { buildFox } from "./fox";
+import { buildWindLines } from "./windlines";
 
 export interface SceneOptions {
   getTheme: () => Theme;
@@ -29,8 +31,8 @@ export interface ScenePart {
 
 /** Builders for each piece of the world; later tasks add torii, tree, grass and petals here. */
 type Builder = (palette: Palette, toon: Texture) => ScenePart | Object3D;
-const BUILDERS: Builder[] = [(p) => buildStars(p), (p) => buildMoon(p), (p, toon) => buildHill(p, toon), (p) => buildRiver(p), (p, toon) => buildTorii(p, toon), (p, toon) => buildTree(p, toon),
-  (p, toon) => buildGrass(p, toon), (p, toon) => buildPetals(p, toon)];
+const BUILDERS: Builder[] = [(p) => buildStars(p), (p) => buildMoon(p), (p, toon) => buildHill(p, toon), (p) => buildRiver(p), (p, toon) => buildFox(p, toon), (p, toon) => buildTorii(p, toon), (p, toon) => buildTree(p, toon),
+  (p, toon) => buildGrass(p, toon), (p, toon) => buildPetals(p, toon), (p) => buildWindLines(p)];
 
 function toonGradient(): Texture {
   const data = new Uint8Array([90, 170, 255]);
@@ -90,11 +92,11 @@ export async function mountScene(host: HTMLElement, opts: SceneOptions): Promise
     camera.lookAt(target);
   }
 
-  let appliedDpr = 0;
+  let appliedDpr = 0, quality = 1;
   function resize() {
     const w = Math.max(1, host.clientWidth), h = Math.max(1, host.clientHeight);
     appliedDpr = window.devicePixelRatio;
-    renderer.setPixelRatio(cappedPixelRatio(appliedDpr));
+    renderer.setPixelRatio(cappedPixelRatio(appliedDpr) * quality);
     renderer.setSize(w, h, false);
     camera.aspect = w / h;
     camera.updateProjectionMatrix();
@@ -108,6 +110,31 @@ export async function mountScene(host: HTMLElement, opts: SceneOptions): Promise
     opts.onFail?.();
   };
 
+  // Adaptive quality: if frames stay slow, render at a lower resolution (never back up, to avoid flicker).
+  let winMs = 0, winFrames = 0, windows = 0;
+  function trackFrame(ms: number) {
+    winMs += ms; winFrames++;
+    if (winMs >= 2000) {
+      windows++; // the first two windows include shader compilation, so ignore them
+      if (windows > 2) {
+        const next = adaptPixelRatioScale(quality, winMs / winFrames);
+        if (next !== quality) { quality = next; resize(); }
+      }
+      if (overlay) overlay.textContent = fpsText(winMs / winFrames);
+      winMs = 0; winFrames = 0;
+    }
+  }
+  const fpsText = (avgMs: number) => {
+    const i = renderer.info;
+    return "fps " + Math.round(1000 / avgMs) + " | draw calls " + i.render.calls + " | triangles " + i.render.triangles + " | scale " + quality;
+  };
+  // ?fps in the URL shows a small readout, so the owner can report numbers from a real machine
+  const overlay = !opts.still && new URLSearchParams(location.search).has("fps") ? document.createElement("div") : null;
+  if (overlay) {
+    overlay.style.cssText = "position:absolute;left:12px;bottom:12px;z-index:5;font:12px monospace;padding:4px 8px;border-radius:6px;background:rgba(0,0,0,.6);color:#fff;pointer-events:none";
+    host.appendChild(overlay);
+  }
+
   let raf = 0, last = 0, elapsed = 0, shown = false;
   function frame(now: number) {
     raf = requestAnimationFrame(frame);
@@ -115,6 +142,7 @@ export async function mountScene(host: HTMLElement, opts: SceneOptions): Promise
     const dt = last ? Math.min(0.1, (now - last) / 1000) : 0; // clamp so a restored tab does not jump
     last = now;
     elapsed += dt;
+    if (dt > 0) trackFrame(dt * 1000);
     smooth.x += (pointer.x - smooth.x) * 0.06;
     smooth.y += (pointer.y - smooth.y) * 0.06;
     placeCamera();
@@ -149,6 +177,7 @@ export async function mountScene(host: HTMLElement, opts: SceneOptions): Promise
     disposeTree(world);
     toon.dispose();
     renderer.dispose();
+    overlay?.remove();
     canvas.remove();
   }
 

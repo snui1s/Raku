@@ -54,7 +54,7 @@ export const PALETTE: Record<Theme, Palette> = {
     night: true,
     moon: 0xfff2cf,
     moonGlow: 0xffe9a8,
-    water: [0x2c4a68, 0x5f8db3],
+    water: [0x35577a, 0x86b1d4],
     fox: [0xd9772f, 0xe8dcc8, 0x2b1f1a],
   },
 };

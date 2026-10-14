@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { cappedPixelRatio, shouldRunScene, type Env } from "./capabilities";
+import { adaptPixelRatioScale, cappedPixelRatio, shouldRunScene, type Env } from "./capabilities";
 
 const ok: Env = { webgl: true, reducedMotion: false, width: 1280, coarsePointer: false };
 
@@ -28,5 +28,23 @@ describe("cappedPixelRatio", () => {
     expect(cappedPixelRatio(0)).toBe(1);
     expect(cappedPixelRatio(Number.NaN)).toBe(1);
     expect(cappedPixelRatio(undefined)).toBe(1);
+  });
+});
+
+describe("adaptPixelRatioScale", () => {
+  it("lowers the render scale when frames are slow, never below the floor", () => {
+    expect(adaptPixelRatioScale(1, 40)).toBe(0.75);
+    expect(adaptPixelRatioScale(0.75, 40)).toBe(0.6);
+    expect(adaptPixelRatioScale(0.6, 80)).toBe(0.6);
+  });
+
+  it("keeps the scale when the frame rate is fine", () => {
+    expect(adaptPixelRatioScale(1, 16.7)).toBe(1);
+    expect(adaptPixelRatioScale(0.75, 20)).toBe(0.75);
+  });
+
+  it("ignores nonsense frame times", () => {
+    expect(adaptPixelRatioScale(1, Number.NaN)).toBe(1);
+    expect(adaptPixelRatioScale(1, 0)).toBe(1);
   });
 });

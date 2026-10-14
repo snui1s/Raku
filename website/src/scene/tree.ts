@@ -1,5 +1,5 @@
 import {
-  BufferGeometry, Color, CubicBezierCurve3, CylinderGeometry, DoubleSide, Euler, Float32BufferAttribute, Group,
+  BufferGeometry, Color, CubicBezierCurve3, type Curve, CylinderGeometry, DoubleSide, Euler, Float32BufferAttribute, Group,
   InstancedMesh, Matrix4, Mesh, MeshToonMaterial, Object3D, Quaternion, Shape, ShapeGeometry, Vector3,
   type Texture,
 } from "three";
@@ -24,7 +24,7 @@ export interface TreeStats {
 const v = (x: number, y: number, z = 0) => new Vector3(x, y, z);
 
 /** Tube along a bezier whose radius tapers from r0 to r1. */
-function taperedTube(c: CubicBezierCurve3, r0: number, r1: number, tubular = 24, radial = 10): BufferGeometry {
+export function taperedTube(c: Curve<Vector3>, r0: number, r1: number, tubular = 24, radial = 10): BufferGeometry {
   const frames = c.computeFrenetFrames(tubular, false);
   const pos: number[] = [], idx: number[] = [];
   for (let i = 0; i <= tubular; i++) {
