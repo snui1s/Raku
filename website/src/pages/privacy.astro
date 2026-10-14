@@ -1,0 +1,45 @@
+---
+import Base from "../layouts/Base.astro";
+import Nav from "../components/Nav.astro";
+---
+<Base title="Privacy policy | Raku" description="Raku does not collect, transmit or sell personal data.">
+  <Nav />
+  <main class="prose">
+    <h1>Privacy policy</h1>
+    <p>
+      Raku does not collect, transmit or sell any personal data. There are no accounts and no telemetry.
+    </p>
+    <ul>
+      <li>
+        Your notes, folders and images are stored only on your computer (SQLite database and image folder in the app
+        data directory).
+      </li>
+      <li>
+        The app makes these network requests: checking <code>update.json</code> on GitHub for new versions (and
+        downloading an update only when you accept it), and loading web fonts from Google Fonts and jsDelivr when you
+        are online and use a font that is not bundled. Those services can see your IP address as for any web request.
+      </li>
+      <li>Backups are files you create and keep yourself.</li>
+    </ul>
+    <h2>This website</h2>
+    <p>
+      This website does not use cookies, analytics or third-party scripts. It stores one value in your browser,
+      your light or dark theme choice, and only on your device.
+    </p>
+  </main>
+  <footer>
+    <a href="/">Home</a> · <a href="/docs/getting-started/">Docs</a>
+  </footer>
+</Base>
+
+<style>
+  .prose { max-width: 680px; margin: 0 auto; padding: 120px max(24px, 3vw) 64px; line-height: 1.7; }
+  h1 { font-size: clamp(32px, 5vw, 44px); letter-spacing: -0.02em; margin: 0 0 24px; }
+  h2 { font-size: 22px; margin: 40px 0 12px; }
+  ul { padding-left: 1.2em; }
+  li { margin: 10px 0; }
+  p, li { color: var(--muted); }
+  code { background: var(--border); padding: 2px 6px; border-radius: 6px; font-size: 0.9em; }
+  footer { padding: 24px max(24px, 3vw); border-top: 1px solid var(--border); color: var(--muted); font-size: 13px; text-align: center; }
+  footer a { color: inherit; }
+</style>
