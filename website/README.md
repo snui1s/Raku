@@ -36,7 +36,7 @@ bun scripts/check-build.ts   # sanity check of the built home page
 
 The home page always shows a pre-rendered image first. The live 3D scene mounts over it only when WebGL works, `prefers-reduced-motion` is off, the window is at least 768 px wide and the pointer is not touch. Otherwise the image stays. Rendering pauses when the hero is scrolled out of view or the tab is hidden. If frames stay slow, the renderer lowers its resolution (down to 60%).
 
-The scene has the torii, a sakura tree, grass, falling petals, a river, a sitting fox, a moon, stars (dark theme only) and wind gusts that move the grass, tree, petals and fox tail, with a few streaks drawn across the sky. Add `?fps` to the home page URL to see a readout of frame rate, draw calls and triangles.
+The scene has the torii, a sakura tree, grass, falling petals, a river, a sitting fox, black-eyed Susans and poppies scattered over the hill, a moon, stars (dark theme only) and wind gusts that move the grass, tree, petals and fox tail, with a few streaks drawn across the sky. Add `?fps` to the home page URL to see a readout of frame rate, draw calls and triangles.
 
 After **any change to `src/scene/`**, regenerate the images and commit them:
 
@@ -49,8 +49,8 @@ This builds the site and renders `public/hero/*.webp|avif` with Google Chrome (i
 ## Sizes (measured at build time on 2026-10-14)
 
 - Home page without the 3D chunk: about 158 KB with Brotli (HTML, CSS, JS, the desktop hero image and three fonts).
-- 3D chunk (`scene.*.js`, Three.js plus the scene): 586 KB raw, about 150 KB gzip, 123 KB Brotli. It loads only when the live scene runs.
-- Scene load measured in Chrome (software GL, so frame rate is not representative): 63 draw calls, about 76,000 triangles.
+- 3D chunk (`scene.*.js`, Three.js plus the scene): 593 KB raw, about 152 KB gzip, 124 KB Brotli. It loads only when the live scene runs.
+- Scene load measured in Chrome (software GL, so frame rate is not representative): 66 draw calls, about 127,000 triangles.
 
 ## Deploy (manual steps for the repository owner)
 
