@@ -1,6 +1,6 @@
 # Raku website
 
-Source of `https://raku.snui1s.com`: an Astro site with Tailwind, Starlight docs and a lazy-loaded Three.js hero. It is a separate project from the app, with its own `package.json`.
+Source of `https://raku.snui1s.com`: an Astro site with Tailwind, Starlight docs, a scroll-driven Three.js home page and a notebook you can write in. It is a separate project from the app, with its own `package.json`.
 
 ## Develop
 
@@ -24,7 +24,9 @@ bun scripts/check-build.ts   # sanity check of the built home page
 | `src/content/docs/docs/` | Docs (Markdown, served under `/docs/`) |
 | `src/pages/privacy.astro` | Privacy policy |
 | `src/lib/release.ts` | Reads `../update.json` at build time for the download button |
-| `src/scene/` | The 3D hero (Three.js), loaded only on capable desktop browsers |
+| `src/components/Journey.astro` | The whole home page: one pinned scene and the DOM placed over it |
+| `src/scene/` | The 3D scene (Three.js), loaded only on capable desktop browsers. `journey.ts` is the scroll timeline |
+| `src/notebook/` | The try-it notebook (TipTap, no React), loaded lazily |
 | `src/pages/still.astro` | Page used only to render the hero images |
 | `public/hero/` | Generated hero images (two sizes, `dark.*` and `dark-sm.*`) |
 
@@ -32,11 +34,27 @@ bun scripts/check-build.ts   # sanity check of the built home page
 
 `src/lib/release.ts` reads `update.json` from the repository root. The release workflow commits that file to `main` after each release, which triggers a Vercel deploy, so the button always points at the latest installer. If the file is missing or invalid, the button links to the GitHub Releases page.
 
-### The hero
+### The home page
 
-The home page always shows a pre-rendered image first. The live 3D scene mounts over it only when WebGL works, `prefers-reduced-motion` is off, the window is at least 768 px wide and the pointer is not touch. Otherwise the image stays. Rendering pauses when the hero is scrolled out of view or the tab is hidden. If frames stay slow, the renderer lowers its resolution (down to 60%).
+The home page always shows a pre-rendered image first. The live 3D scene mounts over it only when WebGL works, `prefers-reduced-motion` is off, the window is at least 768 px wide and the pointer is not touch. Otherwise the image stays and the page is plain sections in the same order (features list, notebook, numbers, download).
 
-The scene has the torii, a sakura tree, grass, falling petals, a river, a sitting fox, black-eyed Susans and poppies scattered over the hill, clouds, a moon, stars and wind gusts that move the grass, tree, petals and fox tail, with a few streaks drawn across the sky. Add `?fps` to the home page URL to see a readout of frame rate, draw calls and triangles.
+With the live scene the page is one tall section with a pinned frame, and scrolling drives a timeline (`src/scene/journey.ts`, lengths in screen heights):
+
+1. **Hero**: the camera as in the still.
+2. **Stars**: the camera tilts up into the night sky; each feature is a star with a label.
+3. **Write**: the camera comes back down to the glade and holds while a notebook floats in front of the tree. It is a real editor.
+4. **Numbers**: the camera moves to the gate; the four numbers hang under paper lanterns.
+5. **Download**: the camera moves in on the fox, whose wooden tag (an *ema*) carries the Download link.
+
+All text, buttons and the notebook are real DOM, placed over the canvas by projecting 3D anchor points to the screen every frame. To change the pacing edit `JOURNEY` and `CONSTELLATION` (scroll lengths); to move the camera edit `GLADE` and `GATE` in `journey.ts` and `foxCamera` in `fox.ts`; lantern positions are `LANTERNS` in `lanterns.ts`.
+
+Focusing something in another chapter (Tab) scrolls the page to that chapter first. The **Features** link in the nav goes to where the stars begin.
+
+#### The notebook
+
+`src/notebook/` builds an editor from the same TipTap extensions the app uses (headings, lists, checklists, highlight, color, quote) with a small toolbar. The page renders its sample note as plain HTML first and the editor takes over when the visitor nears it or touches it. Nothing is saved or sent anywhere; reloading clears it. It works with or without the live scene, including on phones.
+
+The scene has the torii, a sakura tree, grass, falling petals, a river, a sitting fox, black-eyed Susans and poppies scattered over the hill, clouds, a moon, stars and wind gusts that move the grass, tree, petals and fox tail. Add `?fps` to the home page URL to see a readout of frame rate, draw calls and triangles.
 
 After **any change to `src/scene/`**, regenerate the images and commit them:
 
@@ -46,11 +64,11 @@ bun run stills
 
 This builds the site and renders `public/hero/*.webp|avif` with Google Chrome (it must be installed). No local web server is used. The script runs under Node 22.6 or newer (not Bun: on Windows Bun cannot talk to Chrome and the launch times out).
 
-## Sizes (measured at build time on 2026-10-14)
+## Sizes (measured at build time on 2026-10-15)
 
-- Home page without the 3D chunk: about 158 KB with Brotli (HTML, CSS, JS, the desktop hero image and three fonts).
-- 3D chunk (`scene.*.js`, Three.js plus the scene): 593 KB raw, about 152 KB gzip, 124 KB Brotli. It loads only when the live scene runs.
-- Scene load measured in Chrome (software GL, so frame rate is not representative): 66 draw calls, about 127,000 triangles.
+- 3D (`scene.*.js` plus the shared Three.js chunk): about 620 KB raw, 162 KB gzip, 135 KB Brotli. It loads only when the live scene runs.
+- Notebook (`mount.*.js`, TipTap and ProseMirror): 387 KB raw, 120 KB gzip, 102 KB Brotli. It loads when the visitor scrolls near the notebook or touches it, with or without the live scene.
+- Frame rate and draw calls on a real GPU have not been measured; use `?fps`.
 
 ## Deploy (manual steps for the repository owner)
 

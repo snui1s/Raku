@@ -84,7 +84,7 @@ export function lookPose(position: [number, number, number], target: [number, nu
 }
 
 /** In the glade by the cherry tree: the notebook floats on the left, the tree fills the right. */
-export const GLADE = lookPose([1.5, 3.4, -6], [6.5, 4.2, -17], 44);
+export const GLADE = lookPose([2.0, 3.3, -5.5], [4.6, 4.4, -16], 44);
 /** In front of the gate, looking up at it, with the four lanterns hanging in view. */
 export const GATE = lookPose([-3, 3.6, -8], [1.6, 6.2, -17], 44);
 
@@ -137,6 +137,6 @@ export function chapterScroll(chapter: Chapter): number {
     case "stars": return JOURNEY_AT.stars + CONSTELLATION.itemVh * 0.5;
     case "write": return JOURNEY_AT.write + JOURNEY.write / 2;
     case "numbers": return JOURNEY_AT.numbers + JOURNEY.numbers / 2;
-    case "fox": return JOURNEY_AT.fox + JOURNEY.toFox + JOURNEY.final / 2;
+    case "fox": return JOURNEY_AT.fox + JOURNEY.final / 2; // JOURNEY_AT.fox is where the move to the fox ends
   }
 }

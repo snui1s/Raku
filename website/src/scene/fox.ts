@@ -1,10 +1,9 @@
 import {
-  ConeGeometry, CubicBezierCurve3, CylinderGeometry, Euler, ExtrudeGeometry, Group, Matrix4, Mesh, MeshToonMaterial, Quaternion,
-  Shape, SphereGeometry, TorusGeometry, Vector3, type Texture,
+  CubicBezierCurve3, CylinderGeometry, Euler, ExtrudeGeometry, Group, Matrix4, Mesh, MeshToonMaterial, Quaternion,
+  Shape, SphereGeometry, TorusGeometry, TubeGeometry, Vector3, type Texture,
 } from "three";
 import { hillHeight } from "./hill";
 import { windGust } from "./wind";
-import { taperedTube } from "./tree";
 import { lookPose, type Pose } from "./journey";
 import type { Palette } from "./palette";
 import type { ScenePart } from "./index";
@@ -31,7 +30,7 @@ export const FOX_TAG = { hang: [0.4, 0.68, 0] as [number, number, number], local
 
 /** The close-up for the download: in front of the fox, low, with the face above the tag. */
 export function foxCamera(): Pose {
-  const p = foxLocalToWorld([1.5, 0.78, 0.2]), t = foxLocalToWorld([0.4, 0.66, 0]);
+  const p = foxLocalToWorld([1.9, 0.8, 0.2]), t = foxLocalToWorld([0.4, 0.72, 0]);
   return lookPose([p.x, p.y, p.z], [t.x, t.y, t.z], 38);
 }
 
@@ -42,7 +41,8 @@ export function buildFox(palette: Palette, toon?: Texture): ScenePart {
   root.name = "fox";
 
   const ball = (m: MeshToonMaterial, sx: number, sy: number, sz: number, x: number, y: number, z: number, parent: Group = root, name?: string) => {
-    const mesh = new Mesh(new SphereGeometry(1, 20, 14), m);
+    // Higher tessellation keeps the fox soft-looking even in the close-up.
+    const mesh = new Mesh(new SphereGeometry(1, 32, 24), m);
     mesh.scale.set(sx, sy, sz);
     mesh.position.set(x, y, z);
     if (name) mesh.name = name;
@@ -57,13 +57,13 @@ export function buildFox(palette: Palette, toon?: Texture): ScenePart {
   [-1, 1].forEach((s) => {
     ball(fur, 0.22, 0.22, 0.12, -0.14, 0.23, s * 0.17); // haunch
     ball(dark, 0.14, 0.05, 0.075, 0.0, 0.05, s * 0.17); // hind paw
-    const leg = new Mesh(new CylinderGeometry(0.045, 0.05, 0.4, 10), fur); // front leg
-    leg.position.set(0.22, 0.24, s * 0.09);
+    const leg = new Mesh(new CylinderGeometry(0.05, 0.055, 0.34, 16), fur); // short, rounded-looking front leg
+    leg.position.set(0.22, 0.27, s * 0.09);
     root.add(leg);
-    const sock = new Mesh(new CylinderGeometry(0.05, 0.052, 0.17, 10), dark);
-    sock.position.set(0.22, 0.09, s * 0.09);
+    const sock = new Mesh(new CylinderGeometry(0.052, 0.055, 0.12, 16), dark);
+    sock.position.set(0.22, 0.1, s * 0.09);
     root.add(sock);
-    ball(dark, 0.075, 0.04, 0.06, 0.25, 0.03, s * 0.09);
+    ball(dark, 0.085, 0.045, 0.065, 0.25, 0.035, s * 0.09);
   });
 
   // head
@@ -71,37 +71,77 @@ export function buildFox(palette: Palette, toon?: Texture): ScenePart {
   head.name = "fox-head";
   head.position.set(0.3, 0.84, 0);
   root.add(head);
-  ball(fur, 0.17, 0.155, 0.16, 0, 0, 0, head);
-  [-1, 1].forEach((s) => ball(cream, 0.11, 0.075, 0.075, 0.03, -0.06, s * 0.1, head)); // cheeks
-  const snout = new Mesh(new ConeGeometry(0.075, 0.22, 14), fur);
-  snout.rotation.z = -Math.PI / 2; // cone points along +x
-  snout.position.set(0.2, -0.04, 0);
-  head.add(snout);
-  ball(cream, 0.1, 0.04, 0.05, 0.19, -0.075, 0, head);
+  ball(fur, 0.19, 0.17, 0.175, 0, 0, 0, head);
+  [-1, 1].forEach((s) => ball(cream, 0.12, 0.085, 0.08, 0.035, -0.055, s * 0.095, head)); // puffy cheeks
+  // A short rounded muzzle reads softer than the old sharp cone.
+  ball(fur, 0.13, 0.075, 0.09, 0.16, -0.045, 0, head);
+  ball(cream, 0.105, 0.05, 0.065, 0.205, -0.075, 0, head);
   ball(dark, 0.03, 0.026, 0.03, 0.315, -0.035, 0, head); // nose
-  const eyes = [-1, 1].map((s) => ball(dark, 0.02, 0.022, 0.014, 0.1, 0.035, s * 0.115, head));
+  const shine = mat(0xffffff);
+  const eyes = [-1, 1].map((s) => {
+    const eye = new Group();
+    eye.name = s < 0 ? "fox-eye-l" : "fox-eye-r";
+    // Follow the enlarged head's surface normal so the eyes sit on the face, rather than inside it.
+    eye.position.set(0.142, 0.044, s * 0.116);
+    const normal = new Vector3(0.142 / 0.19 ** 2, 0.044 / 0.17 ** 2, s * 0.116 / 0.175 ** 2).normalize();
+    eye.quaternion.setFromUnitVectors(new Vector3(0, 0, 1), normal);
+    ball(dark, 0.028, 0.036, 0.014, 0, 0, 0, eye);
+    ball(shine, 0.009, 0.01, 0.004, -0.008, 0.012, 0.012, eye);
+    ball(shine, 0.004, 0.004, 0.002, 0.009, -0.01, 0.014, eye);
+    head.add(eye);
+    return eye;
+  });
   const ears = [-1, 1].map((s) => {
     const ear = new Group();
     ear.name = s < 0 ? "fox-ear-l" : "fox-ear-r";
-    ear.position.set(-0.02, 0.14, s * 0.1);
+    ear.position.set(-0.035, 0.13, s * 0.1);
     ear.rotation.x = -s * 0.3; // leaned outward
-    const outer = new Mesh(new ConeGeometry(0.075, 0.24, 12), fur);
-    outer.position.y = 0.11;
-    const tip = new Mesh(new ConeGeometry(0.05, 0.11, 12), dark);
-    tip.position.y = 0.19;
-    ear.add(outer, tip);
+    // Pointed fox ears, with a gently bevelled edge and a smaller cream triangle on the front.
+    const earShape = new Shape();
+    earShape.moveTo(-0.085, -0.025).quadraticCurveTo(-0.075, 0.08, 0, 0.25)
+      .quadraticCurveTo(0.075, 0.08, 0.085, -0.025).closePath();
+    const outerGeometry = new ExtrudeGeometry(earShape, {
+      depth: 0.055, bevelEnabled: true, bevelThickness: 0.01, bevelSize: 0.008, bevelSegments: 3, curveSegments: 16,
+    });
+    outerGeometry.translate(0, 0, -0.0275);
+    outerGeometry.rotateY(Math.PI / 2);
+    const outer = new Mesh(outerGeometry, fur);
+    const innerShape = new Shape();
+    innerShape.moveTo(-0.045, 0.015).lineTo(0, 0.185).lineTo(0.045, 0.015).closePath();
+    const innerGeometry = new ExtrudeGeometry(innerShape, { depth: 0.004, bevelEnabled: false });
+    innerGeometry.rotateY(Math.PI / 2);
+    const inner = new Mesh(innerGeometry, cream);
+    inner.position.x = 0.039;
+    ear.add(outer, inner);
     head.add(ear);
     return ear;
   });
 
-  // tail: bushy, curled around the feet, with a cream tip
+  // One continuous tail surface: full in the middle, tapering to a closed cream tip.
   const tail = new Group();
   tail.name = "fox-tail";
-  tail.position.set(-0.3, 0.2, 0.03);
-  const curve = new CubicBezierCurve3(new Vector3(0, 0, 0), new Vector3(-0.42, -0.12, 0.2), new Vector3(-0.2, -0.17, 0.5), new Vector3(0.38, -0.16, 0.42));
-  tail.add(new Mesh(taperedTube(curve, 0.07, 0.12, 22, 12), fur));
-  const tip = ball(cream, 0.1, 0.09, 0.1, 0.4, -0.16, 0.43, tail);
-  tip.scale.set(0.13, 0.1, 0.1);
+  tail.position.set(-0.3, 0.23, 0.03);
+  const curve = new CubicBezierCurve3(new Vector3(0, 0, 0), new Vector3(-0.38, -0.04, 0.2), new Vector3(-0.3, -0.06, 0.52), new Vector3(0.52, -0.08, 0.38));
+  const segments = 48, radial = 20;
+  const tailGeometry = new TubeGeometry(curve, segments, 1, radial, false);
+  const positions = tailGeometry.getAttribute("position");
+  for (let i = 0; i <= segments; i++) {
+    const t = i / segments, centre = curve.getPointAt(t);
+    const radius = i === segments ? 0 : 0.055 * (1 - t) + 0.14 * Math.sin(Math.PI * t) ** 0.85;
+    for (let j = 0; j <= radial; j++) {
+      const index = i * (radial + 1) + j;
+      const vertex = new Vector3().fromBufferAttribute(positions, index).sub(centre).multiplyScalar(radius).add(centre);
+      positions.setXYZ(index, vertex.x, vertex.y, vertex.z);
+    }
+  }
+  tailGeometry.computeVertexNormals();
+  tailGeometry.clearGroups();
+  const creamStart = Math.floor(segments * 0.72) * radial * 6;
+  tailGeometry.addGroup(0, creamStart, 0);
+  tailGeometry.addGroup(creamStart, segments * radial * 6 - creamStart, 1);
+  const tailMesh = new Mesh(tailGeometry, [fur, cream]);
+  tailMesh.name = "fox-tail-fur";
+  tail.add(tailMesh);
   root.add(tail);
 
   // the tag: a cord around the neck, and a wooden plaque hanging from it on two cords
@@ -159,7 +199,7 @@ export function buildFox(palette: Palette, toon?: Texture): ScenePart {
       const flick = Math.pow(Math.max(0, Math.sin(t * 1.05)), 40); // a quick ear twitch every six seconds or so
       ears[1].rotation.z = earBase + flick * 0.3;
       const blink = Math.pow(Math.max(0, Math.sin(t * 0.8 + 0.7)), 80);
-      eyes.forEach((e) => (e.scale.y = 0.022 * (1 - 0.9 * blink)));
+      eyes.forEach((e) => (e.scale.y = 1 - 0.9 * blink));
     },
   };
 }
