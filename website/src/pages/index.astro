@@ -2,26 +2,80 @@
 import Base from "../layouts/Base.astro";
 import Nav from "../components/Nav.astro";
 import Journey from "../components/Journey.astro";
-import { loadRelease } from "../lib/release";
+import { loadRelease, RELEASES_URL } from "../lib/release";
 
 const release = loadRelease();
+
+const DESCRIPTION = "Raku is a free, open-source note-taking app for Windows. Fast, works offline, no account and no cloud: your notes stay on your computer.";
+const SITE = "https://raku.snui1s.com/";
+const REPO = "https://github.com/snui1s/Raku";
+// What search engines read to understand the page: an app, free, open source, for Windows. Nothing here is a rating or a count.
+const structuredData = JSON.stringify({
+  "@context": "https://schema.org",
+  "@graph": [
+    { "@type": "WebSite", "@id": SITE + "#website", url: SITE, name: "Raku", inLanguage: "en" },
+    {
+      "@type": "SoftwareApplication",
+      "@id": SITE + "#app",
+      name: "Raku",
+      url: SITE,
+      description: DESCRIPTION,
+      applicationCategory: "ProductivityApplication",
+      operatingSystem: "Windows 10, Windows 11",
+      ...(release.version ? { softwareVersion: release.version } : {}),
+      downloadUrl: release.url,
+      license: REPO + "/blob/main/LICENSE",
+      isAccessibleForFree: true,
+      offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+      image: SITE + "og.png",
+      featureList: ["Works offline", "No account", "Open source (MIT)", "Notes stay on your computer", "Markdown and PDF export", "Checklists, highlights and folders"],
+      author: { "@type": "Person", name: "snui1s", url: "https://github.com/snui1s" },
+      sameAs: [REPO],
+    },
+  ],
+}).replace(/</g, "\\u003c");
 ---
-<Base title="Raku: fast, distraction-free notes for Windows">
+<Base title="Raku: fast, offline, open-source notes for Windows" description={DESCRIPTION}>
+  <script type="application/ld+json" slot="head" set:html={structuredData} />
   <Nav />
   <main>
     <Journey release={release} />
   </main>
   <footer>
-    <span>Raku, MIT licensed.</span>
-    <span><a href="/docs/getting-started/">Docs</a> · <a href="/privacy/">Privacy</a> · <a href="https://github.com/snui1s/Raku">GitHub</a></span>
+    <span>Raku{release.version ? ` v${release.version}` : ""} · MIT licensed</span>
+    <nav aria-label="Footer">
+      <a href="/docs/">Docs</a>
+      <a href={RELEASES_URL}>Release notes</a>
+      <a href="/docs/getting-started/#verify-your-download">Verify download</a>
+      <a href="https://github.com/snui1s/Raku/issues">Report a bug</a>
+      <a href="/privacy/">Privacy</a>
+      <a href="https://github.com/snui1s/Raku">GitHub</a>
+    </nav>
   </footer>
 </Base>
 
+<style is:global>
+  :root { --footer-h: 72px; }
+  @media (max-width: 760px) { :root { --footer-h: 112px; } }
+</style>
+
 <style>
+  /* The footer is night too: the same deep blue as the hill, so the page ends in the scene's colors. */
   footer {
-    display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px;
-    padding: 24px max(24px, 3vw); border-top: 1px solid var(--border);
-    color: var(--muted); font-size: 13px;
+    position: relative; z-index: 20; box-sizing: border-box; height: var(--footer-h);
+    display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px 24px;
+    padding: 0 max(24px, 3vw); background: #0a122e;
+    color: #8d9ec7; font-size: 13px;
   }
-  footer a { color: inherit; }
+  footer nav { display: flex; flex-wrap: wrap; gap: 4px 18px; }
+  footer a { color: #c9d4ec; text-decoration: none; }
+  footer a:hover { color: #fff; text-decoration: underline; }
+  /* a soft edge, so it does not end in a hard line over the fox */
+  footer::before {
+    content: ""; position: absolute; left: 0; right: 0; bottom: 100%; height: 64px; pointer-events: none;
+    background: linear-gradient(rgba(10, 18, 46, 0), rgba(10, 18, 46, 0.92));
+  }
+  /* With the live scene the picture stays pinned to the end of the page and the footer slides up over it (a curtain).
+     Without it the footer just follows the content. */
+  :global(body:has(.stage.live)) footer { margin-top: calc(-1 * var(--footer-h)); }
 </style>

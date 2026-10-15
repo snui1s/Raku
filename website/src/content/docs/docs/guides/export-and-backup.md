@@ -8,11 +8,19 @@ Open the **Export & Backup** menu from the header.
 ## Export a note
 
 - **Markdown** saves the current note to your Downloads folder as a `.md` file. If the note contains images, you get a `.zip` with the note and an `images` folder instead.
-- **PDF** saves the current note to your Downloads folder as a `.pdf` file.
+- **PDF** saves a basic text PDF to your Downloads folder. Read the limitations below before using it for a long or formatted note.
+
+### PDF limitations
+
+The current PDF export produces a **single-page text file**. It does not preserve images or rich text styling, non-Latin characters may not render correctly, and long notes can be cut off.
+
+Use **Markdown** to keep a note's text and images together. A **Backup** is the format to use when restoring notes into Raku.
 
 ## Back up everything
 
 **Backup** creates a file named like `raku-backup-<date>.zip` containing all of your notes, folders and images. Keep it somewhere safe, such as a cloud drive or an external disk.
+
+Appearance preferences and other app settings are not included in the backup.
 
 ## Restore
 

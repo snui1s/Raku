@@ -25,10 +25,18 @@ const stats = [
   ["~2 s", "until it is ready to type"],
   ["~170 MB", "memory when idle"],
 ];
+// [command, name, what the button shows]. The letters are styled like the thing they do; the rest are small icons.
+const icon = (paths: string) => `<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${paths}</svg>`;
 const tools = [
-  ["h1", "H1", "Heading 1"], ["h2", "H2", "Heading 2"], ["bold", "B", "Bold"], ["italic", "I", "Italic"],
-  ["underline", "U", "Underline"], ["highlight", "▍", "Highlight"], ["bullet", "•", "Bulleted list"],
-  ["task", "☑", "Checklist"], ["quote", "❝", "Quote"],
+  ["h1", "H1 (Heading 1)", "H<small>1</small>"],
+  ["h2", "H2 (Heading 2)", "H<small>2</small>"],
+  ["bold", "Bold", "<b>B</b>"],
+  ["italic", "Italic", "<i>I</i>"],
+  ["underline", "Underline", "<u>U</u>"],
+  ["highlight", "Highlight", '<span class="hl">A</span>'],
+  ["bullet", "Bulleted list", icon('<circle cx="5" cy="7" r="1.3" fill="currentColor" stroke="none"/><circle cx="5" cy="12" r="1.3" fill="currentColor" stroke="none"/><circle cx="5" cy="17" r="1.3" fill="currentColor" stroke="none"/><path d="M10 7h10M10 12h10M10 17h10"/>')],
+  ["task", "Checklist", icon('<rect x="3.5" y="4" width="6.5" height="6.5" rx="1.4"/><path d="M5.1 7.3l1.4 1.4 2.4-2.8"/><path d="M14 7.2h7"/><rect x="3.5" y="13.5" width="6.5" height="6.5" rx="1.4"/><path d="M14 16.7h7"/>')],
+  ["quote", "Quote", icon('<path d="M5 5v14"/><path d="M10 8h10M10 12h10M10 16h6"/>')],
 ];
 ---
 <section id="hero" class="stage" style={`--stage-vh: ${journeyHeightVh()}; --features-vh: ${JOURNEY_AT.stars};`}>
@@ -40,19 +48,19 @@ const tools = [
       <source media="(max-width: 960px)" srcset="/hero/dark-sm.webp" type="image/webp" />
       <source srcset="/hero/dark.avif" type="image/avif" />
       <source srcset="/hero/dark.webp" type="image/webp" />
-      <img src="/hero/dark.webp" alt="" width="1920" height="1200" loading="lazy" decoding="async" />
+      <img src="/hero/dark.webp" alt="" width="1920" height="1200" fetchpriority="high" decoding="async" />
     </picture>
     <div id="hero-scene" class="scene" aria-hidden="true"></div>
 
     <div class="copy" data-chapter="hero">
-      <p class="eyebrow">Notes for Windows</p>
+      <p class="eyebrow">Open-source notes for Windows</p>
       <h1 class="flex items-baseline gap-2 text-4xl">
-        Raku <span class="text-9xl!">楽</span>
+        Raku <span>楽</span>
       </h1>
       <p class="tag">A fast, distraction-free note-taking app. No accounts. No cloud. Just write.</p>
       <div class="cta">
         <Download release={release} />
-        <a class="ghost" href="/docs/getting-started/">Read the docs</a>
+        <a class="ghost" href="/docs/">Read the docs</a>
       </div>
       <p class="meta">
         {release.version ? `v${release.version} · ` : ""}About 5 MB · Free and open source
@@ -65,11 +73,11 @@ const tools = [
       <ol class="labels">
         {features.map(([title, text], i) => (
           <li data-index={i}>
-            <button type="button" class="label" aria-label={`${title}: ${text}`}>
-              <span class="num">{String(i + 1).padStart(2, "0")}</span>
+            <div class="label">
+              <span class="num" aria-hidden="true">{String(i + 1).padStart(2, "0")}</span>
               <h3>{title}</h3>
               <p>{text}</p>
-            </button>
+            </div>
           </li>
         ))}
       </ol>
@@ -83,8 +91,8 @@ const tools = [
       <h2 id="write-title" class="chapter-title">Try it. Write something.</h2>
       <div class="notebook">
         <div id="notebook-toolbar" class="toolbar" role="toolbar" aria-label="Formatting">
-          {tools.map(([cmd, label, name]) => (
-            <button type="button" data-cmd={cmd} aria-label={name} title={name} aria-pressed="false" disabled>{label}</button>
+          {tools.map(([cmd, name, inner]) => (
+            <button type="button" data-cmd={cmd} aria-label={name} title={name} aria-pressed="false" disabled set:html={inner} />
           ))}
         </div>
         <div id="notebook-editor" class="paper" set:html={SAMPLE_HTML}></div>
@@ -134,25 +142,32 @@ const tools = [
   }
   .eyebrow { font-size: 13px; letter-spacing: 0.14em; text-transform: uppercase; color: #c9d4ec; margin: 0 0 18px; }
   h1 { margin: 0; font-size: clamp(72px, 11vw, 132px); line-height: 0.95; letter-spacing: -0.03em; font-weight: 800; }
-  h1 span { color: var(--accent); font-weight: 400; margin-left: 0.12em; font-size: 0.62em; }
+  h1 span { color: var(--accent); font-weight: 400; margin-left: 0.12em; font-size: 128px; }
   .tag { margin: 22px 0 0; font-size: 19px; line-height: 1.55; color: #c9d4ec; max-width: 420px; }
   .cta { margin-top: 34px; display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
   .ghost {
     padding: 13px 22px; border-radius: 12px; font-size: 15px; font-weight: 600;
     color: var(--text); text-decoration: none; border: 1px solid var(--border);
+    background: rgba(7, 7, 11, 0.55); backdrop-filter: blur(6px); /* readable over the picture */
   }
   .ghost:hover { background: var(--border); }
-  .meta { margin: 14px 0 0; font-size: 13px; color: #c9d4ec; }
+  .meta { display: inline-block; margin: 14px 0 0 -10px; padding: 4px 10px; border-radius: 8px; font-size: 13px; color: #c9d4ec; background: rgba(7, 7, 11, 0.6); } /* a plate: it can lie over the flowers of the picture */
   .hint { display: none; }
 
   /* ---- the sky: labels for the feature stars (the page moves them next to the stars every frame) ---- */
-  .sky { position: relative; z-index: 10; padding: 64px max(24px, 3vw) 24px; background: #07070b; }
-  .sky-title { margin: 0 0 22px; font-size: 14px; letter-spacing: 0.3em; text-transform: uppercase; color: #ffe9a8; }
-  .labels { list-style: none; margin: 0; padding: 0; display: grid; gap: 14px; }
-  .label { all: unset; display: block; box-sizing: border-box; width: 100%; cursor: pointer; } /* buttons shrink-wrap unless given a width */
+  .sky { position: relative; z-index: 10; padding: 88px max(24px, 3vw) 40px; background: #07070b; text-align: center; }
+  .sky-title { margin: 0 0 32px; font-size: 14px; letter-spacing: 0.3em; text-transform: uppercase; color: #ffe9a8; }
+  .labels { list-style: none; margin: 0 auto; padding: 0; max-width: 1040px; display: flex; flex-wrap: wrap; justify-content: center; gap: 16px; }
+  .labels li { flex: 1 1 300px; max-width: 330px; }
+  .label { display: block; box-sizing: border-box; }
+  /* the plain page: each feature is a card (the scene lays them out its own way, below) */
+  .stage:not(.live) .minor { margin-top: 36px; }
+  .stage:not(.live) .label { height: 100%; padding: 24px 22px 26px; border: 1px solid rgba(255, 255, 255, 0.09); border-radius: 16px; background: linear-gradient(180deg, #11121a, #0b0b11); }
+  .stage.live .label { cursor: pointer; }
   .num { display: block; font-size: 12px; letter-spacing: 0.2em; color: #ffe9a8; }
   .label h3 { margin: 4px 0 0; font-size: 22px; color: #fff3d6; }
   .label p { margin: 6px 0 0; color: #c9d4ec; font-size: 15px; line-height: 1.5; max-width: 40ch; }
+  .stage:not(.live) .label p { margin: 8px auto 0; }
   .minor { margin: 28px 0 0; color: var(--muted); font-size: 13px; letter-spacing: 0.04em; }
   .dots { display: none; }
 
@@ -169,19 +184,41 @@ const tools = [
   .toolbar button:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
   .toolbar button.on { background: rgba(242, 92, 84, 0.22); color: #fff; }
   .toolbar button:disabled { opacity: 0.35; cursor: default; }
+  .toolbar button { display: inline-flex; align-items: center; justify-content: center; line-height: 1; }
+  .toolbar button :global(b) { font-weight: 800; font-size: 15px; }
+  .toolbar button :global(i) { font-family: Georgia, "Times New Roman", serif; font-style: italic; font-weight: 700; font-size: 16px; padding-right: 1px; }
+  .toolbar button :global(u) { font-size: 15px; text-underline-offset: 3px; }
+  .toolbar button :global(small) { font-size: 10px; font-weight: 700; margin-top: 4px; }
+  .toolbar button :global(.hl) { display: inline-block; padding: 1px 5px; border-radius: 4px; background: rgba(255, 214, 102, 0.45); color: #fff; font-size: 13px; font-weight: 700; }
   .paper { padding: 22px 26px 26px; max-height: min(46vh, 380px); overflow: auto; font-size: 16px; line-height: 1.65; color: #ececec; caret-color: var(--accent); }
+  /* a thin, quiet scrollbar: no track, no arrows, a soft rounded thumb that brightens when the pointer is over it
+     (Chrome and Safari use the ::-webkit-scrollbar rules, Firefox the standard two properties) */
+  /* Chrome ignores the ::-webkit-scrollbar rules if the standard properties are set, so those are for Firefox only */
+  @supports not selector(::-webkit-scrollbar) {
+    .paper { scrollbar-width: thin; scrollbar-color: rgba(255, 255, 255, 0.16) transparent; }
+    .paper:hover { scrollbar-color: rgba(255, 255, 255, 0.32) transparent; }
+  }
+  .paper::-webkit-scrollbar { width: 10px; }
+  .paper::-webkit-scrollbar-track { background: transparent; margin: 6px 0; }
+  .paper::-webkit-scrollbar-button, .paper::-webkit-scrollbar-corner { display: none; width: 0; height: 0; background: transparent; } /* no arrow buttons */
+  .paper::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.16); border-radius: 999px; border: 3px solid transparent; background-clip: padding-box; }
+  .paper:hover::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.32); background-clip: padding-box; }
   .paper :global(.ProseMirror) { outline: none; min-height: 140px; }
   .paper :global(h1) { margin: 0 0 8px; font-size: 26px; line-height: 1.2; letter-spacing: -0.02em; }
   .paper :global(h2) { margin: 18px 0 6px; font-size: 19px; line-height: 1.3; }
   .paper :global(p) { margin: 0 0 8px; }
-  .paper :global(ul), .paper :global(ol) { margin: 0 0 8px; padding-left: 22px; }
+  .paper :global(ul), .paper :global(ol) { margin: 0 0 8px; padding-left: 24px; } /* the page's reset removes list markers, so they are put back here */
+  .paper :global(ul) { list-style: disc; }
+  .paper :global(ol) { list-style: decimal; }
+  .paper :global(li::marker) { color: var(--accent); }
+  .paper :global(li > p) { margin: 0 0 4px; }
   .paper :global(ul[data-type="taskList"]) { list-style: none; padding-left: 0; }
   .paper :global(ul[data-type="taskList"] li) { display: flex; gap: 10px; align-items: flex-start; }
-  .paper :global(ul[data-type="taskList"] li > label) { margin-top: 5px; flex: none; }
+  .paper :global(ul[data-type="taskList"] li > label) { flex: none; display: flex; align-items: center; height: 1.65em; margin: 0; } /* one line tall, so the box is centred on the first line of text */
   .paper :global(ul[data-type="taskList"] li > div) { flex: 1; }
   .paper :global(ul[data-type="taskList"] li > div p) { margin: 0 0 4px; }
   .paper :global(ul[data-type="taskList"] li[data-checked="true"] > div) { text-decoration: line-through; opacity: 0.55; }
-  .paper :global(input[type="checkbox"]) { accent-color: var(--accent); width: 15px; height: 15px; cursor: pointer; }
+  .paper :global(input[type="checkbox"]) { accent-color: var(--accent); width: 15px; height: 15px; margin: 0; cursor: pointer; }
   .paper :global(mark) { background: rgba(255, 214, 102, 0.35); color: inherit; border-radius: 3px; padding: 0 2px; }
   .paper :global(blockquote) { margin: 8px 0; padding: 6px 14px; border-left: 3px solid var(--accent); background: rgba(242, 92, 84, 0.1); border-radius: 0 8px 8px 0; font-style: italic; }
   .paper :global(p.is-editor-empty:first-child::before) { content: attr(data-placeholder); float: left; height: 0; color: #777; pointer-events: none; }
@@ -198,14 +235,14 @@ const tools = [
   .stat dt { font-size: clamp(32px, 5vw, 48px); font-weight: 800; letter-spacing: -0.03em; color: var(--accent); }
   .stat dd { margin: 4px 0 0; color: var(--muted); font-size: 14px; }
   .measure { margin: 24px 0 0; color: var(--muted); font-size: 13px; }
-  .measure a { color: var(--text); }
+  .measure a { color: var(--text); text-decoration: underline; text-underline-offset: 2px; }
 
   /* ---- the download ---- */
   .get { position: relative; z-index: 10; text-align: center; padding: 96px 24px; background: #07070b; }
   .get-title { font-size: clamp(28px, 4vw, 40px); letter-spacing: -0.02em; margin: 0 0 28px; }
   .sign-meta { margin: 12px 0 0; font-size: 13px; color: var(--muted); }
   .smartscreen { margin: 18px auto 0; max-width: 420px; color: var(--muted); font-size: 13px; line-height: 1.5; }
-  .smartscreen a { color: var(--text); }
+  .smartscreen a { color: var(--text); text-decoration: underline; text-underline-offset: 2px; }
 
   /* ---- live: the stage is tall, the frame is pinned, and the camera and everything over it are driven by scroll ---- */
   .stage.live { height: calc(var(--stage-vh) * 100vh); }
@@ -213,7 +250,7 @@ const tools = [
   .stage.live .frame { position: sticky; top: 0; height: 100vh; min-height: 0; }
   .stage.live .copy { min-height: 100vh; }
 
-  .stage.live .sky { position: absolute; inset: 0; padding: 0; background: none; opacity: var(--ui, 0); pointer-events: none; }
+  .stage.live .sky { text-align: left; position: absolute; inset: 0; padding: 0; background: none; opacity: var(--ui, 0); pointer-events: none; }
   .stage.live .sky-title { position: absolute; left: max(24px, 3vw); top: 84px; margin: 0; }
   .stage.live .labels { display: block; }
   .stage.live .labels li { position: absolute; left: 0; top: 0; width: 280px; will-change: transform, opacity; opacity: 0; }
@@ -261,7 +298,7 @@ const tools = [
     box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
   }
   .stage.live .sign-meta { margin: 0.55em 0 0; color: #3d2a18; font-weight: 700; font-size: clamp(10px, calc(var(--tag-w, 240px) * 0.045), 14px); }
-  .stage.live .smartscreen { position: absolute; left: 50%; bottom: 4vh; margin: 0; transform: translateX(-50%); width: min(440px, 90vw); box-sizing: border-box; color: #c9d4ec; pointer-events: var(--tag-events, none); }
+  .stage.live .smartscreen { position: absolute; left: 50%; bottom: calc(var(--footer-h, 72px) + 3vh); margin: 0; transform: translateX(-50%); width: min(440px, 90vw); box-sizing: border-box; color: #c9d4ec; pointer-events: var(--tag-events, none); }
   .stage.live .smartscreen a { color: #fff; }
 
   .stage.live .hint {
@@ -273,11 +310,16 @@ const tools = [
   @keyframes hint { 0%, 100% { transform: scaleY(0.4); transform-origin: top; } 50% { transform: scaleY(1); transform-origin: top; } }
 
   @media (max-width: 767px) {
-    /* phones: text first, then the picture below it, so nothing is drawn over the gate */
+    /* phones: the picture fills the top of the first screen and fades into the page; the name sits on its lower edge and
+       the text and buttons follow below. (Text first, then the picture, left a black first screen.) */
     .frame { display: flex; flex-direction: column; }
-    .copy { order: 1; max-width: none; min-height: 0; padding-top: 96px; padding-bottom: 12px; margin-left: 0; justify-content: flex-start; }
-    .still { order: 2; position: relative; inset: auto; height: auto; aspect-ratio: 1 / 1; }
+    .still { position: absolute; inset: 0 0 auto 0; height: 56vh; height: 56svh; min-height: 340px; max-height: 560px; -webkit-mask-image: linear-gradient(#000 45%, transparent 98%); mask-image: linear-gradient(#000 45%, transparent 98%); }
     .still img { object-position: 68% bottom; }
+    .copy { order: 1; max-width: none; min-height: 0; margin-left: 0; justify-content: flex-start; padding-top: calc(clamp(340px, 56svh, 560px) - 96px); padding-bottom: 28px; }
+    .eyebrow, h1 { text-shadow: 0 2px 14px rgba(7, 7, 11, 0.85); }
+    .eyebrow { letter-spacing: 0.1em; }
+    h1 { font-size: min(72px, 19vw); } /* "Raku 楽" must fit the narrowest phones (320 px) */
+    h1 span { font-size: min(112px, 24vw); }
     .sky, .write, .numbers, .get { order: 3; }
     .write { width: auto; box-sizing: border-box; }
     .scene { display: none; }
@@ -310,14 +352,19 @@ const tools = [
   editorEl?.addEventListener("pointerdown", loadNotebook, { once: true });
   editorEl?.addEventListener("focusin", loadNotebook, { once: true });
 
-  const live = stage && host && shouldRunScene(detectEnv(window));
-  if (stage && !live) {
-    // plain page: load the notebook as it comes near the screen
+  // plain page: load the notebook as it comes near the screen
+  let watching = false;
+  const loadWhenNear = () => {
+    if (watching || !stage) return;
+    watching = true;
     const near = stage.querySelector(".write");
     if (near && "IntersectionObserver" in window) {
       new IntersectionObserver((e, io) => { if (e.some((x) => x.isIntersecting)) { loadNotebook(); io.disconnect(); } }, { rootMargin: "800px" }).observe(near);
     } else loadNotebook();
-  }
+  };
+
+  const live = stage && host && shouldRunScene(detectEnv(window));
+  if (stage && !live) loadWhenNear();
 
   if (stage && host && live) {
     const sky = stage.querySelector<HTMLElement>(".sky")!;
@@ -334,7 +381,15 @@ const tools = [
     const setLive = (on: boolean) => {
       stage.classList.toggle("live", on);
       // the plain page must not keep the scroll-driven look (a faded hero) if the live scene stops part-way
-      if (!on) for (const v of ["--hero-out", "--copy-events"]) stage.style.removeProperty(v);
+      if (!on) {
+        for (const v of ["--hero-out", "--copy-events"]) stage.style.removeProperty(v);
+        loadWhenNear(); // the scene stopped (or was too slow): this is now the plain page, and its notebook needs loading too
+      }
+      for (const li of items) {
+        const label = li.querySelector<HTMLElement>(".label")!;
+        if (on) { label.setAttribute("role", "button"); label.tabIndex = 0; }
+        else { label.removeAttribute("role"); label.removeAttribute("tabindex"); }
+      }
       sky.id = on ? "" : "features";
       anchor.id = on ? "features" : "";
     };
@@ -403,7 +458,7 @@ const tools = [
     };
 
     // clicking a label scrolls to that feature
-    items.forEach((li, i) => li.querySelector("button")?.addEventListener("click", () => {
+    items.forEach((li, i) => li.querySelector<HTMLElement>(".label")?.addEventListener("click", () => {
       const vh = JOURNEY_AT.stars + CONSTELLATION.itemVh * (i + 0.5);
       scrollTo({ top: stage.getBoundingClientRect().top + scrollY + vh * window.innerHeight, behavior: "smooth" });
     }));

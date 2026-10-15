@@ -6,6 +6,7 @@ import {
 import { hillHeight } from "./hill";
 import { mulberry32 } from "./rng";
 import { windGust } from "./wind";
+import { createReaction } from "./reaction";
 import type { Palette } from "./palette";
 import type { ScenePart } from "./index";
 
@@ -14,6 +15,9 @@ export const TREE = {
   forkY: 5.2, // where the trunk splits into branches
   position: [8.2, 0, -19.5] as [number, number, number], // x, (y comes from the hill), z
 };
+/** The whole tree is drawn at this scale, and sits 0.2 below the hill surface. */
+export const TREE_SCALE = 0.82;
+const TREE_SINK = 0.2;
 
 export interface TreeStats {
   blossoms: number;
@@ -50,7 +54,7 @@ export function taperedTube(c: Curve<Vector3>, r0: number, r1: number, tubular =
 
 // trunk and the six branches: [control points, start radius, end radius]
 const TRUNK = new CubicBezierCurve3(v(0, -0.3), v(-0.1, 1.8), v(-0.3, 3.6), v(-0.45, TREE.forkY));
-const BRANCHES: [CubicBezierCurve3, number, number][] = [
+export const BRANCHES: [CubicBezierCurve3, number, number][] = [
   [new CubicBezierCurve3(v(-0.4, 4.8), v(-1.6, 5.0), v(-3.0, 5.9), v(-4.6, 5.9)), 0.52, 0.09],
   [new CubicBezierCurve3(v(-0.4, 5.0), v(-0.9, 6.2), v(-2.2, 7.4), v(-3.4, 8.0)), 0.46, 0.08],
   [new CubicBezierCurve3(v(-0.4, 4.9), v(1.0, 5.6), v(2.6, 6.2), v(4.3, 6.9)), 0.5, 0.09],
@@ -64,6 +68,18 @@ const CLOUDS: [number, number, number, number, number, number][] = [
   [-3.2, 6.6, 0, 3.2, 1.9, 1.7], [0.1, 8.1, 0, 4.0, 2.4, 2.0], [3.6, 6.9, 0, 2.9, 2.5, 1.8],
   [-0.3, 5.9, 0.2, 3.6, 1.3, 1.7], [-4.5, 5.6, 0, 1.8, 1.0, 1.2], [1.4, 9.4, 0, 2.2, 1.3, 1.3],
 ];
+
+/** World position of a point given in the tree's own coordinates (meters, origin at the foot of the trunk). */
+export function treeLocalToWorld(local: [number, number, number] | Vector3): Vector3 {
+  const [tx, , tz] = TREE.position;
+  const p = Array.isArray(local) ? new Vector3(...local) : local.clone();
+  return p.multiplyScalar(TREE_SCALE).add(new Vector3(tx, hillHeight(tx, tz) - TREE_SINK, tz));
+}
+
+/** A point `t` (0..1) along branch `index`, in world coordinates. */
+export function branchPointWorld(index: number, t: number): Vector3 {
+  return treeLocalToWorld(BRANCHES[index][0].getPoint(t));
+}
 
 /** Five-lobed flower outline, radius about 1. */
 function flowerGeometry(): ShapeGeometry {
@@ -81,7 +97,10 @@ function leafGeometry(): ShapeGeometry {
   return new ShapeGeometry(s);
 }
 
-export function buildTree(palette: Palette, toon?: Texture, seed = 7): ScenePart & { stats: TreeStats } {
+/** Where the blossom is, in the tree's own coordinates (the middle of the canopy), and how big it is in meters. */
+export const BLOSSOM = { local: [0, 7.3, 0] as [number, number, number], radius: 3.6 };
+
+export function buildTree(palette: Palette, toon?: Texture, seed = 7): ScenePart & { stats: TreeStats; shake(): void } {
   const rng = mulberry32(seed);
   const r = (a: number, b: number) => a + rng() * (b - a);
   const mat = (color: number, extra: object = {}) => new MeshToonMaterial({ color, gradientMap: toon ?? null, ...extra });
@@ -162,16 +181,21 @@ export function buildTree(palette: Palette, toon?: Texture, seed = 7): ScenePart
   }
   canopy.add(leafMesh);
 
+  const shudder = createReaction(13, 1.6);
   const o = new Object3D();
-  tree.scale.setScalar(0.82);
+  o.name = "tree";
+  tree.scale.setScalar(TREE_SCALE);
   o.add(tree);
   const [tx, , tz] = TREE.position;
-  o.position.set(tx, hillHeight(tx, tz) - 0.2, tz);
+  o.position.set(tx, hillHeight(tx, tz) - TREE_SINK, tz);
   return {
     object: o,
     stats: { blossoms, leaves, branches: BRANCHES.length },
-    update: (t) => {
-      canopy.rotation.z = Math.sin(t * 0.7) * 0.006 + windGust(t + 1) * 0.02; // sways around the fork, leaning left in gusts
+    update: (t, dt) => {
+      const shaken = shudder.step(dt) * 0.05;
+      o.rotation.z = shaken * 0.44; // the trunk rocks from its foot; branches and anything tied to them follow
+      canopy.rotation.z = Math.sin(t * 0.7) * 0.006 + windGust(t + 1) * 0.02 + shaken; // sways around the fork, leaning left in gusts
     },
+    shake: () => { shudder.kick(); },
   };
 }

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { Points } from "three";
-import { STARS, buildStars, generateStars } from "./stars";
+import { STARS, buildStars, generateStars, starPositions } from "./stars";
 
 describe("generateStars", () => {
   const s = generateStars(STARS.count, 5);
@@ -40,5 +40,18 @@ describe("buildStars", () => {
   it("has a field of points", () => {
     const night = buildStars().object;
     expect(night.children.some((c) => (c as Points).isPoints)).toBe(true);
+  });
+});
+
+describe("starPositions", () => {
+  it("are the same stars that are drawn, as points in the world", () => {
+    const g = generateStars(STARS.count, 5), p = starPositions();
+    expect(p).toHaveLength(STARS.count);
+    for (const i of [0, 1, 77, STARS.count - 1]) {
+      expect(p[i].x).toBe(g.positions[i * 3]);
+      expect(p[i].y).toBe(g.positions[i * 3 + 1]);
+      expect(p[i].z).toBe(g.positions[i * 3 + 2]);
+    }
+    expect(p.every((v) => Math.abs(v.length() - STARS.radius) < 1e-3)).toBe(true);
   });
 });

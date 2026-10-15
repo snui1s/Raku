@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://raku.snui1s.com/sitemap-index.xml

@@ -1,9 +1,12 @@
 import {
-  CubicBezierCurve3, CylinderGeometry, Euler, ExtrudeGeometry, Group, Matrix4, Mesh, MeshToonMaterial, Quaternion,
-  Shape, SphereGeometry, TorusGeometry, TubeGeometry, Vector3, type Texture,
+  type BufferGeometry, ConeGeometry, CubicBezierCurve3, CylinderGeometry, Euler, ExtrudeGeometry, Group, IcosahedronGeometry, Matrix4,
+  Mesh, MeshToonMaterial, OctahedronGeometry, Quaternion, Shape, SphereGeometry, TorusGeometry, Vector3, type Texture,
 } from "three";
 import { hillHeight } from "./hill";
 import { windGust } from "./wind";
+import { createReaction } from "./reaction";
+import { faceted, facetedTube } from "./lowpoly";
+import { mulberry32 } from "./rng";
 import { lookPose, type Pose } from "./journey";
 import type { Palette } from "./palette";
 import type { ScenePart } from "./index";
@@ -28,21 +31,35 @@ export function foxLocalToWorld(local: [number, number, number]): Vector3 {
 /** The wooden tag (an ema, like the prayer tablets at a shrine) on the fox's chest, in fox-local coordinates. */
 export const FOX_TAG = { hang: [0.4, 0.68, 0] as [number, number, number], local: [0.42, 0.5, 0] as [number, number, number], halfWidth: 0.2 };
 
+const FACET = 0.24; // how different neighbouring facets are in shade: enough that the cut shows from across the hill
+const BODY_Y = 0.36; // the body's height scale, which breathing varies a little
+const HEAD_AT = new Vector3(0.3, 0.84, 0); // where the head sits on the fox (fox-local)
+const MAX_YAW = 0.6, MAX_PITCH = 0.35;
+
+/** How far the head turns (yaw, sideways) and tips (pitch) to look at a point, given as an offset from the head in
+ *  fox-local coordinates (x forward, y up). Both are limited, so it never twists round. */
+export function lookAngles(offset: Vector3): { yaw: number; pitch: number } {
+  const clamp = (v: number, m: number) => Math.max(-m, Math.min(m, v));
+  return {
+    yaw: clamp(Math.atan2(-offset.z, offset.x), MAX_YAW),
+    pitch: clamp(Math.atan2(offset.y, Math.hypot(offset.x, offset.z)), MAX_PITCH),
+  };
+}
+
 /** The close-up for the download: in front of the fox, low, with the face above the tag. */
 export function foxCamera(): Pose {
   const p = foxLocalToWorld([1.9, 0.8, 0.2]), t = foxLocalToWorld([0.4, 0.72, 0]);
   return lookPose([p.x, p.y, p.z], [t.x, t.y, t.z], 38);
 }
 
-export function buildFox(palette: Palette, toon?: Texture): ScenePart {
+export function buildFox(palette: Palette, toon?: Texture): ScenePart & { react(): void; look(target: Vector3 | null): void } {
   const mat = (c: number) => new MeshToonMaterial({ color: c, gradientMap: toon ?? null });
   const fur = mat(palette.fox[0]), cream = mat(palette.fox[1]), dark = mat(palette.fox[2]);
   const root = new Group();
   root.name = "fox";
 
   const ball = (m: MeshToonMaterial, sx: number, sy: number, sz: number, x: number, y: number, z: number, parent: Group = root, name?: string) => {
-    // Higher tessellation keeps the fox soft-looking even in the close-up.
-    const mesh = new Mesh(new SphereGeometry(1, 32, 24), m);
+    const mesh = new Mesh(new SphereGeometry(1, 14, 10), m); // only the eyes use this, and they are small
     mesh.scale.set(sx, sy, sz);
     mesh.position.set(x, y, z);
     if (name) mesh.name = name;
@@ -50,96 +67,81 @@ export function buildFox(palette: Palette, toon?: Texture): ScenePart {
     return mesh;
   };
 
-  // body: tilted so the chest is high and the rump is low, as when sitting
-  const body = ball(fur, 0.36, 0.34, 0.26, -0.02, 0.4, 0, root, "fox-body");
+  // Low poly: a few big shapes with flat facets, each facet a slightly different shade, like cut paper.
+  const rng = mulberry32(11);
+  const facets = new MeshToonMaterial({ vertexColors: true, gradientMap: toon ?? null });
+  const [FUR, CREAM, DARK] = palette.fox, PINK = 0xefbfae;
+  const gem = (geo: BufferGeometry, color: number, sx: number, sy: number, sz: number, x: number, y: number, z: number, parent: Group = root, name?: string) => {
+    const mesh = new Mesh(faceted(geo, color, rng, FACET), facets);
+    mesh.scale.set(sx, sy, sz);
+    mesh.position.set(x, y, z);
+    if (name) mesh.name = name;
+    parent.add(mesh);
+    return mesh;
+  };
+  const rock = (color: number, sx: number, sy: number, sz: number, x: number, y: number, z: number, parent: Group = root, name?: string) =>
+    gem(new IcosahedronGeometry(1, 1), color, sx, sy, sz, x, y, z, parent, name);
+
+  // body: plump, tilted so the chest is high and the rump is low, as when sitting up
+  const body = rock(FUR, 0.38, BODY_Y, 0.29, -0.02, 0.4, 0, root, "fox-body");
   body.rotation.z = 0.5;
-  ball(cream, 0.2, 0.27, 0.2, 0.2, 0.47, 0); // chest
+  rock(CREAM, 0.21, 0.28, 0.21, 0.2, 0.47, 0); // chest
   [-1, 1].forEach((s) => {
-    ball(fur, 0.22, 0.22, 0.12, -0.14, 0.23, s * 0.17); // haunch
-    ball(dark, 0.14, 0.05, 0.075, 0.0, 0.05, s * 0.17); // hind paw
-    const leg = new Mesh(new CylinderGeometry(0.05, 0.055, 0.34, 16), fur); // short, rounded-looking front leg
-    leg.position.set(0.22, 0.27, s * 0.09);
-    root.add(leg);
-    const sock = new Mesh(new CylinderGeometry(0.052, 0.055, 0.12, 16), dark);
-    sock.position.set(0.22, 0.1, s * 0.09);
-    root.add(sock);
-    ball(dark, 0.085, 0.045, 0.065, 0.25, 0.035, s * 0.09);
+    rock(FUR, 0.23, 0.23, 0.14, -0.14, 0.23, s * 0.18); // haunch
+    rock(CREAM, 0.15, 0.055, 0.08, 0.0, 0.05, s * 0.18); // hind paw
+    gem(new CylinderGeometry(0.052, 0.062, 0.36, 5), DARK, 1, 1, 1, 0.22, 0.24, s * 0.09); // dark front leg
+    rock(DARK, 0.09, 0.045, 0.07, 0.25, 0.035, s * 0.09); // front paw
   });
 
-  // head
+  // head: a wide skull, puffy cream cheeks, a pointed muzzle and tall pointed ears
   const head = new Group();
   head.name = "fox-head";
   head.position.set(0.3, 0.84, 0);
   root.add(head);
-  ball(fur, 0.19, 0.17, 0.175, 0, 0, 0, head);
-  [-1, 1].forEach((s) => ball(cream, 0.12, 0.085, 0.08, 0.035, -0.055, s * 0.095, head)); // puffy cheeks
-  // A short rounded muzzle reads softer than the old sharp cone.
-  ball(fur, 0.13, 0.075, 0.09, 0.16, -0.045, 0, head);
-  ball(cream, 0.105, 0.05, 0.065, 0.205, -0.075, 0, head);
-  ball(dark, 0.03, 0.026, 0.03, 0.315, -0.035, 0, head); // nose
+  rock(FUR, 0.19, 0.17, 0.175, 0, 0, 0, head);
+  [-1, 1].forEach((s) => rock(CREAM, 0.12, 0.085, 0.085, 0.04, -0.055, s * 0.1, head)); // cheeks
+  const muzzle = new ConeGeometry(0.1, 0.3, 5);
+  muzzle.rotateZ(-Math.PI / 2); // the point faces forward
+  gem(muzzle, FUR, 1, 0.85, 0.95, 0.185, -0.04, 0, head);
+  rock(CREAM, 0.125, 0.05, 0.08, 0.2, -0.085, 0, head); // under the muzzle
+  gem(new OctahedronGeometry(1, 0), DARK, 0.032, 0.027, 0.03, 0.335, -0.036, 0, head); // nose
   const shine = mat(0xffffff);
   const eyes = [-1, 1].map((s) => {
     const eye = new Group();
     eye.name = s < 0 ? "fox-eye-l" : "fox-eye-r";
-    // Follow the enlarged head's surface normal so the eyes sit on the face, rather than inside it.
-    eye.position.set(0.142, 0.044, s * 0.116);
+    // Sit on the face: the facets lie a little inside the smooth shape these numbers describe, so pull the eyes in a touch.
+    eye.position.set(0.142 * 0.975, 0.044 * 0.975, s * 0.116 * 0.975);
     const normal = new Vector3(0.142 / 0.19 ** 2, 0.044 / 0.17 ** 2, s * 0.116 / 0.175 ** 2).normalize();
     eye.quaternion.setFromUnitVectors(new Vector3(0, 0, 1), normal);
-    ball(dark, 0.028, 0.036, 0.014, 0, 0, 0, eye);
+    const almond = ball(dark, 0.034, 0.022, 0.014, 0, 0, 0, eye); // a narrow, slanted eye, not a round one
+    almond.rotation.z = s * 0.32;
     ball(shine, 0.009, 0.01, 0.004, -0.008, 0.012, 0.012, eye);
     ball(shine, 0.004, 0.004, 0.002, 0.009, -0.01, 0.014, eye);
     head.add(eye);
     return eye;
   });
+  const cone = (radius: number, height: number) => new ConeGeometry(radius, height, 4).translate(0, height / 2, 0); // a four-sided point, standing on its base
   const ears = [-1, 1].map((s) => {
     const ear = new Group();
     ear.name = s < 0 ? "fox-ear-l" : "fox-ear-r";
-    ear.position.set(-0.035, 0.13, s * 0.1);
-    ear.rotation.x = -s * 0.3; // leaned outward
-    // Pointed fox ears, with a gently bevelled edge and a smaller cream triangle on the front.
-    const earShape = new Shape();
-    earShape.moveTo(-0.085, -0.025).quadraticCurveTo(-0.075, 0.08, 0, 0.25)
-      .quadraticCurveTo(0.075, 0.08, 0.085, -0.025).closePath();
-    const outerGeometry = new ExtrudeGeometry(earShape, {
-      depth: 0.055, bevelEnabled: true, bevelThickness: 0.01, bevelSize: 0.008, bevelSegments: 3, curveSegments: 16,
-    });
-    outerGeometry.translate(0, 0, -0.0275);
-    outerGeometry.rotateY(Math.PI / 2);
-    const outer = new Mesh(outerGeometry, fur);
-    const innerShape = new Shape();
-    innerShape.moveTo(-0.045, 0.015).lineTo(0, 0.185).lineTo(0.045, 0.015).closePath();
-    const innerGeometry = new ExtrudeGeometry(innerShape, { depth: 0.004, bevelEnabled: false });
-    innerGeometry.rotateY(Math.PI / 2);
-    const inner = new Mesh(innerGeometry, cream);
-    inner.position.x = 0.039;
-    ear.add(outer, inner);
+    ear.position.set(-0.03, 0.085, s * 0.085); // the base is inside the skull, so each ear grows out of the head
+    ear.rotation.x = s * 0.2; // lean each tip away from the centre of the head
+    gem(cone(0.095, 0.34), FUR, 0.6, 1, 1, 0, 0, 0, ear); // flat from front to back, wide across
+    gem(cone(0.048, 0.14), DARK, 0.6, 1, 1, 0, 0.204, 0, ear); // dark tip
+    gem(cone(0.058, 0.24), PINK, 0.3, 1, 1, 0.043, 0.07, 0, ear); // pink inside, on the front
     head.add(ear);
     return ear;
   });
 
-  // One continuous tail surface: full in the middle, tapering to a closed cream tip.
+  // The tail: big and bushy, curling round the feet, with a cream tip. Seven flat sides, so it is faceted too.
   const tail = new Group();
   tail.name = "fox-tail";
   tail.position.set(-0.3, 0.23, 0.03);
   const curve = new CubicBezierCurve3(new Vector3(0, 0, 0), new Vector3(-0.38, -0.04, 0.2), new Vector3(-0.3, -0.06, 0.52), new Vector3(0.52, -0.08, 0.38));
-  const segments = 48, radial = 20;
-  const tailGeometry = new TubeGeometry(curve, segments, 1, radial, false);
-  const positions = tailGeometry.getAttribute("position");
-  for (let i = 0; i <= segments; i++) {
-    const t = i / segments, centre = curve.getPointAt(t);
-    const radius = i === segments ? 0 : 0.055 * (1 - t) + 0.14 * Math.sin(Math.PI * t) ** 0.85;
-    for (let j = 0; j <= radial; j++) {
-      const index = i * (radial + 1) + j;
-      const vertex = new Vector3().fromBufferAttribute(positions, index).sub(centre).multiplyScalar(radius).add(centre);
-      positions.setXYZ(index, vertex.x, vertex.y, vertex.z);
-    }
-  }
-  tailGeometry.computeVertexNormals();
-  tailGeometry.clearGroups();
-  const creamStart = Math.floor(segments * 0.72) * radial * 6;
-  tailGeometry.addGroup(0, creamStart, 0);
-  tailGeometry.addGroup(creamStart, segments * radial * 6 - creamStart, 1);
-  const tailMesh = new Mesh(tailGeometry, [fur, cream]);
+  const tailMesh = new Mesh(
+    facetedTube(curve, (t) => 0.055 * (1 - t) + 0.14 * Math.sin(Math.PI * t) ** 0.85, (t) => (t > 0.66 ? CREAM : FUR), 14, 6, rng, FACET),
+    facets,
+  );
   tailMesh.name = "fox-tail-fur";
   tail.add(tailMesh);
   root.add(tail);
@@ -186,18 +188,40 @@ export function buildFox(palette: Palette, toon?: Texture): ScenePart {
   root.rotation.y = FOX.yaw;
   root.scale.set(...FOX_SCALE);
 
-  const earBase = ears[1].rotation.z;
+  const earBase = ears.map((e) => e.rotation.z);
+  const nod = createReaction(10, 1.7), wag = createReaction(24, 1.7), earWiggle = createReaction(32, 1.7);
+  let target: Vector3 | null = null; // a point in the world the fox is looking at, or null for straight ahead
+  let yaw = 0, pitch = 0;
   return {
     object: root,
-    update: (t) => {
+    react: () => { nod.kick(); wag.kick(); earWiggle.kick(); },
+    look: (p) => { target = p ? p.clone() : null; },
+    update: (t, dt) => {
       const gust = windGust(t);
-      body.scale.y = 0.34 * (1 + 0.018 * Math.sin(t * 2.1)); // breathing
-      head.rotation.z = Math.sin(t * 0.5) * 0.03;
-      tail.rotation.y = Math.sin(t * 1.1) * 0.1 + gust * 0.12; // swishes, and the wind lifts it
+      const nodding = nod.step(dt), wagging = wag.step(dt), wiggling = earWiggle.step(dt);
+
+      // the head turns toward the pointer, a little, and eases back when there is nothing to look at
+      let yawGoal = 0, pitchGoal = 0;
+      if (target) {
+        root.updateWorldMatrix(true, false);
+        const a = lookAngles(root.worldToLocal(target.clone()).sub(HEAD_AT));
+        yawGoal = a.yaw;
+        pitchGoal = a.pitch;
+      }
+      const ease = 1 - Math.exp(-Math.max(0, dt ?? 0) * 5);
+      yaw += (yawGoal - yaw) * ease;
+      pitch += (pitchGoal - pitch) * ease;
+      head.rotation.y = yaw;
+
+      body.scale.y = BODY_Y * (1 + 0.018 * Math.sin(t * 2.1)); // breathing
+      head.rotation.z = Math.sin(t * 0.5) * 0.03 + pitch + nodding * 0.1;
+      tail.rotation.y = Math.sin(t * 1.1) * 0.1 + gust * 0.12 + wagging * 0.55;
       tag.rotation.x = Math.sin(t * 1.1) * 0.06; // the tag swings a little from side to side, and the wind pushes it back
       tag.rotation.z = gust * 0.1;
       const flick = Math.pow(Math.max(0, Math.sin(t * 1.05)), 40); // a quick ear twitch every six seconds or so
-      ears[1].rotation.z = earBase + flick * 0.3;
+      const wiggle = wiggling * 0.4; // both ears waggle, in opposite directions
+      ears[0].rotation.z = earBase[0] - wiggle;
+      ears[1].rotation.z = earBase[1] + flick * 0.3 + wiggle;
       const blink = Math.pow(Math.max(0, Math.sin(t * 0.8 + 0.7)), 80);
       eyes.forEach((e) => (e.scale.y = 1 - 0.9 * blink));
     },

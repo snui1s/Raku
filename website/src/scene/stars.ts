@@ -1,4 +1,4 @@
-import { AdditiveBlending, BufferGeometry, Float32BufferAttribute, Group, Points, ShaderMaterial } from "three";
+import { AdditiveBlending, BufferGeometry, Float32BufferAttribute, Group, Points, ShaderMaterial, Vector3 } from "three";
 import { cappedPixelRatio } from "./capabilities";
 import { mulberry32 } from "./rng";
 import type { ScenePart } from "./index";
@@ -34,6 +34,12 @@ export function generateStars(count: number, seed = 5) {
     phases[i] = r(0, Math.PI * 2);
   }
   return { positions, colors, sizes, phases };
+}
+
+/** Where each star is in the world (the same stars the scene draws), for working out which one was clicked. */
+export function starPositions(): Vector3[] {
+  const { positions } = generateStars(STARS.count);
+  return Array.from({ length: STARS.count }, (_, i) => new Vector3(positions[i * 3], positions[i * 3 + 1], positions[i * 3 + 2]));
 }
 
 const VERT = /* glsl */ `

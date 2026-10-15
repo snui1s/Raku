@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { parallaxOffset } from "./camera";
+import { journeyParallax, parallaxOffset } from "./camera";
 
 describe("parallaxOffset", () => {
   it("is zero at the center", () => {
@@ -15,5 +15,25 @@ describe("parallaxOffset", () => {
     const o = parallaxOffset({ x: 0.5, y: -0.5 });
     expect(o.x).toBeCloseTo(0.175);
     expect(o.y).toBeCloseTo(-0.175);
+  });
+});
+
+describe("journeyParallax", () => {
+  it("is the same as the hero's parallax until the close-up", () => {
+    expect(journeyParallax({ x: 0.5, y: -0.5 }, 0)).toEqual(parallaxOffset({ x: 0.5, y: -0.5 }));
+  });
+
+  it("is smaller, but not gone, at the fox close-up, and never grows", () => {
+    const full = parallaxOffset({ x: 1, y: 1 }).x, near = journeyParallax({ x: 1, y: 1 }, 1).x;
+    expect(near).toBeGreaterThan(0);
+    expect(near).toBeLessThan(full * 0.5);
+    let prev = full;
+    for (let c = 0; c <= 1; c += 0.1) { const v = journeyParallax({ x: 1, y: 1 }, c).x; expect(v).toBeLessThanOrEqual(prev + 1e-12); prev = v; }
+  });
+
+  it("keeps the sign and treats out-of-range closeness as the nearest end", () => {
+    expect(journeyParallax({ x: -1, y: 1 }, 0.3).x).toBeLessThan(0);
+    expect(journeyParallax({ x: 1, y: 1 }, 5)).toEqual(journeyParallax({ x: 1, y: 1 }, 1));
+    expect(journeyParallax({ x: 1, y: 1 }, -2)).toEqual(journeyParallax({ x: 1, y: 1 }, 0));
   });
 });

@@ -5,8 +5,9 @@ interface Props {
   title: string;
   description?: string;
 }
-const { title, description = "A fast, distraction-free note-taking app for Windows. No accounts. No cloud. Just write." } = Astro.props;
+const { title, description = "Raku is a free, open-source note-taking app for Windows. Fast, works offline, no account and no cloud: your notes stay on your computer." } = Astro.props;
 const canonical = new URL(Astro.url.pathname, Astro.site);
+const image = new URL("/og.png", Astro.site);
 ---
 <!doctype html>
 <html lang="en" data-theme="dark">
@@ -14,14 +15,24 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="color-scheme" content="dark" />
+    <meta name="theme-color" content="#0a122e" />
     <title>{title}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="preload" href="/fonts/Rubik-Latin.woff2" as="font" type="font/woff2" crossorigin />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
     <meta property="og:url" content={canonical} />
+    <meta property="og:site_name" content="Raku" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:image" content={image} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Raku: a torii gate, a cherry tree and a fox under a full moon" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content={image} />
     <slot name="head" />
   </head>
   <body>

@@ -13,25 +13,23 @@ const FALLBACK: ReleaseInfo = { version: null, url: RELEASES_URL };
 const isRecord = (v: unknown): v is Record<string, unknown> =>
   typeof v === "object" && v !== null && !Array.isArray(v);
 
-function validInstallerUrl(v: unknown): v is string {
-  if (typeof v !== "string") return false;
-  try {
-    const u = new URL(v);
-    return u.protocol === "https:" && u.hostname === "github.com" && u.pathname.endsWith(".exe");
-  } catch {
-    return false;
-  }
+function validInstallerUrl(v: unknown, version: string): v is string {
+  // Match the release workflow's canonical asset URL exactly, including repo, tag and filename.
+  // This also rejects credentials, alternate ports, query strings and encoded path tricks.
+  return v === `https://github.com/snui1s/Raku/releases/download/v${version}/Raku_${version}_x64-setup.exe`;
 }
 
 /** Turn the parsed contents of update.json into the info the download button needs. Never throws. */
 export function parseRelease(raw: unknown): ReleaseInfo {
   if (!isRecord(raw)) return FALLBACK;
+  const version = typeof raw.version === "string" && raw.version.trim() === raw.version
+    && /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$/.test(raw.version)
+    ? raw.version : null;
+  if (!version) return FALLBACK;
   const platforms = raw.platforms;
   const win = isRecord(platforms) ? platforms["windows-x86_64"] : undefined;
   const url = isRecord(win) ? win.url : undefined;
-  if (!validInstallerUrl(url)) return FALLBACK;
-  const version =
-    typeof raw.version === "string" && /^\d+\.\d+\.\d+$/.test(raw.version) ? raw.version : null;
+  if (!validInstallerUrl(url, version)) return FALLBACK;
   return { version, url };
 }
 

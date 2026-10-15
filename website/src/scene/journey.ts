@@ -1,4 +1,4 @@
-// The whole home page as one scroll: hero, the feature stars, the notebook in the glade, the numbers at the gate and
+// The whole home page as one scroll: hero, the feature stars, the notebook in the glade, the numbers on the tree and
 // the download on the fox. Everything here is pure (no scene objects), so the timeline can be tested on its own.
 import { PerspectiveCamera, Vector3 } from "three";
 import { CONSTELLATION, constellationPose, constellationTimeline } from "./constellation";
@@ -6,8 +6,8 @@ import { CONSTELLATION, constellationPose, constellationTimeline } from "./const
 /** Scroll lengths in screen heights. The hero, tilt and feature lengths come from CONSTELLATION. */
 export const JOURNEY = {
   descent: 0.9, // from the stars back down to the glade
-  write: 1.6, // the notebook is open and the camera holds
-  toGate: 0.6,
+  write: 0.7, // the notebook is open and the camera holds
+  toTree: 0.9, // the camera pans from the glade to the tree
   numbers: 0.6, // the numbers are shown and the camera holds
   toFox: 0.9,
   final: 0.6, // the camera holds on the fox
@@ -15,7 +15,7 @@ export const JOURNEY = {
 
 const STARS_END = CONSTELLATION.holdVh + CONSTELLATION.tiltVh + CONSTELLATION.itemVh * CONSTELLATION.stars.length;
 const WRITE_END = STARS_END + JOURNEY.descent + JOURNEY.write;
-const NUMBERS_START = WRITE_END + JOURNEY.toGate;
+const NUMBERS_START = WRITE_END + JOURNEY.toTree;
 const NUMBERS_END = NUMBERS_START + JOURNEY.numbers;
 
 /** Where each chapter starts, in screen heights of scroll (what the "Features" link and focus handling scroll to). */
@@ -48,7 +48,7 @@ export interface JourneyState {
   tag: number;
   /** How far the camera is through each move, 0..1. */
   descent: number;
-  toGate: number;
+  toTree: number;
   toFox: number;
 }
 
@@ -56,7 +56,7 @@ export function journeyAt(scrollVh: number): JourneyState {
   const s = Math.max(0, scrollVh);
   const cons = constellationTimeline(Math.min(s, STARS_END));
   const descent = clamp((s - STARS_END) / JOURNEY.descent);
-  const toGate = clamp((s - WRITE_END) / JOURNEY.toGate);
+  const toTree = clamp((s - WRITE_END) / JOURNEY.toTree);
   const toFox = clamp((s - NUMBERS_END) / JOURNEY.toFox);
   return {
     scroll: s,
@@ -64,11 +64,11 @@ export function journeyAt(scrollVh: number): JourneyState {
     feature: cons.feature,
     skyBlend: 0.7 * cons.tilt * (1 - smooth(descent)),
     stars: smoothstep(0.7, 1, cons.tilt) * (1 - smoothstep(0, 0.3, descent)),
-    write: smoothstep(0.5, 1, descent) * (1 - smoothstep(0, 0.35, toGate)),
-    numbers: smoothstep(0.5, 1, toGate) * (1 - smoothstep(0, 0.4, toFox)),
+    write: smoothstep(0.5, 1, descent) * (1 - smoothstep(0, 0.35, toTree)),
+    numbers: smoothstep(0.5, 1, toTree) * (1 - smoothstep(0, 0.4, toFox)),
     tag: smoothstep(0.6, 1, toFox),
     descent,
-    toGate,
+    toTree,
     toFox,
   };
 }
@@ -85,8 +85,8 @@ export function lookPose(position: [number, number, number], target: [number, nu
 
 /** In the glade by the cherry tree: the notebook floats on the left, the tree fills the right. */
 export const GLADE = lookPose([2.0, 3.3, -5.5], [4.6, 4.4, -16], 44);
-/** In front of the gate, looking up at it, with the four lanterns hanging in view. */
-export const GATE = lookPose([-3, 3.6, -8], [1.6, 6.2, -17], 44);
+/** Across the glade from the cherry tree, looking at the lanterns that hang from its branches. */
+export const TREE_VIEW = lookPose([6.0, 4.4, -12.5], [8.1, 5.9, -19.5], 44);
 
 const mix = (a: Pose, b: Pose, t: number): Pose => ({
   position: a.position.clone().lerp(b.position, t),
@@ -99,8 +99,13 @@ export function journeyPose(state: JourneyState, fox: Pose): Pose {
   // once the stars are done, tilt and feature stay at their end values, so this is the sky camera for the rest
   const sky = constellationPose(state.tilt, state.feature);
   const toGlade = mix(sky, GLADE, smooth(state.descent));
-  const toGate = mix(toGlade, GATE, smooth(state.toGate));
-  return mix(toGate, fox, smooth(state.toFox));
+  const toTree = mix(toGlade, TREE_VIEW, smooth(state.toTree));
+  return mix(toTree, fox, smooth(state.toFox));
+}
+
+/** True while the camera is looking up at the stars, with the whole hill (and its flowers) below the bottom of the screen. */
+export function lookingAtSky(state: JourneyState): boolean {
+  return state.descent === 0 && state.tilt >= 0.85;
 }
 
 /** Where points in the world are on screen, in CSS pixels, so the page can put DOM next to them. */

@@ -1,6 +1,6 @@
 import {
   BufferGeometry, Color, CylinderGeometry, DoubleSide, Euler, Float32BufferAttribute, Group, InstancedMesh, Matrix4,
-  MeshToonMaterial, PerspectiveCamera, Quaternion, Shape, ShapeGeometry, Vector3, type Texture,
+  MeshToonMaterial, PerspectiveCamera, Quaternion, SphereGeometry, Vector3, type Texture,
 } from "three";
 import { mergeGeometries } from "three/examples/jsm/utils/BufferGeometryUtils.js";
 import { CAMERA } from "./camera";
@@ -80,35 +80,137 @@ export function scatterFlowers(seed = 3): Flower[] {
   return out;
 }
 
-/** Flat flower shapes in the XY plane (radius about 1), colored with vertex colors: petals white, center dark. */
-function headGeometry(petals: Shape[], center: Shape, centerColor: [number, number, number]): BufferGeometry {
-  const parts = petals.map((s) => paint(new ShapeGeometry(s), [1, 1, 1], 0));
-  parts.push(paint(new ShapeGeometry(center), centerColor, 0.02)); // the center sits just above the petals
-  return mergeGeometries(parts)!;
+function combine(parts: BufferGeometry[]): BufferGeometry {
+  const geometry = mergeGeometries(parts)!;
+  parts.forEach((part) => part.dispose());
+  return geometry;
 }
-function paint(g: ShapeGeometry, rgb: [number, number, number], lift: number): ShapeGeometry {
-  const n = g.attributes.position.count;
-  const c = new Float32Array(n * 3);
-  for (let i = 0; i < n; i++) c.set(rgb, i * 3);
-  g.setAttribute("color", new Float32BufferAttribute(c, 3));
-  g.translate(0, 0, lift);
-  return g;
+
+function paint(geometry: BufferGeometry, rgb: [number, number, number]): BufferGeometry {
+  const colors = new Float32Array(geometry.getAttribute("position").count * 3);
+  for (let i = 0; i < colors.length; i += 3) colors.set(rgb, i);
+  geometry.setAttribute("color", new Float32BufferAttribute(colors, 3));
+  return geometry;
 }
-const circle = (cx: number, cy: number, r: number) => new Shape().absarc(cx, cy, r, 0, Math.PI * 2, false);
+
+/** Rounded petals with a raised edge, a central crease and gentle ripples, facing local +z. */
+function petalGeometry(angle: number, length: number, width: number, cup: number, lift: number, seed: number): BufferGeometry {
+  const positions: number[] = [], colors: number[] = [], uv: number[] = [], indices: number[] = [];
+  const broad = width > 0.3;
+  const rows = broad ? 8 : 6, columns = 4; // enough to keep the cup and ripples; flowers are small on screen
+  const ca = Math.cos(angle), sa = Math.sin(angle);
+  for (let row = 0; row <= rows; row++) {
+    const t = row / rows;
+    const radius = 0.1 + (length - 0.1) * t;
+    const spread = width * Math.sin(Math.PI * t) ** (broad ? 0.48 : 0.7);
+    for (let column = 0; column <= columns; column++) {
+      const side = column / columns * 2 - 1;
+      const ripple = (broad ? 0.028 : 0.014) * Math.sin(t * 10 + seed) * side * side;
+      const z = lift + cup * t * t + (broad ? 0.1 : 0.035) * side * side * Math.sin(Math.PI * t) + ripple;
+      const tangent = side * spread + Math.sin(t * Math.PI) * Math.sin(seed) * 0.025;
+      positions.push(ca * radius - sa * tangent, sa * radius + ca * tangent, z);
+      const shade = (0.69 + 0.29 * Math.sin(t * Math.PI / 2)) * (1 - Math.abs(side) * 0.045);
+      colors.push(shade, shade, shade);
+      uv.push(column / columns, t);
+    }
+  }
+  for (let row = 0; row < rows; row++) for (let column = 0; column < columns; column++) {
+    const a = row * (columns + 1) + column, b = a + columns + 1;
+    indices.push(a, b, a + 1, a + 1, b, b + 1);
+  }
+  const geometry = new BufferGeometry();
+  geometry.setAttribute("position", new Float32BufferAttribute(positions, 3));
+  geometry.setAttribute("color", new Float32BufferAttribute(colors, 3));
+  geometry.setAttribute("uv", new Float32BufferAttribute(uv, 2));
+  geometry.setIndex(indices);
+  geometry.computeVertexNormals();
+  return geometry;
+}
+
+/** A domed seed head with a subtle seed pattern in the vertex colours. */
+function seedHead(radius: number, depth: number, rgb: [number, number, number]): BufferGeometry {
+  const geometry = new SphereGeometry(radius, 14, 6, 0, Math.PI * 2, 0, Math.PI / 2);
+  geometry.rotateX(Math.PI / 2);
+  geometry.scale(1, 1, depth / radius);
+  geometry.translate(0, 0, 0.055);
+  const positions = geometry.getAttribute("position");
+  const colors = new Float32Array(positions.count * 3);
+  for (let i = 0; i < colors.length / 3; i++) {
+    // Colour by position so duplicated pole/seam vertices share a shade, avoiding triangular seams.
+    const fleck = 0.9 + 0.06 * Math.sin(positions.getX(i) * 41) * Math.sin(positions.getY(i) * 37)
+      + 0.12 * (positions.getZ(i) - 0.055) / depth;
+    colors.set(rgb.map((channel) => channel * fleck), i * 3);
+  }
+  geometry.setAttribute("color", new Float32BufferAttribute(colors, 3));
+  return geometry;
+}
 
 function poppyHead(): BufferGeometry {
-  const petals = [0, 1, 2, 3].map((i) => {
-    const a = Math.PI / 4 + (i * Math.PI) / 2;
-    return circle(Math.cos(a) * 0.45, Math.sin(a) * 0.45, 0.58);
-  });
-  return headGeometry(petals, circle(0, 0, 0.2), [0.08, 0.06, 0.08]);
+  const parts: BufferGeometry[] = [];
+  for (let i = 0; i < 4; i++) {
+    const angle = Math.PI / 4 + i * Math.PI / 2;
+    parts.push(petalGeometry(angle, 1.02 + Math.sin(i * 2) * 0.04, 0.61, 0.24, 0, i + 1));
+    parts.push(petalGeometry(angle + 0.38, 0.79, 0.43, 0.19, 0.045, i + 5));
+  }
+  parts.push(seedHead(0.19, 0.11, [0.075, 0.055, 0.065]));
+  for (let i = 0; i < 14; i++) {
+    const angle = i / 14 * Math.PI * 2;
+    const pollen = new SphereGeometry(0.025, 4, 2); // a few millimetres across: eight faces are plenty (indexed, like the rest, so it merges)
+    pollen.translate(Math.cos(angle) * 0.245, Math.sin(angle) * 0.245, 0.1 + Math.sin(i * 2.1) * 0.015);
+    parts.push(paint(pollen, [0.96, 0.74, 0.3]));
+  }
+  return combine(parts);
 }
+
 function susanHead(): BufferGeometry {
-  const petals = Array.from({ length: 14 }, (_, i) => {
-    const a = (i / 14) * Math.PI * 2;
-    return new Shape().absellipse(Math.cos(a) * 0.66, Math.sin(a) * 0.66, 0.36, 0.13, 0, Math.PI * 2, false, a);
-  });
-  return headGeometry(petals, circle(0, 0, 0.36), [0.3, 0.12, 0.04]);
+  const parts: BufferGeometry[] = [];
+  for (let i = 0; i < 13; i++) {
+    const angle = i / 13 * Math.PI * 2;
+    parts.push(petalGeometry(angle, 0.95 + 0.06 * Math.sin(i * 2.4), 0.135, -0.12, 0.055, i));
+  }
+  parts.push(seedHead(0.305, 0.22, [0.24, 0.12, 0.045]));
+  return combine(parts);
+}
+
+/** Pointed, gently folded leaves, attached at alternating heights on the stem. */
+function leafGeometry(height: number, angle: number, length: number): BufferGeometry {
+  const positions: number[] = [], colors: number[] = [], uv: number[] = [], indices: number[] = [];
+  const rows = 5, ca = Math.cos(angle), sa = Math.sin(angle);
+  for (let row = 0; row <= rows; row++) {
+    const t = row / rows, width = 0.047 * Math.sin(Math.PI * t) ** 0.8;
+    for (let side = -1; side <= 1; side++) {
+      const x = length * t, z = side * width;
+      const ridge = (1 - Math.abs(side)) * 0.018 * Math.sin(Math.PI * t);
+      positions.push(0.05 * Math.sin(Math.PI * height) + ca * x - sa * z,
+        height + 0.09 * t + 0.045 * Math.sin(Math.PI * t) + ridge, sa * x + ca * z);
+      const shade = side === 0 ? 1 : 0.77;
+      colors.push(0.77 * shade, shade, 0.66 * shade);
+      uv.push((side + 1) / 2, t);
+    }
+  }
+  for (let row = 0; row < rows; row++) for (let column = 0; column < 2; column++) {
+    const a = row * 3 + column, b = a + 3;
+    indices.push(a, a + 1, b, a + 1, b + 1, b);
+  }
+  const geometry = new BufferGeometry();
+  geometry.setAttribute("position", new Float32BufferAttribute(positions, 3));
+  geometry.setAttribute("color", new Float32BufferAttribute(colors, 3));
+  geometry.setAttribute("uv", new Float32BufferAttribute(uv, 2));
+  geometry.setIndex(indices);
+  geometry.computeVertexNormals();
+  return geometry;
+}
+
+function stemGeometry(): BufferGeometry {
+  const stem = new CylinderGeometry(0.007, 0.011, 1, 5, 4);
+  stem.translate(0, 0.5, 0);
+  const positions = stem.getAttribute("position");
+  for (let i = 0; i < positions.count; i++) {
+    positions.setX(i, positions.getX(i) + 0.05 * Math.sin(Math.PI * positions.getY(i)));
+  }
+  stem.computeVertexNormals();
+  return combine([paint(stem, [0.65, 0.8, 0.62]),
+    leafGeometry(0.25, 0.1, 0.19), leafGeometry(0.49, Math.PI + 0.5, 0.17), leafGeometry(0.7, -0.6, 0.11)]);
 }
 
 export function buildFlowers(palette: Palette, toon?: Texture, seed = 3): ScenePart {
@@ -117,9 +219,7 @@ export function buildFlowers(palette: Palette, toon?: Texture, seed = 3): SceneP
   group.name = "flowers";
   const mat = (extra: object = {}) => new MeshToonMaterial({ color: 0xffffff, gradientMap: toon ?? null, side: DoubleSide, ...extra });
 
-  const stemGeo = new CylinderGeometry(0.014, 0.02, 1, 5);
-  stemGeo.translate(0, 0.5, 0);
-  const stems = new InstancedMesh(stemGeo, mat({ color: palette.grass[1] }), flowers.length);
+  const stems = new InstancedMesh(stemGeometry(), mat({ color: palette.grass[2], vertexColors: true }), flowers.length);
   stems.name = "flower-stems";
   const susanFlowers = flowers.filter((f) => f.kind === "susan");
   const poppyFlowers = flowers.filter((f) => f.kind === "poppy");
@@ -127,14 +227,14 @@ export function buildFlowers(palette: Palette, toon?: Texture, seed = 3): SceneP
   susans.name = "susan-heads";
   const poppies = new InstancedMesh(poppyHead(), mat({ vertexColors: true }), poppyFlowers.length);
   poppies.name = "poppy-heads";
-  [stems, susans, poppies].forEach((m) => { m.frustumCulled = false; group.add(m); });
+  [stems, susans, poppies].forEach((m) => { m.frustumCulled = false; group.add(m); }); // they move every frame, and the camera is inside the field
 
   const col = new Color();
   susanFlowers.forEach((f, i) => susans.setColorAt(i, col.setHex(f.color)));
   poppyFlowers.forEach((f, i) => poppies.setColorAt(i, col.setHex(f.color)));
 
   const m = new Matrix4(), q = new Quaternion(), e = new Euler(), hq = new Quaternion(), p = new Vector3(), s = new Vector3(), top = new Vector3();
-  const facing = new Quaternion().setFromEuler(new Euler(-0.5, 0, 0)); // heads face the camera, tipped up a little
+  const facing = new Quaternion();
   const spin = new Quaternion(), spinAxis = new Vector3(0, 0, 1);
   const write = (t: number) => {
     let si = 0, pi = 0;
@@ -145,7 +245,8 @@ export function buildFlowers(palette: Palette, toon?: Texture, seed = 3): SceneP
       stems.setMatrixAt(i, m.compose(p.set(f.x, f.y, f.z), q, s.set(w, f.height, w)));
       top.set(0, f.height, 0).applyQuaternion(q);
       top.x += f.x; top.y += f.y; top.z += f.z;
-      hq.copy(q).multiply(facing).multiply(spin.setFromAxisAngle(spinAxis, f.yaw)); // random spin about the flower face
+      facing.setFromEuler(e.set(-0.5 + Math.sin(f.phase) * 0.14, Math.cos(f.phase) * 0.16, 0));
+      hq.copy(q).multiply(facing).multiply(spin.setFromAxisAngle(spinAxis, f.yaw)); // individual head tilt and spin
       const head = f.kind === "susan" ? susans : poppies;
       head.setMatrixAt(f.kind === "susan" ? si++ : pi++, m.compose(top, hq, s.set(f.size, f.size, f.size)));
     });

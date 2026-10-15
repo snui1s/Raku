@@ -42,28 +42,36 @@ const VERT = /* glsl */ `
     gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
   }
 `;
-// uv.x across the river, uv.y along it (0 far .. 1 near). Light streaks slide toward the viewer.
+// One surface, four analytic waves: flowing ribbons, a broken moon reflection and a soft shallow-water edge.
 const FRAG = /* glsl */ `
   varying vec2 vUv;
   uniform vec3 uBase;
   uniform vec3 uLight;
   uniform vec3 uGlint;
   uniform float uTime;
-  float hash(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
   void main() {
-    float along = vUv.y * 150.0 - uTime * 2.2;
-    float wob = sin(vUv.x * 11.0 + vUv.y * 26.0 + uTime * 0.6) * 1.4;
-    float streak = smoothstep(0.78, 0.96, sin(along + wob) * 0.5 + 0.5);
-    float edge = smoothstep(0.0, 0.16, vUv.x) * smoothstep(1.0, 0.84, vUv.x);
+    float x = vUv.x * 2.0 - 1.0;
+    float flow = vUv.y * 105.0 - uTime * 1.6;
+    float bend = sin(vUv.y * 23.0 - uTime * 0.25);
+    float crossWave = sin(vUv.y * 44.0 + x * 7.0 + uTime * 0.5);
+    float ripple = sin(flow + x * 4.0 + bend * 1.3);
+    float shimmer = sin(flow * 1.73 - x * 13.0 + bend);
+    float aa = max(fwidth(flow), 0.035);
+    float detail = 1.0 - smoothstep(0.7, 2.5, aa);
+    float crest = smoothstep(0.84 - aa * 0.12, 0.98, ripple) * (0.35 + 0.65 * detail);
+    float lane = 1.0 - smoothstep(0.09, 0.4, abs(vUv.x - (0.48 + 0.12 * bend + 0.045 * crossWave)));
+    float edge = smoothstep(0.0, 0.075, vUv.x) * (1.0 - smoothstep(0.925, 1.0, vUv.x));
     float far = smoothstep(0.0, 0.12, vUv.y);
-    vec3 col = mix(uBase, uLight, streak * 0.75 + (1.0 - edge) * 0.35);
-    // small glints that ride the current and twinkle
-    vec2 g = vec2(vUv.x * 9.0, vUv.y * 150.0 - uTime * 2.2);
-    vec2 cell = floor(g), f = fract(g) - 0.5;
-    float h = hash(cell);
-    float glint = step(0.9, h) * smoothstep(0.32, 0.0, length(f)) * (0.5 + 0.5 * sin(uTime * 3.0 + h * 40.0)) * edge;
-    col = mix(col, uGlint, glint);
+    vec3 col = uBase * (0.72 + x * x * 0.36);
+    col = mix(col, uLight, 0.08 + lane * 0.12 + (crossWave * 0.5 + 0.5) * 0.06);
+    col = mix(col, uLight, crest * (0.18 + lane * 0.36));
+    float glint = smoothstep(0.95, 0.999, shimmer)
+      * (1.0 - smoothstep(0.04, 0.12, abs(x * 0.5 - crossWave * 0.15))) * detail * edge;
+    float bank = (1.0 - smoothstep(0.025, 0.09, min(vUv.x, 1.0 - vUv.x)))
+      * smoothstep(0.15, 0.75, crossWave) * 0.18;
+    col = mix(col, uGlint, glint * 0.65 + bank);
     gl_FragColor = vec4(col, (0.92 * edge + 0.08) * far);
+    #include <colorspace_fragment>
   }
 `;
 
@@ -90,7 +98,11 @@ export function buildRiver(palette: Palette): ScenePart {
   geo.setAttribute("uv", new Float32BufferAttribute(uv, 2));
   geo.setIndex(idx);
   const mat = new ShaderMaterial({
-    uniforms: { uBase: { value: new Color(palette.water[0]) }, uLight: { value: new Color(palette.water[1]) }, uGlint: { value: new Color(0xdff0ff) }, uTime: { value: 0 } },
+    uniforms: {
+      uBase: { value: new Color(palette.water[0]).lerp(new Color(0x17475e), 0.45) },
+      uLight: { value: new Color(palette.water[1]).lerp(new Color(0x66c3c4), 0.35) },
+      uGlint: { value: new Color(0xe5f1e9) }, uTime: { value: 0 },
+    },
     vertexShader: VERT,
     fragmentShader: FRAG,
     transparent: true,

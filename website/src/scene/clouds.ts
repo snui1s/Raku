@@ -1,4 +1,4 @@
-import { CanvasTexture, Color, Group, Mesh, MeshBasicMaterial, PlaneGeometry, type Texture } from "three";
+import { CanvasTexture, Color, Group, Mesh, MeshBasicMaterial, PlaneGeometry, SRGBColorSpace, type Texture } from "three";
 import { mulberry32 } from "./rng";
 import type { Palette } from "./palette";
 import type { ScenePart } from "./index";
@@ -146,7 +146,7 @@ export function drawCloudMask(ctx: Ctx2D, variant: number, seed: number) {
   const byRadius = [...puffs].sort((a, b) => b.r - a.r).slice(0, v.curls);
   byRadius.forEach((p, i) => {
     const dir = i % 2 === 0 ? 1 : -1;
-    spiral(ctx, p.x + p.r * 0.05, p.y + p.r * 0.02, p.r * 0.62, 1.55, -0.9 + i * 1.1, dir, p.r * 0.13, p.r * 0.04);
+    spiral(ctx, p.x + p.r * 0.05, p.y + p.r * 0.02, p.r * 0.62, 1.15, -0.9 + i * 1.1, dir, p.r * 0.075, p.r * 0.018);
   });
   if (variant % CLOUD_VARIANTS.length === 0) { // only the big bank gets a line that follows the top edge of its biggest puff
     const big = byRadius[0];
@@ -155,15 +155,16 @@ export function drawCloudMask(ctx: Ctx2D, variant: number, seed: number) {
       const a = Math.PI * (1.08 + 0.7 * (i / 24));
       arc.push([big.x + big.r * 0.82 * Math.cos(a), big.y + big.r * 0.82 * Math.sin(a)]);
     }
-    ribbon(ctx, arc, big.r * 0.025, big.r * 0.08);
+    ribbon(ctx, arc, big.r * 0.02, big.r * 0.045);
   }
   // a flowing line along the middle of the tail
   const spine: Pt[] = [];
   for (let i = 0; i <= 30; i++) spine.push(bezier([bx - last.r * 0.5, base - h * 0.07], [bx + L * 0.3, base - h * 0.14], [bx + L * 0.6, base - h * 0.02 + h * v.tailRise * 0.3], [tipX - L * 0.12, tipY + h * 0.005], i / 30));
-  ribbon(ctx, spine, h * 0.034, h * 0.004);
+  ribbon(ctx, spine, h * 0.022, h * 0.003);
 }
 
-function makeMask(variant: number, seed: number): Texture | undefined {
+/** Bake the shaded body and moonlit rim once. Each cloud still needs just one quad and one texture lookup. */
+function makeArtwork(variant: number, seed: number, palette: Palette): Texture | undefined {
   if (typeof document === "undefined") return undefined; // no DOM (unit tests): the cloud is then a plain quad
   const canvas = document.createElement("canvas");
   canvas.width = CLOUD_TEX.w;
@@ -171,7 +172,28 @@ function makeMask(variant: number, seed: number): Texture | undefined {
   const ctx = canvas.getContext("2d");
   if (!ctx) return undefined;
   drawCloudMask(ctx as unknown as Ctx2D, variant, seed);
+  const image = ctx.getImageData(0, 0, CLOUD_TEX.w, CLOUD_TEX.h);
+  const pixels = image.data, mask = new Uint8Array(CLOUD_TEX.w * CLOUD_TEX.h);
+  for (let i = 0; i < mask.length; i++) mask[i] = pixels[i * 4 + 1];
+  const top = new Color(palette.cloud).lerp(new Color(0xd2d4ed), 0.35).getHex();
+  const bottom = new Color(palette.cloud).lerp(new Color(0x283b69), 0.42).getHex();
+  const rimColor = [220, 221, 238];
+  for (let y = 0; y < CLOUD_TEX.h; y++) {
+    const shade = Math.min(1, Math.max(0, (y / CLOUD_TEX.h - 0.16) / 0.62));
+    const row = [16, 8, 0].map((shift) => lerp((top >> shift) & 255, (bottom >> shift) & 255, shade));
+    const above = Math.max(0, y - 3) * CLOUD_TEX.w;
+    for (let x = 0; x < CLOUD_TEX.w; x++) {
+      const i = y * CLOUD_TEX.w + x, p = i * 4;
+      const rim = Math.max(0, mask[i] - mask[above + x]) / 255 * 0.55;
+      pixels[p] = lerp(row[0], rimColor[0], rim);
+      pixels[p + 1] = lerp(row[1], rimColor[1], rim);
+      pixels[p + 2] = lerp(row[2], rimColor[2], rim);
+      pixels[p + 3] = mask[i] * (0.95 - shade * 0.12);
+    }
+  }
+  ctx.putImageData(image, 0, 0);
   const tex = new CanvasTexture(canvas);
+  tex.colorSpace = SRGBColorSpace;
   tex.anisotropy = 4;
   return tex;
 }
@@ -184,14 +206,14 @@ export function buildClouds(palette: Palette): ScenePart {
   const group = new Group();
   group.name = "clouds";
   const rad = Math.PI / 180;
-  const masks = CLOUD_VARIANTS.map((_, i) => makeMask(i, 100 + i));
+  const artwork = CLOUD_VARIANTS.map((_, i) => makeArtwork(i, 100 + i, palette));
 
   const items = Array.from({ length: CLOUDS.count }, (_, i) => {
     const variant = i % CLOUD_VARIANTS.length;
     const widthDeg = r(20, 34) * (variant === 2 ? 0.85 : 1);
     const width = 2 * CLOUDS.distance * Math.tan((widthDeg / 2) * rad);
     const material = new MeshBasicMaterial({
-      color: new Color(palette.cloud), alphaMap: masks[variant] ?? null, transparent: true, opacity: 0, depthWrite: false, fog: false,
+      color: 0xffffff, map: artwork[variant] ?? null, transparent: true, opacity: 0, depthWrite: false, fog: false,
     });
     const mesh = new Mesh(new PlaneGeometry(width, width / 2), material);
     mesh.name = "cloud";

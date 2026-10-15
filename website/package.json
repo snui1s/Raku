@@ -7,8 +7,13 @@
     "build": "astro build",
     "preview": "astro preview",
     "check": "astro check",
+    "check:security": "bun scripts/check-security.ts",
     "test": "vitest run",
-    "stills": "node --experimental-strip-types scripts/render-stills.ts"
+    "stills": "node --experimental-strip-types scripts/render-stills.ts",
+    "og": "node --experimental-strip-types scripts/render-og.ts"
+  },
+  "overrides": {
+    "postcss-selector-parser": "7.1.6"
   },
   "dependencies": {
     "@astrojs/starlight": "0.42.6",

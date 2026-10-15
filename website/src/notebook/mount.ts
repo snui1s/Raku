@@ -1,6 +1,7 @@
 import { Editor, type ChainedCommands } from "@tiptap/core";
 import { notebookExtensions } from "./extensions";
 import { SAMPLE_HTML } from "./sample";
+import "../styles/notebook.css";
 
 /** What each toolbar button (data-cmd) does, and how to tell it is on. Nothing is stored: the text lives in the editor only. */
 const COMMANDS: Record<string, { run: (c: ChainedCommands) => ChainedCommands; active: (e: Editor) => boolean }> = {
@@ -18,6 +19,7 @@ const COMMANDS: Record<string, { run: (c: ChainedCommands) => ChainedCommands; a
 /** Turns the plain sample note in `el` into a live editor and wires the toolbar buttons (`data-cmd`) in `toolbar`. */
 export function mountNotebook(el: HTMLElement, toolbar: HTMLElement): { destroy(): void } {
   const editor = new Editor({
+    injectCSS: false, // Bundle the editor's base styles instead of injecting a runtime <style> tag under CSP.
     element: (el.replaceChildren(), el),
     extensions: notebookExtensions(),
     content: SAMPLE_HTML,

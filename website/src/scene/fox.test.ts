@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { Box3, Object3D, PerspectiveCamera, Vector3 } from "three";
 import { PALETTE } from "./palette";
 import { hillHeight } from "./hill";
-import { FOX, FOX_TAG, buildFox, foxCamera, foxLocalToWorld } from "./fox";
+import { FOX, FOX_TAG, buildFox, foxCamera, foxLocalToWorld, lookAngles } from "./fox";
 
 describe("buildFox", () => {
   const fox = () => {
@@ -110,5 +110,109 @@ describe("the tag around the fox's neck", () => {
     const toCamera = pose.position.clone().sub(foxLocalToWorld([0.3, 0.84, 0])).normalize();
     const facing = foxLocalToWorld([1, 0, 0]).sub(foxLocalToWorld([0, 0, 0])).normalize();
     expect(toCamera.dot(facing)).toBeGreaterThan(0.6);
+  });
+});
+
+describe("the fox reacts to the visitor", () => {
+  const built = () => {
+    const part = buildFox(PALETTE);
+    part.object.updateMatrixWorld(true);
+    return part;
+  };
+  const run = (part: ReturnType<typeof built>, seconds: number, t0 = 3) => {
+    const tail = part.object.getObjectByName("fox-tail")!, earL = part.object.getObjectByName("fox-ear-l")!, earR = part.object.getObjectByName("fox-ear-r")!;
+    let tailMax = 0, earMax = 0;
+    for (let i = 0, t = t0; i < seconds * 60; i++, t += 1 / 60) {
+      part.update!(t, 1 / 60);
+      tailMax = Math.max(tailMax, Math.abs(tail.rotation.y));
+      earMax = Math.max(earMax, Math.abs(earL.rotation.z), Math.abs(earR.rotation.z));
+    }
+    return { tailMax, earMax };
+  };
+
+  it("wags its tail and waggles its ears when clicked, far more than it idles", () => {
+    const idle = built(), clicked = built();
+    clicked.react();
+    const a = run(idle, 1), b = run(clicked, 1);
+    expect(b.tailMax).toBeGreaterThan(a.tailMax + 0.2);
+    expect(b.earMax).toBeGreaterThan(a.earMax + 0.15);
+    expect(b.tailMax).toBeLessThan(1); // lively, not wild
+    expect(b.earMax).toBeLessThan(0.9);
+  });
+
+  it("settles back to its idle motion within a few seconds", () => {
+    const part = built();
+    part.react();
+    run(part, 5);
+    const after = run(part, 3, 8);
+    expect(after.tailMax).toBeLessThan(0.4); // the idle bound
+    expect(after.earMax).toBeLessThan(0.5);
+  });
+
+  it("can be clicked again while it is still excited", () => {
+    const part = built();
+    part.react();
+    run(part, 0.5);
+    part.react();
+    expect(run(part, 0.5).tailMax).toBeGreaterThan(0.3);
+  });
+
+  it("turns its head toward a point it is told to look at, within limits, and back when told to stop", () => {
+    const part = built();
+    const head = part.object.getObjectByName("fox-head")!;
+    part.look(foxLocalToWorld([2, 0.84, -1.5]));
+    for (let i = 0; i < 120; i++) part.update!(i / 60, 1 / 60);
+    expect(head.rotation.y).toBeGreaterThan(0.3);
+    expect(head.rotation.y).toBeLessThanOrEqual(0.6 + 1e-9);
+    part.look(foxLocalToWorld([2, 0.84, 1.5]));
+    for (let i = 0; i < 120; i++) part.update!(2 + i / 60, 1 / 60);
+    expect(head.rotation.y).toBeLessThan(-0.3);
+    part.look(null);
+    for (let i = 0; i < 240; i++) part.update!(4 + i / 60, 1 / 60);
+    expect(Math.abs(head.rotation.y)).toBeLessThan(0.01);
+  });
+
+  it("looks straight ahead at a point straight ahead, and never twists round to look behind it", () => {
+    const part = built();
+    const head = part.object.getObjectByName("fox-head")!;
+    part.look(foxLocalToWorld([5, 0.84, 0]));
+    for (let i = 0; i < 180; i++) part.update!(i / 60, 1 / 60);
+    expect(Math.abs(head.rotation.y)).toBeLessThan(0.02);
+    part.look(foxLocalToWorld([-4, 0.84, -1]));
+    for (let i = 0; i < 180; i++) part.update!(3 + i / 60, 1 / 60);
+    expect(Math.abs(head.rotation.y)).toBeLessThanOrEqual(0.6 + 1e-9);
+  });
+
+  it("moves its head smoothly rather than snapping to the pointer", () => {
+    const part = built();
+    const head = part.object.getObjectByName("fox-head")!;
+    part.look(foxLocalToWorld([2, 0.84, -1.5]));
+    let prev = 0;
+    for (let i = 0; i < 60; i++) {
+      part.update!(i / 60, 1 / 60);
+      expect(Math.abs(head.rotation.y - prev)).toBeLessThan(0.12);
+      prev = head.rotation.y;
+    }
+  });
+});
+
+describe("lookAngles", () => {
+  it("is zero for straight ahead, and signs follow the side and the height", () => {
+    const ahead = lookAngles(new Vector3(1, 0, 0));
+    expect(ahead.yaw).toBeCloseTo(0, 9);
+    expect(ahead.pitch).toBeCloseTo(0, 9);
+    expect(lookAngles(new Vector3(1, 0, -0.2)).yaw).toBeGreaterThan(0);
+    expect(lookAngles(new Vector3(1, 0, 0.2)).yaw).toBeLessThan(0);
+    expect(lookAngles(new Vector3(1, 0.2, 0)).pitch).toBeGreaterThan(0);
+    expect(lookAngles(new Vector3(1, -0.2, 0)).pitch).toBeLessThan(0);
+  });
+
+  it("is limited in both directions, even for a point behind or straight above", () => {
+    for (const v of [new Vector3(1, 0, -9), new Vector3(1, 0, 9), new Vector3(-1, 0, 0.1), new Vector3(0, 9, 0), new Vector3(0, -9, 0), new Vector3(0, 0, 0)]) {
+      const a = lookAngles(v);
+      expect(Number.isFinite(a.yaw + a.pitch)).toBe(true);
+      expect(Math.abs(a.yaw)).toBeLessThanOrEqual(0.6 + 1e-9);
+      expect(Math.abs(a.pitch)).toBeLessThanOrEqual(0.35 + 1e-9);
+    }
   });
 });

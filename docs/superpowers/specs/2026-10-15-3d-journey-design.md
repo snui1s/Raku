@@ -27,7 +27,7 @@ projecting 3D anchor points to screen positions every frame (what the feature la
 | 1 Hero | Today's hero camera, exactly | Title, tagline, Download and Docs buttons |
 | 2 Stars | Tilts up into the sky (today's constellation) | Five feature labels, minor features line |
 | 3 Write | Tilts back down to the glade by the cherry tree, then holds | The notebook, floating in front of the tree |
-| 4 Numbers | Moves toward the gate | The four numbers as signs on 3D anchor points |
+| 4 Numbers | Pans over to the cherry tree | The four numbers under paper lanterns tied to its branches (3D anchor points) |
 | 5 Download | Moves in low and close to the fox | A wooden tag on the fox's chest with the Download link on it |
 
 Scroll lengths are in screen heights, starting values to be tuned by eye: hero hold 0.2, tilt 0.9, five features 0.6

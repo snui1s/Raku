@@ -1,5 +1,5 @@
 const task = (text: string, checked: boolean) =>
-  `<li data-checked="${checked}" data-type="taskItem"><label><input type="checkbox"${checked ? ' checked="checked"' : ""}><span></span></label><div><p>${text}</p></div></li>`;
+  `<li data-checked="${checked}" data-type="taskItem"><label><input type="checkbox" aria-label="Done"${checked ? ' checked="checked"' : ""}><span></span></label><div><p>${text}</p></div></li>`;
 
 /** The note the notebook opens with. The page renders it before the editor loads, and the editor starts from it. */
 export const SAMPLE_HTML = [

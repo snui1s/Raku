@@ -35,9 +35,37 @@ describe("parseRelease", () => {
     expect(parseRelease(file({ platforms: zip }))).toEqual(FALLBACK);
   });
 
-  it("drops an invalid version but keeps a valid url", () => {
-    expect(parseRelease(file({ version: "1.1" }))).toEqual({ version: null, url: URL_OK });
-    expect(parseRelease(file({ version: "abc" }))).toEqual({ version: null, url: URL_OK });
+  it("falls back for invalid versions or an installer from a different version", () => {
+    for (const version of ["1.1", "abc", "01.1.1", "1.1.1\n", "1.1.2", undefined]) {
+      expect(parseRelease(file({ version }))).toEqual(FALLBACK);
+    }
+  });
+
+  it.each([
+    URL_OK.replace("snui1s/Raku", "attacker/Raku"),
+    URL_OK.replace("snui1s/Raku", "snui1s/Raku-fork"),
+    URL_OK.replace("github.com", "github.com.evil.example"),
+    URL_OK.replace("github.com", "attacker@github.com"),
+    URL_OK.replace("github.com", "github.com:8443"),
+    URL_OK.replace("github.com", "github.com:443"),
+    URL_OK.replace("/v1.1.1/", "/v1.1.2/"),
+    URL_OK.replace("Raku_1.1.1_x64", "Raku_1.1.2_x64"),
+    URL_OK.replace("/Raku/releases", "/%52aku/releases"),
+    URL_OK.replace("/download/", "/download/other/../"),
+    URL_OK + "?redirect=elsewhere",
+    URL_OK + "#elsewhere",
+    " " + URL_OK,
+    URL_OK + "\n",
+    URL_OK.replaceAll("/", "\\"),
+  ])("rejects a noncanonical download URL: %s", (url) => {
+    expect(parseRelease(file({ platforms: { "windows-x86_64": { url } } }))).toEqual(FALLBACK);
+  });
+
+  it("rejects version line endings even when both the tag and filename copy them", () => {
+    for (const version of ["1.1.1\n", "1.1.1\r", "1.1.1\r\n"]) {
+      const url = `https://github.com/snui1s/Raku/releases/download/v${version}/Raku_${version}_x64-setup.exe`;
+      expect(parseRelease(file({ version, platforms: { "windows-x86_64": { url } } }))).toEqual(FALLBACK);
+    }
   });
 
   it("falls back for non-object input", () => {

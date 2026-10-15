@@ -34,11 +34,14 @@ The zoom range is 50% to 250%. Zoom only changes the paper. The interface around
 **Appearance**
 
 - **Interface scale:** 50%, 75%, 100% or 125%. This scales the sidebar, header and menus, not the paper.
-- **Dark mode:** switches between light and dark. The color palette is chosen from the header.
+- **Dark mode:** switches between light and dark.
+- **Theme:** chooses a color palette. The header also has a theme picker.
 - **Reduce animations:** turns off transitions. Raku also respects the reduced-motion setting of Windows.
 
 Settings are stored on your computer and kept between launches.
 
+Use **Reset to defaults** at the bottom of Settings to reset paper, writing and interface settings. This does not delete notes or folders. The selected color palette and light/dark mode are separate appearance choices.
+
 ## Focus mode
 
-Press `Ctrl` + `Shift` + `Z` for **Zen mode**, which hides the sidebar and header. Press `Esc` to leave it. The header also has a Pomodoro timer.
+Press `Ctrl` + `Shift` + `Z` for **Zen mode**, which hides the sidebar and header. Press `Esc` to leave it. Read [Focus tools](/docs/guides/focus-tools/) for the Pomodoro timer and a quieter workspace, or open the [keyboard shortcut reference](/docs/guides/keyboard-shortcuts/).
