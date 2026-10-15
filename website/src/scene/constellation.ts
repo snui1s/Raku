@@ -63,16 +63,21 @@ function focusDirection(feature: number): Vector3 {
   return direction(...CONSTELLATION.center).multiplyScalar(0.5).add(star.multiplyScalar(0.5)).normalize();
 }
 
+/** Where the camera is and looks when it tilts up toward the sky. At tilt 0 it is exactly the hero camera. */
+export function constellationPose(tilt: number, feature: number): { position: Vector3; direction: Vector3; fov: number } {
+  const k = ease(clamp(tilt));
+  const position = new Vector3(...CAMERA.position);
+  const hero = new Vector3(...CAMERA.target).sub(position).normalize();
+  const direction = hero.multiplyScalar(1 - k).add(focusDirection(feature).multiplyScalar(k)).normalize();
+  return { position, direction, fov: CAMERA.fov - 4 * k }; // a touch closer while looking at the stars
+}
+
 /** Tilts the hero camera up toward the sky. At tilt 0 it is exactly the hero camera; it is never rolled. */
 export function applyConstellationCamera(camera: PerspectiveCamera, tilt: number, feature: number) {
-  const k = ease(clamp(tilt));
-  const pos = new Vector3(...CAMERA.position);
-  const hero = new Vector3(...CAMERA.target).sub(pos).normalize();
-  const dir = hero.multiplyScalar(1 - k).add(focusDirection(feature).multiplyScalar(k)).normalize();
-  camera.position.copy(pos);
+  const { position, direction, fov } = constellationPose(tilt, feature);
+  camera.position.copy(position);
   camera.up.set(0, 1, 0);
-  camera.lookAt(pos.clone().addScaledVector(dir, 100));
-  const fov = CAMERA.fov - 4 * k; // a touch closer while looking at the stars
+  camera.lookAt(position.clone().addScaledVector(direction, 100));
   if (camera.fov !== fov) { camera.fov = fov; camera.updateProjectionMatrix(); }
 }
 
