@@ -3,11 +3,12 @@ import { cappedPixelRatio } from "./capabilities";
 import { mulberry32 } from "./rng";
 import type { ScenePart } from "./index";
 
-/** Stars on a far dome in front of the camera (the visible sky window, with some margin for parallax). */
+/** Stars on a far dome in front of the camera (the visible sky window, with some margin for parallax). It reaches up to
+ *  78 degrees so there are stars to look at when the feature constellation tilts the camera into the sky. */
 export const STARS = {
-  count: 220,
+  count: 340,
   radius: 220,
-  elevationDeg: [9, 52] as [number, number],
+  elevationDeg: [9, 78] as [number, number],
   azimuthDeg: [-58, 58] as [number, number],
   size: [2.4, 5.8] as [number, number], // CSS pixels
 };

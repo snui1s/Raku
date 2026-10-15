@@ -22,6 +22,7 @@ import { buildFlowers } from "./flowers";
 import { LIGHTING, SUN_POSITION, configureMoonLight } from "./shadows";
 import { applyFlip, flipSky, resetFlip, type StageState } from "./stage";
 import { buildWhirl, createHorizonFlash } from "./vortex";
+import { applyConstellationCamera, buildConstellation, projectStars, type ConstellationState } from "./constellation";
 
 export interface SceneOptions {
   /** Called when the scene cannot continue (context lost, init error); the still image stays visible. */
@@ -30,6 +31,12 @@ export interface SceneOptions {
   still?: { time: number };
   /** PROTOTYPE: scroll-driven flip of the world, read once per frame. */
   stage?: { getState: () => StageState };
+  /** Features as a constellation: the camera tilts up into the sky and a star lights for each feature. */
+  constellation?: {
+    getState: () => ConstellationState;
+    /** Called every frame with the on-screen position (CSS pixels) of each feature star, for the page's labels. */
+    onProject?: (stars: ReturnType<typeof projectStars>) => void;
+  };
 }
 
 export interface ScenePart {
@@ -103,6 +110,7 @@ export async function mountScene(host: HTMLElement, opts: SceneOptions): Promise
       });
       return part;
     });
+    if (opts.constellation) parts.push(buildConstellation(() => opts.constellation!.getState().feature));
     parts.forEach((p) => world.add(p.object));
     scene.add(world);
     scene.background = new Color(PALETTE.sky);
@@ -170,7 +178,13 @@ export async function mountScene(host: HTMLElement, opts: SceneOptions): Promise
     elapsed += dt;
     if (dt > 0) trackFrame(dt * 1000);
     const stage = opts.stage?.getState();
-    if (stage && (stage.flip > 0 || stage.feature > 0)) {
+    const cons = opts.constellation?.getState();
+    if (cons && cons.tilt > 0) {
+      applyConstellationCamera(camera, cons.tilt, cons.feature);
+      const sky = flipSky(cons.tilt * 0.7); // the night sky deepens toward violet while we look up
+      (scene.background as Color).copy(sky);
+      (scene.fog as Fog).color.copy(sky);
+    } else if (stage && (stage.flip > 0 || stage.feature > 0)) {
       applyFlip(camera, stage.flip, stage.feature);
       const sky = flipSky(stage.flip);
       (scene.background as Color).copy(sky);
@@ -178,10 +192,14 @@ export async function mountScene(host: HTMLElement, opts: SceneOptions): Promise
     } else {
       smooth.x += (pointer.x - smooth.x) * 0.06;
       smooth.y += (pointer.y - smooth.y) * 0.06;
-      if (stage) { resetFlip(camera); (scene.background as Color).set(PALETTE.sky); (scene.fog as Fog).color.set(PALETTE.sky); }
+      if (stage || cons) { resetFlip(camera); (scene.background as Color).set(PALETTE.sky); (scene.fog as Fog).color.set(PALETTE.sky); }
       placeCamera();
     }
     parts.forEach((p) => p.update?.(elapsed, dt));
+    if (cons && opts.constellation?.onProject) {
+      camera.updateMatrixWorld(true);
+      opts.constellation.onProject(projectStars(camera, host.clientWidth, host.clientHeight));
+    }
     if (stage && whirl) whirl.update(elapsed, stage.flip, camera.fov, camera.aspect);
     renderer.render(scene, camera);
     if (stage && flash && flash.set(camera, stage.flip, elapsed)) flash.draw(renderer);
