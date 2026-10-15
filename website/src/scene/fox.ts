@@ -1,15 +1,39 @@
 import {
-  ConeGeometry, CubicBezierCurve3, CylinderGeometry, Group, Mesh, MeshToonMaterial, SphereGeometry, Vector3,
-  type Texture,
+  ConeGeometry, CubicBezierCurve3, CylinderGeometry, Euler, ExtrudeGeometry, Group, Matrix4, Mesh, MeshToonMaterial, Quaternion,
+  Shape, SphereGeometry, TorusGeometry, Vector3, type Texture,
 } from "three";
 import { hillHeight } from "./hill";
 import { windGust } from "./wind";
 import { taperedTube } from "./tree";
+import { lookPose, type Pose } from "./journey";
 import type { Palette } from "./palette";
 import type { ScenePart } from "./index";
 
 /** A fox sitting on the hill between the gate and the tree, facing left and a little toward the camera. */
 export const FOX = { position: [4.45, 0, -14.2] as [number, number, number], yaw: -2.6 };
+/** Stylized: bigger than life so it reads from across the hill. z is mirrored so that, turned to face left,
+ *  the curled tail stays on the camera side (three.js flips the face winding for mirrored objects). */
+const FOX_SCALE = [1.25, 1.25, -1.25] as const;
+
+/** Fox-local coordinates (x forward, y up, z to the side) to world coordinates. */
+export function foxLocalToWorld(local: [number, number, number]): Vector3 {
+  const [fx, , fz] = FOX.position;
+  const m = new Matrix4().compose(
+    new Vector3(fx, hillHeight(fx, fz) - 0.02, fz),
+    new Quaternion().setFromEuler(new Euler(0, FOX.yaw, 0)),
+    new Vector3(...FOX_SCALE),
+  );
+  return new Vector3(...local).applyMatrix4(m);
+}
+
+/** The wooden tag (an ema, like the prayer tablets at a shrine) on the fox's chest, in fox-local coordinates. */
+export const FOX_TAG = { hang: [0.4, 0.68, 0] as [number, number, number], local: [0.42, 0.5, 0] as [number, number, number], halfWidth: 0.2 };
+
+/** The close-up for the download: in front of the fox, low, with the face above the tag. */
+export function foxCamera(): Pose {
+  const p = foxLocalToWorld([1.5, 0.78, 0.2]), t = foxLocalToWorld([0.4, 0.66, 0]);
+  return lookPose([p.x, p.y, p.z], [t.x, t.y, t.z], 38);
+}
 
 export function buildFox(palette: Palette, toon?: Texture): ScenePart {
   const mat = (c: number) => new MeshToonMaterial({ color: c, gradientMap: toon ?? null });
@@ -80,13 +104,47 @@ export function buildFox(palette: Palette, toon?: Texture): ScenePart {
   tip.scale.set(0.13, 0.1, 0.1);
   root.add(tail);
 
+  // the tag: a cord around the neck, and a wooden plaque hanging from it on two cords
+  const wood = mat(0xb98552), cordMat = mat(palette.accent);
+  const ring = new Group(); // leaned to follow the neck
+  ring.position.set(0.27, 0.7, 0);
+  ring.rotation.z = -0.35;
+  const neck = new Mesh(new TorusGeometry(0.15, 0.013, 8, 28), cordMat);
+  neck.name = "fox-neck-cord";
+  neck.rotation.x = Math.PI / 2;
+  ring.add(neck);
+  root.add(ring);
+
+  const tag = new Group(); // pivots at the point where the cords meet
+  tag.name = "fox-tag";
+  tag.position.set(...FOX_TAG.hang);
+  const [hx, hy] = FOX_TAG.hang, [px, py] = FOX_TAG.local;
+  const w = FOX_TAG.halfWidth;
+  const outline = new Shape(); // a pentagon, like an ema
+  outline.moveTo(-w, -0.14).lineTo(w, -0.14).lineTo(w, 0.08).lineTo(0, 0.15).lineTo(-w, 0.08).closePath();
+  const slab = new ExtrudeGeometry(outline, { depth: 0.035, bevelEnabled: false });
+  slab.translate(0, 0, -0.0175);
+  slab.rotateY(Math.PI / 2); // the shape's width runs along the fox's side and the slab faces forward
+  const plaque = new Mesh(slab, wood);
+  plaque.name = "fox-tag-plaque";
+  plaque.position.set(px - hx, py - hy, 0);
+  tag.add(plaque);
+  [-1, 1].forEach((s) => {
+    const from = new Vector3(0, 0, 0), to = new Vector3(px - hx, py - hy + 0.08, s * (w - 0.02));
+    const len = from.distanceTo(to);
+    const cord = new Mesh(new CylinderGeometry(0.007, 0.007, len, 6), cordMat);
+    cord.name = s < 0 ? "fox-tag-cord-l" : "fox-tag-cord-r";
+    cord.position.copy(from).add(to).multiplyScalar(0.5);
+    cord.quaternion.setFromUnitVectors(new Vector3(0, 1, 0), to.clone().sub(from).normalize());
+    tag.add(cord);
+  });
+  root.add(tag);
+
   // place on the hill, facing the gate
   const [fx, , fz] = FOX.position;
   root.position.set(fx, hillHeight(fx, fz) - 0.02, fz);
   root.rotation.y = FOX.yaw;
-  // stylized: bigger than life so it reads from across the hill. z is mirrored so that, turned to face left,
-  // the curled tail stays on the camera side (three.js flips the face winding for mirrored objects)
-  root.scale.set(1.25, 1.25, -1.25);
+  root.scale.set(...FOX_SCALE);
 
   const earBase = ears[1].rotation.z;
   return {
@@ -96,6 +154,8 @@ export function buildFox(palette: Palette, toon?: Texture): ScenePart {
       body.scale.y = 0.34 * (1 + 0.018 * Math.sin(t * 2.1)); // breathing
       head.rotation.z = Math.sin(t * 0.5) * 0.03;
       tail.rotation.y = Math.sin(t * 1.1) * 0.1 + gust * 0.12; // swishes, and the wind lifts it
+      tag.rotation.x = Math.sin(t * 1.1) * 0.06; // the tag swings a little from side to side, and the wind pushes it back
+      tag.rotation.z = gust * 0.1;
       const flick = Math.pow(Math.max(0, Math.sin(t * 1.05)), 40); // a quick ear twitch every six seconds or so
       ears[1].rotation.z = earBase + flick * 0.3;
       const blink = Math.pow(Math.max(0, Math.sin(t * 0.8 + 0.7)), 80);

@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { Box3, Object3D, Vector3 } from "three";
+import { Box3, Object3D, PerspectiveCamera, Vector3 } from "three";
 import { PALETTE } from "./palette";
 import { hillHeight } from "./hill";
-import { FOX, buildFox } from "./fox";
+import { FOX, FOX_TAG, buildFox, foxCamera, foxLocalToWorld } from "./fox";
 
 describe("buildFox", () => {
   const fox = () => {
@@ -54,5 +54,61 @@ describe("buildFox", () => {
 
   it("has a body", () => {
     expect(buildFox(PALETTE).object.getObjectByName("fox-body")).toBeTruthy();
+  });
+});
+
+describe("the tag around the fox's neck", () => {
+  const built = () => {
+    const part = buildFox(PALETTE);
+    part.object.updateMatrixWorld(true);
+    return part;
+  };
+  const plaqueWorld = () => built().object.getObjectByName("fox-tag-plaque")!.getWorldPosition(new Vector3());
+
+  it("has a cord around the neck, a tag, and cords holding it", () => {
+    const { object } = built();
+    for (const n of ["fox-tag", "fox-tag-plaque", "fox-neck-cord", "fox-tag-cord-l", "fox-tag-cord-r"]) expect(object.getObjectByName(n), n).toBeTruthy();
+  });
+
+  it("hangs where foxLocalToWorld says, in front of the chest", () => {
+    const at = plaqueWorld();
+    expect(at.distanceTo(foxLocalToWorld(FOX_TAG.local))).toBeLessThan(1e-6);
+    const origin = foxLocalToWorld([0, 0, 0]);
+    const facing = foxLocalToWorld([1, 0, 0]).sub(origin).normalize();
+    expect(at.clone().sub(foxLocalToWorld([0.2, 0.47, 0])).dot(facing)).toBeGreaterThan(0.1); // in front of the chest
+    expect(at.y).toBeGreaterThan(origin.y + 0.3); // up on the chest, not on the ground
+  });
+
+  it("sways a little, and never far", () => {
+    const { object, update } = built();
+    const tag = object.getObjectByName("fox-tag") as Object3D;
+    for (let t = 0; t < 120; t += 0.31) {
+      update!(t, 1 / 60);
+      expect(Math.abs(tag.rotation.x)).toBeLessThan(0.2);
+      expect(Math.abs(tag.rotation.z)).toBeLessThan(0.3);
+    }
+  });
+
+  it("is framed by the fox camera: in the middle of the screen, and big enough to hold a button", () => {
+    const pose = foxCamera();
+    const cam = new PerspectiveCamera(pose.fov, 1.6, 0.1, 500);
+    cam.position.copy(pose.position);
+    cam.lookAt(pose.position.clone().add(pose.direction));
+    cam.updateMatrixWorld(true);
+    cam.updateProjectionMatrix();
+    const centre = foxLocalToWorld(FOX_TAG.local).project(cam);
+    expect(Math.abs(centre.x)).toBeLessThan(0.3);
+    expect(centre.y).toBeLessThan(0.1); // low on the screen, so the face is above it
+    expect(centre.y).toBeGreaterThan(-0.7);
+    const [l, r] = [-1, 1].map((s) => foxLocalToWorld([FOX_TAG.local[0], FOX_TAG.local[1], s * FOX_TAG.halfWidth]).project(cam));
+    expect(Math.abs(r.x - l.x) / 2).toBeGreaterThan(0.2); // at least a fifth of the screen width
+    expect(pose.position.distanceTo(foxLocalToWorld(FOX_TAG.local))).toBeGreaterThan(0.8); // not too close for the near plane
+  });
+
+  it("is on the camera's side of the fox, so the face and the tag are what it sees", () => {
+    const pose = foxCamera();
+    const toCamera = pose.position.clone().sub(foxLocalToWorld([0.3, 0.84, 0])).normalize();
+    const facing = foxLocalToWorld([1, 0, 0]).sub(foxLocalToWorld([0, 0, 0])).normalize();
+    expect(toCamera.dot(facing)).toBeGreaterThan(0.6);
   });
 });

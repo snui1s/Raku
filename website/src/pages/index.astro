@@ -1,10 +1,7 @@
 ---
 import Base from "../layouts/Base.astro";
 import Nav from "../components/Nav.astro";
-import Hero from "../components/Hero.astro";
-import Screenshots from "../components/Screenshots.astro";
-import Numbers from "../components/Numbers.astro";
-import Download from "../components/Download.astro";
+import Journey from "../components/Journey.astro";
 import { loadRelease } from "../lib/release";
 
 const release = loadRelease();
@@ -12,17 +9,7 @@ const release = loadRelease();
 <Base title="Raku: fast, distraction-free notes for Windows">
   <Nav />
   <main>
-    <Hero release={release} />
-    <Screenshots />
-    <Numbers />
-    <section class="final">
-      <h2>Start writing in seconds</h2>
-      <Download release={release} />
-      <p>
-        Windows may warn about an unsigned app. Click <strong>More info</strong>, then <strong>Run anyway</strong>.{" "}
-        <a href="/docs/getting-started/#windows-smartscreen">Details</a>
-      </p>
-    </section>
+    <Journey release={release} />
   </main>
   <footer>
     <span>Raku, MIT licensed.</span>
@@ -31,10 +18,6 @@ const release = loadRelease();
 </Base>
 
 <style>
-  .final { text-align: center; padding: 120px 24px 96px; }
-  .final h2 { font-size: clamp(28px, 4vw, 40px); letter-spacing: -0.02em; margin: 0 0 28px; }
-  .final p { margin: 18px auto 0; max-width: 420px; color: var(--muted); font-size: 13px; line-height: 1.5; }
-  .final a { color: var(--text); }
   footer {
     display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px;
     padding: 24px max(24px, 3vw); border-top: 1px solid var(--border);

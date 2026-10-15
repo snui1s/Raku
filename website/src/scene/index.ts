@@ -23,7 +23,10 @@ import { LIGHTING, SUN_POSITION, configureMoonLight } from "./shadows";
 import { applyFlip, resetFlip, type StageState } from "./stage";
 import { buildSky } from "./sky";
 import { buildWhirl, createHorizonFlash } from "./vortex";
-import { applyConstellationCamera, buildConstellation, projectStars, type ConstellationState } from "./constellation";
+import { CONSTELLATION, buildConstellation, projectStars } from "./constellation";
+import { journeyPose, projectPoints, type JourneyState } from "./journey";
+import { FOX_TAG, foxCamera, foxLocalToWorld } from "./fox";
+import { LANTERNS, buildLanterns } from "./lanterns";
 
 export interface SceneOptions {
   /** Called when the scene cannot continue (context lost, init error); the still image stays visible. */
@@ -32,12 +35,20 @@ export interface SceneOptions {
   still?: { time: number };
   /** PROTOTYPE: scroll-driven flip of the world, read once per frame. */
   stage?: { getState: () => StageState };
-  /** Features as a constellation: the camera tilts up into the sky and a star lights for each feature. */
-  constellation?: {
-    getState: () => ConstellationState;
-    /** Called every frame with the on-screen position (CSS pixels) of each feature star, for the page's labels. */
-    onProject?: (stars: ReturnType<typeof projectStars>) => void;
+  /** The whole home page as one scroll: the camera, the feature stars, the lanterns and the fox tag follow the scroll. */
+  journey?: {
+    getState: () => JourneyState;
+    /** Called every frame with the on-screen positions (CSS pixels) the page's DOM is placed at. */
+    onProject?: (p: JourneyProjection) => void;
   };
+}
+
+export interface JourneyProjection {
+  stars: ReturnType<typeof projectStars>;
+  /** The point just under each lantern, where its number goes. */
+  lanterns: ReturnType<typeof projectPoints>;
+  /** The fox's tag: its centre, its width on screen and whether it is in view. */
+  tag: { x: number; y: number; width: number; visible: boolean };
 }
 
 export interface ScenePart {
@@ -121,7 +132,10 @@ export async function mountScene(host: HTMLElement, opts: SceneOptions): Promise
     });
     sky = buildSky(PALETTE);
     parts.push(sky);
-    if (opts.constellation) parts.push(buildConstellation(() => opts.constellation!.getState().feature));
+    if (opts.journey) {
+      parts.push(buildConstellation(() => opts.journey!.getState().feature));
+      parts.push(buildLanterns(() => opts.journey!.getState().numbers));
+    }
     parts.forEach((p) => world.add(p.object));
     scene.add(world);
     scene.background = new Color(PALETTE.sky);
@@ -129,6 +143,7 @@ export async function mountScene(host: HTMLElement, opts: SceneOptions): Promise
     renderer.shadowMap.needsUpdate = true; // draw the shadow map once for this build
   }
 
+  const foxPose = foxCamera();
   const target = new Vector3(...CAMERA.target);
   const pointer = { x: 0, y: 0 }, smooth = { x: 0, y: 0 };
   function placeCamera() {
@@ -189,23 +204,37 @@ export async function mountScene(host: HTMLElement, opts: SceneOptions): Promise
     elapsed += dt;
     if (dt > 0) trackFrame(dt * 1000);
     const stage = opts.stage?.getState();
-    const cons = opts.constellation?.getState();
-    if (cons && cons.tilt > 0) {
-      applyConstellationCamera(camera, cons.tilt, cons.feature);
-      tintSky(cons.tilt * 0.7); // the night sky deepens toward violet while we look up
+    const journey = opts.journey?.getState();
+    if (journey && journey.scroll > CONSTELLATION.holdVh) {
+      const pose = journeyPose(journey, foxPose);
+      camera.position.copy(pose.position);
+      camera.up.set(0, 1, 0);
+      camera.lookAt(pose.position.clone().add(pose.direction));
+      if (camera.fov !== pose.fov) { camera.fov = pose.fov; camera.updateProjectionMatrix(); }
+      tintSky(journey.skyBlend); // the night sky deepens toward violet while we look up
     } else if (stage && (stage.flip > 0 || stage.feature > 0)) {
       applyFlip(camera, stage.flip, stage.feature);
       tintSky(stage.flip);
     } else {
       smooth.x += (pointer.x - smooth.x) * 0.06;
       smooth.y += (pointer.y - smooth.y) * 0.06;
-      if (stage || cons) { resetFlip(camera); tintSky(0); }
+      if (stage || journey) { resetFlip(camera); tintSky(0); }
       placeCamera();
     }
     parts.forEach((p) => p.update?.(elapsed, dt));
-    if (cons && opts.constellation?.onProject) {
+    if (journey && opts.journey?.onProject) {
       camera.updateMatrixWorld(true);
-      opts.constellation.onProject(projectStars(camera, host.clientWidth, host.clientHeight));
+      const w = host.clientWidth, h = host.clientHeight;
+      const [centre, left, right] = projectPoints(camera, w, h, [
+        foxLocalToWorld(FOX_TAG.local),
+        foxLocalToWorld([FOX_TAG.local[0], FOX_TAG.local[1], -FOX_TAG.halfWidth]),
+        foxLocalToWorld([FOX_TAG.local[0], FOX_TAG.local[1], FOX_TAG.halfWidth]),
+      ]);
+      opts.journey.onProject({
+        stars: projectStars(camera, w, h),
+        lanterns: projectPoints(camera, w, h, LANTERNS.map((p) => new Vector3(p[0], p[1] - 0.8, p[2]))), // just under each lantern, where its number goes
+        tag: { x: centre.x, y: centre.y, width: Math.abs(right.x - left.x), visible: centre.visible },
+      });
     }
     if (stage && whirl) whirl.update(elapsed, stage.flip, camera.fov, camera.aspect);
     renderer.render(scene, camera);

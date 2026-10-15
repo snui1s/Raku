@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { PerspectiveCamera, Vector3 } from "three";
 import { CAMERA } from "./camera";
 import { CONSTELLATION } from "./constellation";
-import { JOURNEY, JOURNEY_AT, journeyAt, journeyHeightVh, journeyPose, projectPoints, type Pose } from "./journey";
+import { JOURNEY, JOURNEY_AT, chapterAt, chapterScroll, journeyAt, journeyHeightVh, journeyPose, projectPoints, type Pose } from "./journey";
 
 // A stand-in for the fox close-up, so the timeline can be tested without building the scene
 const FOX: Pose = { position: new Vector3(3, 2, -10), direction: new Vector3(0.5, 0, -1).normalize(), fov: 38 };
@@ -125,5 +125,27 @@ describe("projectPoints", () => {
     expect(front.x).toBeCloseTo(800, 3);
     expect(front.y).toBeCloseTo(500, 3);
     expect(behind.visible).toBe(false);
+  });
+});
+
+describe("chapters", () => {
+  const all = ["hero", "stars", "write", "numbers", "fox"] as const;
+
+  it("scrolling to a chapter puts you in that chapter, with its content fully shown", () => {
+    for (const c of all) expect(chapterAt(chapterScroll(c)), c).toBe(c);
+    expect(journeyAt(chapterScroll("stars")).stars).toBe(1);
+    expect(journeyAt(chapterScroll("write")).write).toBe(1);
+    expect(journeyAt(chapterScroll("numbers")).numbers).toBe(1);
+    expect(journeyAt(chapterScroll("fox")).tag).toBe(1);
+  });
+
+  it("goes through the chapters in order as the page scrolls", () => {
+    let i = 0;
+    for (const s of SCROLLS) {
+      const at = all.indexOf(chapterAt(s));
+      expect(at).toBeGreaterThanOrEqual(i);
+      i = at;
+    }
+    expect(i).toBe(all.length - 1);
   });
 });

@@ -116,3 +116,27 @@ export function projectPoints(camera: PerspectiveCamera, width: number, height: 
     };
   });
 }
+
+// ---- chapters ------------------------------------------------------------------------------------------------
+
+export type Chapter = "hero" | "stars" | "write" | "numbers" | "fox";
+
+/** Which chapter a scroll position is in (the notebook's chapter runs on until the camera has left the glade). */
+export function chapterAt(scrollVh: number): Chapter {
+  if (scrollVh < JOURNEY_AT.stars) return "hero";
+  if (scrollVh < JOURNEY_AT.write) return "stars";
+  if (scrollVh < JOURNEY_AT.numbers) return "write";
+  if (scrollVh < JOURNEY_AT.fox) return "numbers";
+  return "fox";
+}
+
+/** A scroll position where a chapter is fully shown: what focusing something in that chapter scrolls to. */
+export function chapterScroll(chapter: Chapter): number {
+  switch (chapter) {
+    case "hero": return 0;
+    case "stars": return JOURNEY_AT.stars + CONSTELLATION.itemVh * 0.5;
+    case "write": return JOURNEY_AT.write + JOURNEY.write / 2;
+    case "numbers": return JOURNEY_AT.numbers + JOURNEY.numbers / 2;
+    case "fox": return JOURNEY_AT.fox + JOURNEY.toFox + JOURNEY.final / 2;
+  }
+}
