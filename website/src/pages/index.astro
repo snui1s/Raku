@@ -2,7 +2,6 @@
 import Base from "../layouts/Base.astro";
 import Nav from "../components/Nav.astro";
 import Hero from "../components/Hero.astro";
-import Features from "../components/Features.astro";
 import Screenshots from "../components/Screenshots.astro";
 import Numbers from "../components/Numbers.astro";
 import Download from "../components/Download.astro";
@@ -14,7 +13,6 @@ const release = loadRelease();
   <Nav />
   <main>
     <Hero release={release} />
-    <Features />
     <Screenshots />
     <Numbers />
     <section class="final">
