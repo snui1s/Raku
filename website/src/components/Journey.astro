@@ -333,6 +333,8 @@ const tools = [
     // where the features begin when there is one.
     const setLive = (on: boolean) => {
       stage.classList.toggle("live", on);
+      // the plain page must not keep the scroll-driven look (a faded hero) if the live scene stops part-way
+      if (!on) for (const v of ["--hero-out", "--copy-events"]) stage.style.removeProperty(v);
       sky.id = on ? "" : "features";
       anchor.id = on ? "features" : "";
     };
