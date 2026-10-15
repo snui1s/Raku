@@ -62,17 +62,22 @@ bun run build         # production build into dist/
 
 ## Releases
 
-Run the **Release** workflow from the Actions tab (patch, minor or major). It bumps the version, tests, builds, signs and publishes the installer, and updates `update.json` for the in-app updater. The website reads the same file for the version and the installer link on its download button.
+Run the **Release** workflow from the Actions tab (patch, minor or major). It bumps the version, tests, builds, signs the update with the updater key, publishes the installer and updates `update.json` for the in-app updater. The website reads the same file for the version and the installer link on its download button.
 
-## Code signing policy
+## Installer signing
 
-Free code signing for Windows releases is provided by [SignPath.io](https://about.signpath.io/), with a certificate from the [SignPath Foundation](https://signpath.org/).
+The Windows installer is **not signed with a Windows (Authenticode) certificate**. Free code signing through the [SignPath Foundation](https://signpath.org/) was not granted, and Raku does not use a paid certificate for now. Because of this, Windows SmartScreen may show "Windows protected your PC" the first time you run the installer. If you downloaded it from the [official release](https://github.com/snui1s/Raku/releases/latest), click **More info**, then **Run anyway**.
 
-- **Author, reviewer and approver:** [snui1s](https://github.com/snui1s) (the project owner)
-- Release installers are built from this repository by the public GitHub Actions workflow in `.github/workflows/release.yml` and signed only after the build has run typecheck and tests.
-- Only builds of tagged releases are submitted for signing.
+What you can check instead:
 
-### Privacy policy
+- **Where it comes from:** release installers are built from this repository by the public GitHub Actions workflow in [`.github/workflows/release.yml`](.github/workflows/release.yml), which runs typecheck and tests before it builds.
+- **That the file is the one that was built:** every release has a `SHA256SUMS` file. See [Verify your download](https://raku.snui1s.com/docs/getting-started/#verify-your-download).
+- **In-app updates:** Raku checks the `.sig` signature of an update against the public key in `src-tauri/tauri.conf.json` before it installs it. This is Tauri's updater signature, a different thing from a Windows publisher signature.
+- **The source:** the whole app is here under the [MIT license](LICENSE).
+
+Code signing may be added later; this section will say so when it is.
+
+## Privacy policy
 
 Raku does not collect, transmit or sell any personal data. There are no accounts and no telemetry.
 
