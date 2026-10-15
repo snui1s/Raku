@@ -10,7 +10,9 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/snui1s/Raku/releases/latest"><b>Download</b></a>
+  <a href="https://github.com/snui1s/Raku/releases/latest"><b>Download</b></a> ·
+  <a href="https://raku.snui1s.com">Website</a> ·
+  <a href="https://raku.snui1s.com/docs/">Docs</a>
 </p>
 
 <p align="center">
@@ -19,7 +21,8 @@
 
 ## Features
 
-- **Local first:** notes, folders and images stay on your computer
+- **Local first:** notes, folders and images stay on your computer, with no account and no telemetry
+- **Open source:** [MIT licensed](LICENSE); release installers are built from this repository by a public GitHub Actions workflow
 - **Small:** the installer is about 5 MB, and the app uses about 170 MB of memory when idle (WebView2 included)
 - **Rich text:** headings, lists, checklists, quotes, highlights, fonts and colors
 - **Folders:** organize notes and move them with drag and drop
@@ -45,9 +48,21 @@ bun run tauri build   # build the installer
 
 Built with [Tauri](https://tauri.app), React, [Tiptap](https://tiptap.dev) and SQLite.
 
+### Website
+
+The site at [raku.snui1s.com](https://raku.snui1s.com) (the home page, the docs and the privacy policy) lives in [website/](website/README.md). It is a separate project with its own `package.json`, built with Astro and Three.js and deployed on Vercel.
+
+```bash
+cd website
+bun install
+bun run dev           # local dev server
+bun run test          # unit tests
+bun run build         # production build into dist/
+```
+
 ## Releases
 
-Run the **Release** workflow from the Actions tab (patch, minor or major). It bumps the version, tests, builds, signs and publishes the installer, and updates `update.json` for the in-app updater.
+Run the **Release** workflow from the Actions tab (patch, minor or major). It bumps the version, tests, builds, signs and publishes the installer, and updates `update.json` for the in-app updater. The website reads the same file for the version and the installer link on its download button.
 
 ## Code signing policy
 
