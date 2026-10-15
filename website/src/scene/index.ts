@@ -20,7 +20,8 @@ import { buildFox } from "./fox";
 import { buildWindLines } from "./windlines";
 import { buildFlowers } from "./flowers";
 import { LIGHTING, SUN_POSITION, configureMoonLight } from "./shadows";
-import { applyFlip, flipSky, resetFlip, type StageState } from "./stage";
+import { applyFlip, resetFlip, type StageState } from "./stage";
+import { buildSky } from "./sky";
 import { buildWhirl, createHorizonFlash } from "./vortex";
 import { applyConstellationCamera, buildConstellation, projectStars, type ConstellationState } from "./constellation";
 
@@ -97,6 +98,14 @@ export async function mountScene(host: HTMLElement, opts: SceneOptions): Promise
   const flash = opts.stage ? createHorizonFlash() : null;
   if (whirl) { scene.add(camera); camera.add(whirl.object); }
 
+  let sky = buildSky(PALETTE);
+  /** Tints the sky dome (0 = night blue, 1 = deep violet) and keeps the fog the same color as the horizon. */
+  function tintSky(k: number) {
+    sky.setBlend(k);
+    (scene.background as Color).copy(sky.fogColor());
+    (scene.fog as Fog).color.copy(sky.fogColor());
+  }
+
   function rebuild() {
     scene.remove(world);
     disposeTree(world);
@@ -110,6 +119,8 @@ export async function mountScene(host: HTMLElement, opts: SceneOptions): Promise
       });
       return part;
     });
+    sky = buildSky(PALETTE);
+    parts.push(sky);
     if (opts.constellation) parts.push(buildConstellation(() => opts.constellation!.getState().feature));
     parts.forEach((p) => world.add(p.object));
     scene.add(world);
@@ -181,18 +192,14 @@ export async function mountScene(host: HTMLElement, opts: SceneOptions): Promise
     const cons = opts.constellation?.getState();
     if (cons && cons.tilt > 0) {
       applyConstellationCamera(camera, cons.tilt, cons.feature);
-      const sky = flipSky(cons.tilt * 0.7); // the night sky deepens toward violet while we look up
-      (scene.background as Color).copy(sky);
-      (scene.fog as Fog).color.copy(sky);
+      tintSky(cons.tilt * 0.7); // the night sky deepens toward violet while we look up
     } else if (stage && (stage.flip > 0 || stage.feature > 0)) {
       applyFlip(camera, stage.flip, stage.feature);
-      const sky = flipSky(stage.flip);
-      (scene.background as Color).copy(sky);
-      (scene.fog as Fog).color.copy(sky);
+      tintSky(stage.flip);
     } else {
       smooth.x += (pointer.x - smooth.x) * 0.06;
       smooth.y += (pointer.y - smooth.y) * 0.06;
-      if (stage || cons) { resetFlip(camera); (scene.background as Color).set(PALETTE.sky); (scene.fog as Fog).color.set(PALETTE.sky); }
+      if (stage || cons) { resetFlip(camera); tintSky(0); }
       placeCamera();
     }
     parts.forEach((p) => p.update?.(elapsed, dt));
