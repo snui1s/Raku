@@ -1,0 +1,41 @@
+{
+  "name": "raku-website",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "check": "astro check",
+    "check:security": "bun scripts/check-security.ts",
+    "test": "vitest run",
+    "stills": "node --experimental-strip-types scripts/render-stills.ts",
+    "og": "node --experimental-strip-types scripts/render-og.ts"
+  },
+  "overrides": {
+    "postcss-selector-parser": "7.1.6"
+  },
+  "dependencies": {
+    "@astrojs/starlight": "0.42.6",
+    "@tailwindcss/vite": "4.3.3",
+    "@tiptap/core": "^3.14.0",
+    "@tiptap/extension-color": "^3.14.0",
+    "@tiptap/extension-highlight": "^3.14.0",
+    "@tiptap/extension-placeholder": "^3.14.0",
+    "@tiptap/extension-task-item": "^3.14.0",
+    "@tiptap/extension-task-list": "^3.14.0",
+    "@tiptap/extension-text-style": "^3.14.0",
+    "@tiptap/starter-kit": "^3.14.0",
+    "astro": "7.3.8",
+    "tailwindcss": "4.3.3",
+    "three": "0.186.1"
+  },
+  "devDependencies": {
+    "@astrojs/check": "0.9.10",
+    "@astrojs/sitemap": "3.7.4",
+    "@types/three": "0.186.0",
+    "playwright-core": "1.64.0",
+    "typescript": "6.0.3",
+    "vitest": "5.0.4"
+  }
+}

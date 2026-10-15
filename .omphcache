@@ -2,7 +2,7 @@
   "version": 5,
   "files": {
     ".github/scripts/bump-version.mjs": {
-      "hash": "ad73306da7a25a66bf8fa33ebf391180feacd33e51ae9745d35175a9525ecc67",
+      "hash": "f1b57ec9c3450d29781a075c149e3d0de241b5882a028bbff133a88b51253040",
       "data": {
         "symbols": [
           {
@@ -150,7 +150,7 @@
       }
     },
     ".github/scripts/gen-update-json.mjs": {
-      "hash": "428ae3d2be9cf976c7145e4b98bb2da640a2bed392145c5d9f2080e3e04631ca",
+      "hash": "929c55556154a08c494e68ef1269342d48d48c49dcdffa8e20dc51a4c199375e",
       "data": {
         "symbols": [
           {
@@ -176,6 +176,143 @@
             "name": "update",
             "label": "const `update`",
             "line": 18,
+            "doc": "",
+            "exported": false,
+            "children": []
+          }
+        ]
+      }
+    },
+    "bench/data.ts": {
+      "hash": "8d7f95734a6232868863021d6179e8f1dec1131b58b91c1808659385998dea4f",
+      "data": {
+        "symbols": [
+          {
+            "kind": "constant",
+            "name": "words",
+            "label": "const `words`",
+            "line": 4,
+            "doc": "",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "constant",
+            "name": "sentence",
+            "label": "const `sentence()`",
+            "line": 9,
+            "doc": "",
+            "exported": false,
+            "children": [],
+            "calls": [
+              "join",
+              "Array.from"
+            ]
+          },
+          {
+            "kind": "interface",
+            "name": "BenchNote",
+            "label": "export interface `BenchNote`",
+            "line": 12,
+            "doc": "",
+            "exported": true,
+            "children": []
+          },
+          {
+            "kind": "function",
+            "name": "makeContent",
+            "label": "export function `makeContent()`",
+            "line": 22,
+            "doc": "",
+            "exported": true,
+            "children": [],
+            "calls": [
+              "text",
+              "sentence",
+              "para",
+              "map",
+              "nodes.push",
+              "JSON.stringify"
+            ]
+          },
+          {
+            "kind": "function",
+            "name": "makeNotes",
+            "label": "export function `makeNotes()`",
+            "line": 43,
+            "doc": "",
+            "exported": true,
+            "children": [],
+            "calls": [
+              "Date.now",
+              "Array.from",
+              "sentence",
+              "makeContent",
+              "randomUUID"
+            ]
+          }
+        ]
+      }
+    },
+    "bench/run.ts": {
+      "hash": "81483fc4ea975be1b175917fe5c9099450383080658d7c857a153000a541ef6f",
+      "data": {
+        "symbols": [
+          {
+            "kind": "interface",
+            "name": "Row",
+            "label": "interface `Row`",
+            "line": 9,
+            "doc": "",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "constant",
+            "name": "rows",
+            "label": "const `rows`",
+            "line": 16,
+            "doc": "",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "function",
+            "name": "measure",
+            "label": "function `measure()`",
+            "line": 19,
+            "doc": "",
+            "exported": false,
+            "children": [],
+            "calls": [
+              "fn",
+              "performance.now",
+              "times.push",
+              "times.sort",
+              "rows.push",
+              "Math.floor"
+            ]
+          },
+          {
+            "kind": "function",
+            "name": "sqliteWith",
+            "label": "function `sqliteWith()`",
+            "line": 38,
+            "doc": "",
+            "exported": false,
+            "children": [],
+            "calls": [
+              "DatabaseSync",
+              "db.exec",
+              "db.prepare",
+              "insert.run"
+            ]
+          },
+          {
+            "kind": "constant",
+            "name": "cpu",
+            "label": "const `cpu`",
+            "line": 108,
             "doc": "",
             "exported": false,
             "children": []
@@ -272,7 +409,7 @@
       }
     },
     "src/App.tsx": {
-      "hash": "3e8254a535cf27352914addfe83d5dbd37e87cd4ac3b8e49d036df1c01f4afc2",
+      "hash": "8947543cef4d006473c7584b4e684f0aa4a8b99fa2a3d4219aef8f21a3dce647",
       "data": {
         "symbols": [
           {
@@ -340,7 +477,7 @@
       }
     },
     "src/components/CommandPalette.tsx": {
-      "hash": "e9cdc5fc79e0cb5bef5e97b81f27429dc5c009ff04e8404440bbea9028b982c2",
+      "hash": "8eb507b15f4315f29ab96576bccec6a3f35803e00e67c93fdbc9d3a53c38a115",
       "data": {
         "symbols": [
           {
@@ -384,7 +521,7 @@
               "map",
               "slice",
               "sort",
-              "notes\n      .filter",
+              "notes\r\n      .filter",
               "includes",
               "folderName",
               "onSelectNote",
@@ -403,7 +540,7 @@
       }
     },
     "src/components/Editor/EditorToolbar.test.tsx": {
-      "hash": "9c984522dbc618c74b9c61237899cefab37951c5310e2f20f1693b665f346b48",
+      "hash": "b5059e47b36c76af0640090bbd9c13acfd1b9e1057157a2b415d3d9737d9f430",
       "data": {
         "symbols": [
           {
@@ -432,7 +569,7 @@
       }
     },
     "src/components/Editor/EditorToolbar.tsx": {
-      "hash": "e44f3c6295e263837d5607379df7c5b7030abe6bfffab75d22a08e3d067267f5",
+      "hash": "654f68ca0ddff769376caa7a7554ff7883d5b94eed474f71dcdb71dfc214d25a",
       "data": {
         "symbols": [
           {
@@ -490,7 +627,7 @@
               "AVAILABLE_FONT_SIZES.map",
               "parseInt",
               "setMark",
-              "editor\n                        ?.chain",
+              "editor\r\n                        ?.chain",
               "editor?.isActive",
               "toggleHeading",
               "toggleBulletList",
@@ -504,7 +641,7 @@
               "PASTEL_COLORS.map",
               "setColor",
               "setHighlight",
-              "editor\n                      .chain",
+              "editor\r\n                      .chain",
               "editor.getAttributes",
               "unsetColor",
               "toggleBold",
@@ -576,7 +713,7 @@
       }
     },
     "src/components/ExportMenu.test.tsx": {
-      "hash": "6cd02d651a581c465d982d25d8a5d95b38cc82604625d22a15b74d9c92273e58",
+      "hash": "aafe7e4cca4a5e9aaa83fe2d4a35f51e5b0a9a7c7f7d89225a65eb1653b532a2",
       "data": {
         "symbols": []
       }
@@ -704,7 +841,7 @@
       }
     },
     "src/components/Header.tsx": {
-      "hash": "f967d25cf2cc9d89101798bcfb34ed161c952e3f8e2b74b7f2874d2cf89c2c6c",
+      "hash": "046346ed53afd632fe6551b22e4a001cf2d10951569d0c4b48933bce31216ca7",
       "data": {
         "symbols": [
           {
@@ -796,7 +933,7 @@
       }
     },
     "src/components/SettingsMenu.test.tsx": {
-      "hash": "a94c3bf317e66844eb649e7d94af50a56109349d6240c0df3a151a7e74da862c",
+      "hash": "4ea86fbf05c8c86a1885b533c308d2c4208ca41178adbf409cc142a6d1f69d5f",
       "data": {
         "symbols": [
           {
@@ -816,7 +953,7 @@
       }
     },
     "src/components/SettingsMenu.tsx": {
-      "hash": "acf1d9de0c5d3bd6a18b93d845d0dd3e04a0ecb6f1e012192104fefac38c4535",
+      "hash": "68255dc9ecc762a7915545d2f431c8ef8dbfb70c6687a252f383ddddc9f6c2d0",
       "data": {
         "symbols": [
           {
@@ -919,7 +1056,7 @@
       }
     },
     "src/components/Sidebar.test.tsx": {
-      "hash": "9f8e29718aeb49d7c0e3ea8166009c9d093c788d28ec8865c1e00443c829308f",
+      "hash": "11a5c279fd41daf376c88c951f11978dde80e918aa983a59d88dc87fe1ce1f03",
       "data": {
         "symbols": [
           {
@@ -966,7 +1103,7 @@
       }
     },
     "src/components/Sidebar.tsx": {
-      "hash": "3a36346c7e0e0b267b168be2132fdd802d4046f0c7b37ae5f5602c2aa23c789a",
+      "hash": "71a030f2f5f1701f3ee964d66b72d3058a907faf204f11bce9e6381c92b59162",
       "data": {
         "symbols": [
           {
@@ -1072,7 +1209,7 @@
               "createNote",
               "pinnedNotes.map",
               "submitFolder",
-              "notes\n              .filter",
+              "notes\r\n              .filter",
               "isOpen",
               "zoneClass",
               "setFolderRename",
@@ -1089,14 +1226,14 @@
       }
     },
     "src/components/UpdateModal.tsx": {
-      "hash": "451744ef0748652a47b6438994c3ee17cf63fae5e16db467ee709dcb47222082",
+      "hash": "68f65edaaaf2d02242131c539921cb6034a955055d444ecbcd579a6659633098",
       "data": {
         "symbols": [
           {
             "kind": "interface",
             "name": "UpdateModalProps",
             "label": "interface `UpdateModalProps`",
-            "line": 1,
+            "line": 3,
             "doc": "",
             "exported": false,
             "children": []
@@ -1105,7 +1242,7 @@
             "kind": "function",
             "name": "UpdateModal",
             "label": "export function `UpdateModal()`",
-            "line": 12,
+            "line": 14,
             "doc": "",
             "exported": true,
             "children": [],
@@ -1373,7 +1510,7 @@
       }
     },
     "src/hooks/useSettings.ts": {
-      "hash": "0f9c57f438ff030f6b17503db734b297345e7620c5e78b3af50b2ee458946f83",
+      "hash": "4aecfc04820e548e96c506da6e4a271ad356467cebd0bdff907a0b28deea0717",
       "data": {
         "symbols": [
           {
@@ -1707,7 +1844,7 @@
       }
     },
     "src/utils/editorToolbar.test.ts": {
-      "hash": "b1c592d43d03b6744c6278d625936874637a41b51453637648705236056787be",
+      "hash": "4041fabf58a1805d3d7bb7cf8a3c7218e5181182497044e2704c73bd8ade93a6",
       "data": {
         "symbols": [
           {
@@ -1798,7 +1935,7 @@
       }
     },
     "src/utils/noteUtils.test.ts": {
-      "hash": "f904c37c8dfe4513bc2b2a4d02771799d46fca7427d19123c18355556b348fd0",
+      "hash": "501c0f69f96875e5bc330a23184b29a947c5e9f2a9e9e863388bc5ba2e6a8322",
       "data": {
         "symbols": [
           {
@@ -1817,7 +1954,7 @@
       }
     },
     "src/utils/noteUtils.ts": {
-      "hash": "aae38dc80e8419aad2f44982ed0aa4a498c4783f620be7959258730ab53dd8a8",
+      "hash": "d31fda96e53237dd1728d163e782a5e83b66dea5b684f63b73a683867364c48f",
       "data": {
         "symbols": [
           {
@@ -1852,29 +1989,64 @@
           },
           {
             "kind": "constant",
+            "name": "UUID_RE",
+            "label": "const `UUID_RE`",
+            "line": 38,
+            "doc": "",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "constant",
             "name": "findOrphanImages",
             "label": "export const `findOrphanImages()`",
-            "line": 37,
+            "line": 41,
             "doc": "",
             "exported": true,
             "children": [],
             "calls": [
-              "noteContents.join",
+              "Set",
+              "content.matchAll",
+              "referenced.add",
+              "toLowerCase",
               "fileNames.filter",
-              "all.includes"
+              "name.match",
+              "referenced.has",
+              "noteContents.join",
+              "joined.includes"
+            ]
+          }
+        ]
+      }
+    },
+    "src/utils/performance.test.ts": {
+      "hash": "8a034e70a4b7a40ca24c8fa6c3b40a70a347c604b1d0be61ad6eeb503714d7c2",
+      "data": {
+        "symbols": [
+          {
+            "kind": "constant",
+            "name": "time",
+            "label": "const `time()`",
+            "line": 7,
+            "doc": "",
+            "exported": false,
+            "children": [],
+            "calls": [
+              "performance.now",
+              "fn"
             ]
           }
         ]
       }
     },
     "src/utils/settings.test.ts": {
-      "hash": "5aa14f4e07adaff2ec011841c280338b2d9bf58ba7892278753b7cdc452539de",
+      "hash": "e437eacbaa8d070b080793f084d83142b17626c9ae2b22063d06ca7c3d22957b",
       "data": {
         "symbols": []
       }
     },
     "src/utils/settings.ts": {
-      "hash": "540f028ff9c97e99d9e46711b91575b859846f08666aea523f20fc6ef1b452aa",
+      "hash": "dfbc37b0b133ecd3670180393310b10a0f66b15f7f5569dceaf4b6748ade5bdb",
       "data": {
         "symbols": [
           {
@@ -2157,6 +2329,4797 @@
             "children": []
           }
         ]
+      }
+    },
+    "website/astro.config.mjs": {
+      "hash": "c40c5b5f455f46a2a351f37107bd8157dce074ec6d4b8b4cccc92db974393db3",
+      "data": {
+        "symbols": []
+      }
+    },
+    "website/integrations/csp.mjs": {
+      "hash": "9c08cf3d12387dfb9b8c8ac683e2b62abe67290b93362b7692226fdd1722ec7e",
+      "data": {
+        "symbols": [
+          {
+            "kind": "constant",
+            "name": "META",
+            "label": "const `META`",
+            "line": 6,
+            "doc": "",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "function",
+            "name": "completePageCsp",
+            "label": "export function `completePageCsp()`",
+            "line": 9,
+            "doc": "Hash inline tags emitted by trusted integrations (Starlight's is:inline scripts, for example).",
+            "exported": true,
+            "children": [],
+            "calls": [
+              "html.match",
+              "filter",
+              "map",
+              "split",
+              "s.trim",
+              "directives.findIndex",
+              "d.startsWith",
+              "Set",
+              "html.matchAll",
+              "RegExp",
+              "test",
+              "trim",
+              "digest",
+              "update",
+              "createHash",
+              "replace",
+              "sources.add",
+              "join",
+              "directives.join",
+              "html.replace",
+              "anchor.test",
+              "withoutPolicy.replace"
+            ],
+            "raises": [
+              "Error"
+            ]
+          },
+          {
+            "kind": "function",
+            "name": "completeCsp",
+            "label": "export function `completeCsp()`",
+            "line": 36,
+            "doc": "",
+            "exported": true,
+            "children": [],
+            "calls": [
+              "readdir",
+              "join",
+              "entry.isDirectory",
+              "visit",
+              "entry.name.endsWith",
+              "writeFile",
+              "completePageCsp",
+              "readFile",
+              "fileURLToPath"
+            ]
+          }
+        ]
+      }
+    },
+    "website/scripts/check-build.ts": {
+      "hash": "fb20dcd43445d3d6573bbf5e26e6875f3c58db3bea522942cbcbf6af4e3812eb",
+      "data": {
+        "symbols": [
+          {
+            "kind": "constant",
+            "name": "html",
+            "label": "const `html`",
+            "line": 4,
+            "doc": "",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "constant",
+            "name": "problems",
+            "label": "const `problems`",
+            "line": 5,
+            "doc": "",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "constant",
+            "name": "download",
+            "label": "const `download`",
+            "line": 7,
+            "doc": "",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "constant",
+            "name": "downloads",
+            "label": "const `downloads`",
+            "line": 12,
+            "doc": "",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "constant",
+            "name": "ld",
+            "label": "const `ld`",
+            "line": 17,
+            "doc": "",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "constant",
+            "name": "titleOf",
+            "label": "const `titleOf`",
+            "line": 24,
+            "doc": "",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "constant",
+            "name": "metaDescription",
+            "label": "const `metaDescription`",
+            "line": 26,
+            "doc": "",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "constant",
+            "name": "robots",
+            "label": "const `robots`",
+            "line": 29,
+            "doc": "",
+            "exported": false,
+            "children": []
+          }
+        ]
+      }
+    },
+    "website/scripts/check-security.ts": {
+      "hash": "d38fe4211d68c9edca699c1df9c5e6d1ca5eec4eff00d355f0380a8334f5dc03",
+      "data": {
+        "symbols": [
+          {
+            "kind": "constant",
+            "name": "problems",
+            "label": "const `problems`",
+            "line": 6,
+            "doc": "",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "variable",
+            "name": "pages",
+            "label": "let `pages`",
+            "line": 7,
+            "doc": "",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "function",
+            "name": "visit",
+            "label": "function `visit()`",
+            "line": 8,
+            "doc": "",
+            "exported": false,
+            "children": [],
+            "calls": [
+              "readdirSync",
+              "join",
+              "entry.isDirectory",
+              "visit",
+              "entry.name.endsWith",
+              "readFileSync",
+              "html.match",
+              "problems.push",
+              "html.search",
+              "Map",
+              "map",
+              "filter",
+              "split",
+              "d.trim",
+              "directives.get",
+              "directives.has",
+              "scripts.includes",
+              "scripts.some",
+              "includes",
+              "test",
+              "sources.includes",
+              "html.matchAll",
+              "RegExp",
+              "trim",
+              "digest",
+              "update",
+              "createHash",
+              "replace"
+            ]
+          },
+          {
+            "kind": "constant",
+            "name": "config",
+            "label": "const `config`",
+            "line": 52,
+            "doc": "",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "constant",
+            "name": "headers",
+            "label": "const `headers`",
+            "line": 53,
+            "doc": "",
+            "exported": false,
+            "children": []
+          }
+        ]
+      }
+    },
+    "website/scripts/render-og.ts": {
+      "hash": "e4b3cace4aed25b63efc5bbf230396422f34710060dbc452dfdee689bb4206ed",
+      "data": {
+        "symbols": [
+          {
+            "kind": "constant",
+            "name": "PUBLIC",
+            "label": "const `PUBLIC`",
+            "line": 8,
+            "doc": "",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "constant",
+            "name": "ORIGIN",
+            "label": "const `ORIGIN`",
+            "line": 9,
+            "doc": "",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "constant",
+            "name": "TYPES",
+            "label": "const `TYPES`",
+            "line": 10,
+            "doc": "",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "constant",
+            "name": "PAGE",
+            "label": "const `PAGE`",
+            "line": 12,
+            "doc": "",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "function",
+            "name": "fileFor",
+            "label": "function `fileFor()`",
+            "line": 36,
+            "doc": "",
+            "exported": false,
+            "children": [],
+            "calls": [
+              "replace",
+              "normalize",
+              "decodeURIComponent",
+              "join",
+              "p.startsWith",
+              "existsSync",
+              "isFile",
+              "statSync"
+            ]
+          },
+          {
+            "kind": "constant",
+            "name": "browser",
+            "label": "const `browser`",
+            "line": 43,
+            "doc": "",
+            "exported": false,
+            "children": []
+          }
+        ]
+      }
+    },
+    "website/scripts/render-stills.ts": {
+      "hash": "dae2e8c089fdfab6f92ed407e8e49d2b821d9c2d2603a88525991de97fea59a1",
+      "data": {
+        "symbols": [
+          {
+            "kind": "constant",
+            "name": "DIST",
+            "label": "const `DIST`",
+            "line": 9,
+            "doc": "",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "constant",
+            "name": "OUT",
+            "label": "const `OUT`",
+            "line": 10,
+            "doc": "",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "constant",
+            "name": "ORIGIN",
+            "label": "const `ORIGIN`",
+            "line": 11,
+            "doc": "",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "constant",
+            "name": "SIZES",
+            "label": "const `SIZES`",
+            "line": 12,
+            "doc": "",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "constant",
+            "name": "NAME",
+            "label": "const `NAME`",
+            "line": 17,
+            "doc": "",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "constant",
+            "name": "TYPES",
+            "label": "const `TYPES`",
+            "line": 19,
+            "doc": "",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "function",
+            "name": "fileFor",
+            "label": "function `fileFor()`",
+            "line": 25,
+            "doc": "",
+            "exported": false,
+            "children": [],
+            "calls": [
+              "replace",
+              "normalize",
+              "decodeURIComponent",
+              "join",
+              "p.startsWith",
+              "existsSync",
+              "isDirectory",
+              "statSync"
+            ]
+          },
+          {
+            "kind": "constant",
+            "name": "build",
+            "label": "const `build`",
+            "line": 34,
+            "doc": "",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "constant",
+            "name": "browser",
+            "label": "const `browser`",
+            "line": 40,
+            "doc": "",
+            "exported": false,
+            "children": []
+          }
+        ]
+      }
+    },
+    "website/src/content.config.ts": {
+      "hash": "1f8b206b5f7c0afb44c3715a3fe79954b448885fe9e753ba372dddf1210ecfd5",
+      "data": {
+        "symbols": [
+          {
+            "kind": "constant",
+            "name": "collections",
+            "label": "export const `collections`",
+            "line": 5,
+            "doc": "",
+            "exported": true,
+            "children": []
+          }
+        ]
+      }
+    },
+    "website/src/docsRouteData.ts": {
+      "hash": "b6b934e8ab4e5e18b9fcf09155bb76fcaf70a8da38948f34bc9e4ded5fbf3d04",
+      "data": {
+        "symbols": [
+          {
+            "kind": "constant",
+            "name": "onRequest",
+            "label": "export const `onRequest`",
+            "line": 3,
+            "doc": "",
+            "exported": true,
+            "children": []
+          }
+        ]
+      }
+    },
+    "website/src/lib/release.test.ts": {
+      "hash": "a7ecd6b7006720d84c75856b5c844e1dbe4dd53495a994e0fc9f5fbf57989922",
+      "data": {
+        "symbols": [
+          {
+            "kind": "constant",
+            "name": "URL_OK",
+            "label": "const `URL_OK`",
+            "line": 7,
+            "doc": "",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "constant",
+            "name": "file",
+            "label": "const `file()`",
+            "line": 9,
+            "doc": "",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "constant",
+            "name": "FALLBACK",
+            "label": "const `FALLBACK`",
+            "line": 14,
+            "doc": "",
+            "exported": false,
+            "children": []
+          }
+        ]
+      }
+    },
+    "website/src/lib/release.ts": {
+      "hash": "8b33cedb9923861c5f444168cd52781edc4dc7c18e087d89e2f5149614d831a2",
+      "data": {
+        "symbols": [
+          {
+            "kind": "constant",
+            "name": "RELEASES_URL",
+            "label": "export const `RELEASES_URL`",
+            "line": 4,
+            "doc": "",
+            "exported": true,
+            "children": []
+          },
+          {
+            "kind": "interface",
+            "name": "ReleaseInfo",
+            "label": "export interface `ReleaseInfo`",
+            "line": 6,
+            "doc": "",
+            "exported": true,
+            "children": []
+          },
+          {
+            "kind": "constant",
+            "name": "FALLBACK",
+            "label": "const `FALLBACK`",
+            "line": 11,
+            "doc": "",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "constant",
+            "name": "isRecord",
+            "label": "const `isRecord()`",
+            "line": 13,
+            "doc": "",
+            "exported": false,
+            "children": [],
+            "calls": [
+              "Array.isArray"
+            ]
+          },
+          {
+            "kind": "function",
+            "name": "validInstallerUrl",
+            "label": "function `validInstallerUrl()`",
+            "line": 16,
+            "doc": "",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "function",
+            "name": "parseRelease",
+            "label": "export function `parseRelease()`",
+            "line": 23,
+            "doc": "Turn the parsed contents of update.json into the info the download button needs. Never throws.",
+            "exported": true,
+            "children": [],
+            "calls": [
+              "isRecord",
+              "raw.version.trim",
+              "test",
+              "validInstallerUrl"
+            ]
+          },
+          {
+            "kind": "function",
+            "name": "loadRelease",
+            "label": "export function `loadRelease()`",
+            "line": 37,
+            "doc": "Read update.json from the repository root (build runs with the website folder as cwd). Never throws.",
+            "exported": true,
+            "children": [],
+            "calls": [
+              "parseRelease",
+              "JSON.parse",
+              "readFileSync"
+            ]
+          }
+        ]
+      }
+    },
+    "website/src/notebook/extensions.test.ts": {
+      "hash": "fc6fbfed9eaea5ef30466c270642edaf79ba05192aa9408c9ec2f3b4ede9e258",
+      "data": {
+        "symbols": []
+      }
+    },
+    "website/src/notebook/extensions.ts": {
+      "hash": "4bf97bf343bf80881734b3a64283875511c7f9842a346582acc33b3a394e5d4f",
+      "data": {
+        "symbols": [
+          {
+            "kind": "function",
+            "name": "notebookExtensions",
+            "label": "export function `notebookExtensions()`",
+            "line": 12,
+            "doc": "The same pieces the app's editor is built from (the app has more, like images and fonts). No links: pasted",
+            "exported": true,
+            "children": [],
+            "calls": [
+              "StarterKit.configure",
+              "TaskItem.configure",
+              "Placeholder.configure"
+            ]
+          }
+        ]
+      }
+    },
+    "website/src/notebook/mount.ts": {
+      "hash": "02f7cbff254023e5051b4998206c3aab8ea60f4306c453650a94e21dc4219d59",
+      "data": {
+        "symbols": [
+          {
+            "kind": "constant",
+            "name": "COMMANDS",
+            "label": "const `COMMANDS`",
+            "line": 7,
+            "doc": "What each toolbar button (data-cmd) does, and how to tell it is on. Nothing is stored: the text lives in the editor only.",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "function",
+            "name": "mountNotebook",
+            "label": "export function `mountNotebook()`",
+            "line": 20,
+            "doc": "Turns the plain sample note in `el` into a live editor and wires the toolbar buttons (`data-cmd`) in `toolbar`.",
+            "exported": true,
+            "children": [],
+            "calls": [
+              "Editor",
+              "el.replaceChildren",
+              "notebookExtensions",
+              "toolbar.querySelectorAll",
+              "buttons.forEach",
+              "active",
+              "b.classList.toggle",
+              "b.setAttribute",
+              "String",
+              "closest",
+              "run",
+              "cmd.run",
+              "focus",
+              "editor.chain",
+              "refresh",
+              "e.preventDefault",
+              "toolbar.addEventListener",
+              "editor.on",
+              "toolbar.removeEventListener",
+              "editor.destroy"
+            ]
+          }
+        ]
+      }
+    },
+    "website/src/notebook/sample.ts": {
+      "hash": "db8306c7b68c658f00f5ecdb83e5741fab1c3946a9b5c847d2cf61397d1d6ccc",
+      "data": {
+        "symbols": [
+          {
+            "kind": "constant",
+            "name": "task",
+            "label": "const `task()`",
+            "line": 1,
+            "doc": "",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "constant",
+            "name": "SAMPLE_HTML",
+            "label": "export const `SAMPLE_HTML`",
+            "line": 5,
+            "doc": "The note the notebook opens with. The page renders it before the editor loads, and the editor starts from it.",
+            "exported": true,
+            "children": []
+          }
+        ]
+      }
+    },
+    "website/src/scene/budget.test.ts": {
+      "hash": "031818b8f2b8489b72c2e90d0308e3b26f0a48d68a84168a5ddd0c2ab1a19ca2",
+      "data": {
+        "symbols": [
+          {
+            "kind": "function",
+            "name": "triangles",
+            "label": "function `triangles()`",
+            "line": 17,
+            "doc": "Triangles drawn for an object (every instance counts).",
+            "exported": false,
+            "children": [],
+            "calls": [
+              "o.traverse",
+              "g.getAttribute",
+              "Math.round"
+            ]
+          }
+        ]
+      }
+    },
+    "website/src/scene/camera.test.ts": {
+      "hash": "c0b4838b8ffa35b31eeca5f6f2ad702402bf51b62eaffcd2c04d8c90ac655469",
+      "data": {
+        "symbols": []
+      }
+    },
+    "website/src/scene/camera.ts": {
+      "hash": "1668d74d8a30ff76ac98606bef58900324697fc165cbcc51df2dc4f13fe64913",
+      "data": {
+        "symbols": [
+          {
+            "kind": "constant",
+            "name": "CAMERA",
+            "label": "export const `CAMERA`",
+            "line": 2,
+            "doc": "Low camera at the foot of the hill, looking up at the gate (same idea as mockups/landing-hero.html).",
+            "exported": true,
+            "children": []
+          },
+          {
+            "kind": "constant",
+            "name": "MAX_PARALLAX",
+            "label": "const `MAX_PARALLAX`",
+            "line": 8,
+            "doc": "",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "constant",
+            "name": "clamp",
+            "label": "const `clamp()`",
+            "line": 9,
+            "doc": "",
+            "exported": false,
+            "children": [],
+            "calls": [
+              "Math.max",
+              "Math.min"
+            ]
+          },
+          {
+            "kind": "function",
+            "name": "parallaxOffset",
+            "label": "export function `parallaxOffset()`",
+            "line": 12,
+            "doc": "Pointer position in -1..1 on both axes -> small camera shift in world units.",
+            "exported": true,
+            "children": [],
+            "calls": [
+              "clamp"
+            ]
+          },
+          {
+            "kind": "function",
+            "name": "journeyParallax",
+            "label": "export function `journeyParallax()`",
+            "line": 18,
+            "doc": "The parallax shift while scrolling through the journey. It is the full amount until the fox close-up, where the",
+            "exported": true,
+            "children": [],
+            "calls": [
+              "parallaxOffset",
+              "Math.min",
+              "Math.max"
+            ]
+          }
+        ]
+      }
+    },
+    "website/src/scene/capabilities.test.ts": {
+      "hash": "2f06d9ec30bdf94160c148d65d06b6b76c82acf9b51d2238454962e798cda05f",
+      "data": {
+        "symbols": [
+          {
+            "kind": "constant",
+            "name": "ok",
+            "label": "const `ok`",
+            "line": 4,
+            "doc": "",
+            "exported": false,
+            "children": []
+          }
+        ]
+      }
+    },
+    "website/src/scene/capabilities.ts": {
+      "hash": "c0c94d7f1d313a691adfa08c087db9ccf2079292d7a581a64aa5ad05b64516f9",
+      "data": {
+        "symbols": [
+          {
+            "kind": "interface",
+            "name": "Env",
+            "label": "export interface `Env`",
+            "line": 1,
+            "doc": "",
+            "exported": true,
+            "children": []
+          },
+          {
+            "kind": "function",
+            "name": "shouldRunScene",
+            "label": "export function `shouldRunScene()`",
+            "line": 11,
+            "doc": "The live scene runs only on a capable desktop browser; otherwise the still image stays.",
+            "exported": true,
+            "children": []
+          },
+          {
+            "kind": "function",
+            "name": "isSoftwareRenderer",
+            "label": "export function `isSoftwareRenderer()`",
+            "line": 16,
+            "doc": "True for the names a browser reports for a WebGL renderer that draws on the CPU.",
+            "exported": true,
+            "children": [],
+            "calls": [
+              "test"
+            ]
+          },
+          {
+            "kind": "function",
+            "name": "detectEnv",
+            "label": "export function `detectEnv()`",
+            "line": 20,
+            "doc": "",
+            "exported": true,
+            "children": [],
+            "calls": [
+              "URLSearchParams",
+              "params.has",
+              "win.document.createElement",
+              "canvas.getContext",
+              "gl?.getExtension",
+              "isSoftwareRenderer",
+              "String",
+              "gl.getParameter",
+              "win.matchMedia"
+            ]
+          },
+          {
+            "kind": "function",
+            "name": "cappedPixelRatio",
+            "label": "export function `cappedPixelRatio()`",
+            "line": 47,
+            "doc": "Pixel ratio the renderer should use: the screen's ratio, capped at 2 to bound GPU work.",
+            "exported": true,
+            "children": [],
+            "calls": [
+              "Number.isFinite",
+              "Math.min"
+            ]
+          },
+          {
+            "kind": "constant",
+            "name": "SLOW_FRAME_MS",
+            "label": "const `SLOW_FRAME_MS`",
+            "line": 51,
+            "doc": "",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "constant",
+            "name": "MIN_SCALE",
+            "label": "const `MIN_SCALE`",
+            "line": 52,
+            "doc": "",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "constant",
+            "name": "GIVE_UP_MS",
+            "label": "const `GIVE_UP_MS`",
+            "line": 53,
+            "doc": "",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "constant",
+            "name": "GIVE_UP_AT_FLOOR_MS",
+            "label": "const `GIVE_UP_AT_FLOOR_MS`",
+            "line": 54,
+            "doc": "",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "function",
+            "name": "adaptPixelRatioScale",
+            "label": "export function `adaptPixelRatioScale()`",
+            "line": 57,
+            "doc": "Render scale for the next period: step down 25% when the average frame is slow, never below the floor.",
+            "exported": true,
+            "children": [],
+            "calls": [
+              "Number.isFinite",
+              "Math.max"
+            ]
+          },
+          {
+            "kind": "function",
+            "name": "shouldGiveUp",
+            "label": "export function `shouldGiveUp()`",
+            "line": 66,
+            "doc": "Whether the scene is too slow to be worth running: the page should go back to the picture. Looks at the average frame",
+            "exported": true,
+            "children": [],
+            "calls": [
+              "Number.isFinite"
+            ]
+          }
+        ]
+      }
+    },
+    "website/src/scene/clouds.test.ts": {
+      "hash": "0c2a46338b61c4c671c1ae332315b98e5e2ceee43b369ab502ac5bcfd325ad77",
+      "data": {
+        "symbols": [
+          {
+            "kind": "constant",
+            "name": "clouds",
+            "label": "const `clouds()`",
+            "line": 6,
+            "doc": "",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "function",
+            "name": "recorder",
+            "label": "function `recorder()`",
+            "line": 67,
+            "doc": "A stand-in for a canvas context that records every point drawn and every fill colour used.",
+            "exported": false,
+            "children": [],
+            "calls": [
+              "String",
+              "fills.push",
+              "points.push"
+            ]
+          }
+        ]
+      }
+    },
+    "website/src/scene/clouds.ts": {
+      "hash": "ba6f183b38a1fc1b9ecb5351a368411805e36cdda8b35878fc9324a6df912bd4",
+      "data": {
+        "symbols": [
+          {
+            "kind": "constant",
+            "name": "CLOUDS",
+            "label": "export const `CLOUDS`",
+            "line": 7,
+            "doc": "Auspicious-cloud motifs (puffs with spiral curls and a trailing tail) on a far dome, drifting right to left.",
+            "exported": true,
+            "children": []
+          },
+          {
+            "kind": "function",
+            "name": "cloudAzimuth",
+            "label": "export function `cloudAzimuth()`",
+            "line": 10,
+            "doc": "Azimuth in degrees at time t for a cloud that starts at startAz and drifts left, wrapping round the dome.",
+            "exported": true,
+            "children": []
+          },
+          {
+            "kind": "function",
+            "name": "cloudEdgeFade",
+            "label": "export function `cloudEdgeFade()`",
+            "line": 17,
+            "doc": "0 at the wrap-around edges, 1 in the middle, so a cloud fades out and in instead of popping.",
+            "exported": true,
+            "children": [],
+            "calls": [
+              "Math.min",
+              "Math.max"
+            ]
+          },
+          {
+            "kind": "constant",
+            "name": "CLOUD_TEX",
+            "label": "export const `CLOUD_TEX`",
+            "line": 24,
+            "doc": "",
+            "exported": true,
+            "children": []
+          },
+          {
+            "kind": "interface",
+            "name": "Ctx2D",
+            "label": "export interface `Ctx2D`",
+            "line": 27,
+            "doc": "The 2D calls the artwork needs, so it can be drawn on a canvas or on a recording stand-in in tests.",
+            "exported": true,
+            "children": []
+          },
+          {
+            "kind": "type",
+            "name": "Pt",
+            "label": "type `Pt`",
+            "line": 36,
+            "doc": "",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "interface",
+            "name": "Variant",
+            "label": "interface `Variant`",
+            "line": 38,
+            "doc": "",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "constant",
+            "name": "CLOUD_VARIANTS",
+            "label": "export const `CLOUD_VARIANTS`",
+            "line": 41,
+            "doc": "",
+            "exported": true,
+            "children": []
+          },
+          {
+            "kind": "constant",
+            "name": "lerp",
+            "label": "const `lerp()`",
+            "line": 47,
+            "doc": "",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "function",
+            "name": "bezier",
+            "label": "function `bezier()`",
+            "line": 48,
+            "doc": "",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "function",
+            "name": "ribbon",
+            "label": "function `ribbon()`",
+            "line": 57,
+            "doc": "A line of varying thickness along `pts` (thickness w0 at the start, w1 at the end), filled as one polygon.",
+            "exported": false,
+            "children": [],
+            "calls": [
+              "Math.max",
+              "Math.min",
+              "Math.hypot",
+              "lerp",
+              "left.push",
+              "right.push",
+              "ctx.beginPath",
+              "ctx.moveTo",
+              "ctx.lineTo",
+              "ctx.closePath",
+              "ctx.fill",
+              "ctx.arc"
+            ]
+          },
+          {
+            "kind": "function",
+            "name": "spiral",
+            "label": "function `spiral()`",
+            "line": 79,
+            "doc": "A tapering curl that winds in towards (cx, cy).",
+            "exported": false,
+            "children": [],
+            "calls": [
+              "Math.pow",
+              "pts.push",
+              "Math.cos",
+              "Math.sin",
+              "ribbon"
+            ]
+          },
+          {
+            "kind": "function",
+            "name": "drawCloudMask",
+            "label": "export function `drawCloudMask()`",
+            "line": 94,
+            "doc": "Paints one cloud as a mask: white where the cloud is, black where a swirl line cuts through it, black outside.",
+            "exported": true,
+            "children": [],
+            "calls": [
+              "mulberry32",
+              "ctx.fillRect",
+              "Math.max",
+              "Math.abs",
+              "rng",
+              "puffs.push",
+              "ctx.beginPath",
+              "ctx.arc",
+              "ctx.fill",
+              "ctx.moveTo",
+              "ctx.lineTo",
+              "ctx.closePath",
+              "ctx.bezierCurveTo",
+              "lerp",
+              "slice",
+              "sort",
+              "byRadius.forEach",
+              "spiral",
+              "arc.push",
+              "Math.cos",
+              "Math.sin",
+              "ribbon",
+              "spine.push",
+              "bezier"
+            ]
+          },
+          {
+            "kind": "function",
+            "name": "makeArtwork",
+            "label": "function `makeArtwork()`",
+            "line": 167,
+            "doc": "Bake the shaded body and moonlit rim once. Each cloud still needs just one quad and one texture lookup.",
+            "exported": false,
+            "children": [],
+            "calls": [
+              "document.createElement",
+              "canvas.getContext",
+              "drawCloudMask",
+              "ctx.getImageData",
+              "Uint8Array",
+              "getHex",
+              "lerp",
+              "Color",
+              "Math.min",
+              "Math.max",
+              "map",
+              "ctx.putImageData",
+              "CanvasTexture"
+            ]
+          },
+          {
+            "kind": "function",
+            "name": "buildClouds",
+            "label": "export function `buildClouds()`",
+            "line": 203,
+            "doc": "",
+            "exported": true,
+            "children": [],
+            "calls": [
+              "mulberry32",
+              "rng",
+              "Group",
+              "CLOUD_VARIANTS.map",
+              "makeArtwork",
+              "Array.from",
+              "r",
+              "Math.tan",
+              "MeshBasicMaterial",
+              "Mesh",
+              "PlaneGeometry",
+              "group.add",
+              "cloudAzimuth",
+              "Math.sin",
+              "it.mesh.position.set",
+              "Math.cos",
+              "it.mesh.lookAt",
+              "cloudEdgeFade",
+              "place"
+            ]
+          }
+        ]
+      }
+    },
+    "website/src/scene/constellation.test.ts": {
+      "hash": "dff1f0f9a2f3e0c5ed68a20617ff087919629f763dfba2da27ccc148b0f267b4",
+      "data": {
+        "symbols": [
+          {
+            "kind": "constant",
+            "name": "cam",
+            "label": "const `cam()`",
+            "line": 9,
+            "doc": "",
+            "exported": false,
+            "children": [],
+            "calls": [
+              "PerspectiveCamera"
+            ]
+          },
+          {
+            "kind": "constant",
+            "name": "forward",
+            "label": "const `forward()`",
+            "line": 13,
+            "doc": "",
+            "exported": false,
+            "children": [],
+            "calls": [
+              "c.getWorldDirection",
+              "Vector3"
+            ]
+          }
+        ]
+      }
+    },
+    "website/src/scene/constellation.ts": {
+      "hash": "bdd6a836b044d3e2657e409a2df90eb4ab767624f863e9a9f65eb71f9234aa2e",
+      "data": {
+        "symbols": [
+          {
+            "kind": "constant",
+            "name": "CONSTELLATION",
+            "label": "export const `CONSTELLATION`",
+            "line": 9,
+            "doc": "",
+            "exported": true,
+            "children": []
+          },
+          {
+            "kind": "constant",
+            "name": "RAD",
+            "label": "const `RAD`",
+            "line": 20,
+            "doc": "",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "constant",
+            "name": "clamp",
+            "label": "const `clamp()`",
+            "line": 21,
+            "doc": "",
+            "exported": false,
+            "children": [],
+            "calls": [
+              "Math.min",
+              "Math.max"
+            ]
+          },
+          {
+            "kind": "constant",
+            "name": "smoothstep",
+            "label": "const `smoothstep()`",
+            "line": 22,
+            "doc": "",
+            "exported": false,
+            "children": [],
+            "calls": [
+              "clamp"
+            ]
+          },
+          {
+            "kind": "constant",
+            "name": "ease",
+            "label": "const `ease()`",
+            "line": 23,
+            "doc": "",
+            "exported": false,
+            "children": [],
+            "calls": [
+              "Math.pow"
+            ]
+          },
+          {
+            "kind": "function",
+            "name": "direction",
+            "label": "function `direction()`",
+            "line": 26,
+            "doc": "Same convention as the star dome: x right, y up, the camera looks down -z.",
+            "exported": false,
+            "children": [],
+            "calls": [
+              "multiplyScalar",
+              "Vector3",
+              "Math.cos",
+              "Math.sin"
+            ]
+          },
+          {
+            "kind": "constant",
+            "name": "starDirection",
+            "label": "export const `starDirection()`",
+            "line": 30,
+            "doc": "",
+            "exported": true,
+            "children": [],
+            "calls": [
+              "direction"
+            ]
+          },
+          {
+            "kind": "interface",
+            "name": "ConstellationState",
+            "label": "export interface `ConstellationState`",
+            "line": 34,
+            "doc": "",
+            "exported": true,
+            "children": []
+          },
+          {
+            "kind": "function",
+            "name": "constellationHeightVh",
+            "label": "export function `constellationHeightVh()`",
+            "line": 42,
+            "doc": "Total height of the scroll area in screen heights (the pinned frame itself takes one more).",
+            "exported": true,
+            "children": []
+          },
+          {
+            "kind": "function",
+            "name": "constellationTimeline",
+            "label": "export function `constellationTimeline()`",
+            "line": 46,
+            "doc": "",
+            "exported": true,
+            "children": [],
+            "calls": [
+              "Math.max",
+              "clamp"
+            ]
+          },
+          {
+            "kind": "function",
+            "name": "focusDirection",
+            "label": "function `focusDirection()`",
+            "line": 57,
+            "doc": "Where the camera looks when it is up in the sky: the middle of the sky, leaning halfway toward the current star.",
+            "exported": false,
+            "children": [],
+            "calls": [
+              "clamp",
+              "Math.floor",
+              "smoothstep",
+              "direction",
+              "Math.min",
+              "normalize",
+              "add",
+              "a.multiplyScalar",
+              "b.multiplyScalar",
+              "multiplyScalar",
+              "star.multiplyScalar"
+            ]
+          },
+          {
+            "kind": "function",
+            "name": "constellationPose",
+            "label": "export function `constellationPose()`",
+            "line": 67,
+            "doc": "Where the camera is and looks when it tilts up toward the sky. At tilt 0 it is exactly the hero camera.",
+            "exported": true,
+            "children": [],
+            "calls": [
+              "ease",
+              "clamp",
+              "Vector3",
+              "normalize",
+              "sub",
+              "add",
+              "hero.multiplyScalar",
+              "multiplyScalar",
+              "focusDirection"
+            ]
+          },
+          {
+            "kind": "function",
+            "name": "applyConstellationCamera",
+            "label": "export function `applyConstellationCamera()`",
+            "line": 76,
+            "doc": "Tilts the hero camera up toward the sky. At tilt 0 it is exactly the hero camera; it is never rolled.",
+            "exported": true,
+            "children": [],
+            "calls": [
+              "constellationPose",
+              "camera.position.copy",
+              "camera.up.set",
+              "camera.lookAt",
+              "addScaledVector",
+              "position.clone",
+              "camera.updateProjectionMatrix"
+            ]
+          },
+          {
+            "kind": "function",
+            "name": "projectStars",
+            "label": "export function `projectStars()`",
+            "line": 85,
+            "doc": "Where each feature star is on screen, in CSS pixels, so the page can put a label next to it.",
+            "exported": true,
+            "children": [],
+            "calls": [
+              "camera.getWorldDirection",
+              "Vector3",
+              "CONSTELLATION.stars.map",
+              "starDirection",
+              "project",
+              "dir.clone",
+              "forward.dot",
+              "normalize",
+              "Math.abs"
+            ]
+          },
+          {
+            "kind": "constant",
+            "name": "QUAD_VERT",
+            "label": "const `QUAD_VERT`",
+            "line": 97,
+            "doc": "",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "constant",
+            "name": "STAR_FRAG",
+            "label": "const `STAR_FRAG`",
+            "line": 99,
+            "doc": "",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "constant",
+            "name": "LINE_FRAG",
+            "label": "const `LINE_FRAG`",
+            "line": 114,
+            "doc": "",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "function",
+            "name": "ribbon",
+            "label": "function `ribbon()`",
+            "line": 126,
+            "doc": "A thin strip along the great circle from a to b, trimmed at both ends so it stops short of the stars.",
+            "exported": false,
+            "children": [],
+            "calls": [
+              "normalize",
+              "a.clone",
+              "b.clone",
+              "ua.angleTo",
+              "add",
+              "multiplyScalar",
+              "ua.clone",
+              "Math.sin",
+              "ub.clone",
+              "at",
+              "sub",
+              "Math.min",
+              "crossVectors",
+              "Vector3",
+              "p.clone",
+              "pos.push",
+              "uv.push",
+              "idx.push",
+              "BufferGeometry",
+              "g.setAttribute",
+              "Float32BufferAttribute",
+              "g.setIndex"
+            ]
+          },
+          {
+            "kind": "function",
+            "name": "buildConstellation",
+            "label": "export function `buildConstellation()`",
+            "line": 149,
+            "doc": "One bright star per feature, joined by lines that draw themselves as the features are passed.",
+            "exported": true,
+            "children": [],
+            "calls": [
+              "Group",
+              "Math.tan",
+              "CONSTELLATION.stars.map",
+              "ShaderMaterial",
+              "Mesh",
+              "PlaneGeometry",
+              "mesh.position.copy",
+              "starDirection",
+              "mesh.lookAt",
+              "group.add",
+              "map",
+              "CONSTELLATION.stars.slice",
+              "ribbon",
+              "getFeature",
+              "stars.forEach",
+              "smoothstep",
+              "Math.abs",
+              "Math.max",
+              "lines.forEach",
+              "clamp"
+            ]
+          }
+        ]
+      }
+    },
+    "website/src/scene/dispose.ts": {
+      "hash": "396a2e6ef624c46e85d4c222c237de25defdc671ae9ce0560af519a4a06e4ae2",
+      "data": {
+        "symbols": [
+          {
+            "kind": "function",
+            "name": "disposeTree",
+            "label": "export function `disposeTree()`",
+            "line": 4,
+            "doc": "Frees geometry, materials and their colour/alpha maps (disposing a material alone does not free textures).",
+            "exported": true,
+            "children": [],
+            "calls": [
+              "root.traverse",
+              "m.geometry?.dispose",
+              "Array.isArray",
+              "x.alphaMap?.dispose",
+              "x.map?.dispose",
+              "x.dispose"
+            ]
+          }
+        ]
+      }
+    },
+    "website/src/scene/flowers.test.ts": {
+      "hash": "de56cfa762de7c27c33d587faf8e0bb047698d158b444c15909287591a687062",
+      "data": {
+        "symbols": [
+          {
+            "kind": "constant",
+            "name": "flowers",
+            "label": "const `flowers`",
+            "line": 12,
+            "doc": "",
+            "exported": false,
+            "children": []
+          }
+        ]
+      }
+    },
+    "website/src/scene/flowers.ts": {
+      "hash": "a2d13d9fde55a388e036b44c86060608872253ba68fa40f45e7fb930ec76f862",
+      "data": {
+        "symbols": [
+          {
+            "kind": "constant",
+            "name": "FLOWERS",
+            "label": "export const `FLOWERS`",
+            "line": 17,
+            "doc": "",
+            "exported": true,
+            "children": []
+          },
+          {
+            "kind": "constant",
+            "name": "POPPY_COLORS",
+            "label": "export const `POPPY_COLORS`",
+            "line": 18,
+            "doc": "",
+            "exported": true,
+            "children": []
+          },
+          {
+            "kind": "constant",
+            "name": "SUSAN_COLORS",
+            "label": "const `SUSAN_COLORS`",
+            "line": 19,
+            "doc": "",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "interface",
+            "name": "Flower",
+            "label": "export interface `Flower`",
+            "line": 21,
+            "doc": "",
+            "exported": true,
+            "children": []
+          },
+          {
+            "kind": "constant",
+            "name": "camera",
+            "label": "const `camera`",
+            "line": 30,
+            "doc": "",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "function",
+            "name": "groundAt",
+            "label": "function `groundAt()`",
+            "line": 37,
+            "doc": "The ground point seen through a screen position (NDC), or null if the ray never meets the hill.",
+            "exported": false,
+            "children": [],
+            "calls": [
+              "normalize",
+              "sub",
+              "unproject",
+              "Vector3",
+              "addScaledVector",
+              "p.copy",
+              "hillHeight",
+              "p.setY"
+            ]
+          },
+          {
+            "kind": "function",
+            "name": "scatterFlowers",
+            "label": "export function `scatterFlowers()`",
+            "line": 48,
+            "doc": "Scatter flowers over the part of the hill the camera sees, avoiding the river, the fox, the gate feet and the tree.",
+            "exported": true,
+            "children": [],
+            "calls": [
+              "mulberry32",
+              "rng",
+              "Math.cos",
+              "Math.sin",
+              "groundAt",
+              "r",
+              "riverDistance",
+              "riverWidthAt",
+              "keepOut.some",
+              "Math.hypot",
+              "Math.pow",
+              "out.push",
+              "Math.min",
+              "Math.max",
+              "Math.floor",
+              "make"
+            ]
+          },
+          {
+            "kind": "function",
+            "name": "combine",
+            "label": "function `combine()`",
+            "line": 83,
+            "doc": "",
+            "exported": false,
+            "children": [],
+            "calls": [
+              "mergeGeometries",
+              "parts.forEach",
+              "part.dispose"
+            ]
+          },
+          {
+            "kind": "function",
+            "name": "paint",
+            "label": "function `paint()`",
+            "line": 89,
+            "doc": "",
+            "exported": false,
+            "children": [],
+            "calls": [
+              "Float32Array",
+              "geometry.getAttribute",
+              "colors.set",
+              "geometry.setAttribute",
+              "Float32BufferAttribute"
+            ]
+          },
+          {
+            "kind": "function",
+            "name": "petalGeometry",
+            "label": "function `petalGeometry()`",
+            "line": 97,
+            "doc": "Rounded petals with a raised edge, a central crease and gentle ripples, facing local +z.",
+            "exported": false,
+            "children": [],
+            "calls": [
+              "Math.cos",
+              "Math.sin",
+              "positions.push",
+              "Math.abs",
+              "colors.push",
+              "uv.push",
+              "indices.push",
+              "BufferGeometry",
+              "geometry.setAttribute",
+              "Float32BufferAttribute",
+              "geometry.setIndex",
+              "geometry.computeVertexNormals"
+            ]
+          },
+          {
+            "kind": "function",
+            "name": "seedHead",
+            "label": "function `seedHead()`",
+            "line": 131,
+            "doc": "A domed seed head with a subtle seed pattern in the vertex colours.",
+            "exported": false,
+            "children": [],
+            "calls": [
+              "SphereGeometry",
+              "geometry.rotateX",
+              "geometry.scale",
+              "geometry.translate",
+              "geometry.getAttribute",
+              "Float32Array",
+              "Math.sin",
+              "positions.getX",
+              "positions.getY",
+              "positions.getZ",
+              "colors.set",
+              "rgb.map",
+              "geometry.setAttribute",
+              "Float32BufferAttribute"
+            ]
+          },
+          {
+            "kind": "function",
+            "name": "poppyHead",
+            "label": "function `poppyHead()`",
+            "line": 148,
+            "doc": "",
+            "exported": false,
+            "children": [],
+            "calls": [
+              "parts.push",
+              "petalGeometry",
+              "Math.sin",
+              "seedHead",
+              "SphereGeometry",
+              "pollen.translate",
+              "Math.cos",
+              "paint",
+              "combine"
+            ]
+          },
+          {
+            "kind": "function",
+            "name": "susanHead",
+            "label": "function `susanHead()`",
+            "line": 165,
+            "doc": "",
+            "exported": false,
+            "children": [],
+            "calls": [
+              "parts.push",
+              "petalGeometry",
+              "Math.sin",
+              "seedHead",
+              "combine"
+            ]
+          },
+          {
+            "kind": "function",
+            "name": "leafGeometry",
+            "label": "function `leafGeometry()`",
+            "line": 176,
+            "doc": "Pointed, gently folded leaves, attached at alternating heights on the stem.",
+            "exported": false,
+            "children": [],
+            "calls": [
+              "Math.cos",
+              "Math.sin",
+              "Math.abs",
+              "positions.push",
+              "colors.push",
+              "uv.push",
+              "indices.push",
+              "BufferGeometry",
+              "geometry.setAttribute",
+              "Float32BufferAttribute",
+              "geometry.setIndex",
+              "geometry.computeVertexNormals"
+            ]
+          },
+          {
+            "kind": "function",
+            "name": "stemGeometry",
+            "label": "function `stemGeometry()`",
+            "line": 204,
+            "doc": "",
+            "exported": false,
+            "children": [],
+            "calls": [
+              "CylinderGeometry",
+              "stem.translate",
+              "stem.getAttribute",
+              "positions.setX",
+              "positions.getX",
+              "Math.sin",
+              "positions.getY",
+              "stem.computeVertexNormals",
+              "combine",
+              "paint",
+              "leafGeometry"
+            ]
+          },
+          {
+            "kind": "function",
+            "name": "buildFlowers",
+            "label": "export function `buildFlowers()`",
+            "line": 216,
+            "doc": "",
+            "exported": true,
+            "children": [],
+            "calls": [
+              "scatterFlowers",
+              "Group",
+              "MeshToonMaterial",
+              "InstancedMesh",
+              "stemGeometry",
+              "mat",
+              "flowers.filter",
+              "susanHead",
+              "poppyHead",
+              "forEach",
+              "group.add",
+              "Color",
+              "susanFlowers.forEach",
+              "susans.setColorAt",
+              "col.setHex",
+              "poppyFlowers.forEach",
+              "poppies.setColorAt",
+              "Matrix4",
+              "Quaternion",
+              "Euler",
+              "Vector3",
+              "flowers.forEach",
+              "Math.sin",
+              "windGust",
+              "q.setFromEuler",
+              "e.set",
+              "stems.setMatrixAt",
+              "m.compose",
+              "p.set",
+              "s.set",
+              "applyQuaternion",
+              "top.set",
+              "facing.setFromEuler",
+              "Math.cos",
+              "multiply",
+              "hq.copy",
+              "spin.setFromAxisAngle",
+              "head.setMatrixAt",
+              "write"
+            ]
+          }
+        ]
+      }
+    },
+    "website/src/scene/fox.test.ts": {
+      "hash": "fa882261dfa1c547e0b0a93ea282cb516e4210fbe4f62b9baa2850b648d3740c",
+      "data": {
+        "symbols": []
+      }
+    },
+    "website/src/scene/fox.ts": {
+      "hash": "2bd3d28057389d3e43147bf7b63f4cb0fe887c913871a42e60696d7fc2981551",
+      "data": {
+        "symbols": [
+          {
+            "kind": "constant",
+            "name": "FOX",
+            "label": "export const `FOX`",
+            "line": 15,
+            "doc": "A fox sitting on the hill between the gate and the tree, facing left and a little toward the camera.",
+            "exported": true,
+            "children": []
+          },
+          {
+            "kind": "constant",
+            "name": "FOX_SCALE",
+            "label": "const `FOX_SCALE`",
+            "line": 18,
+            "doc": "Stylized: bigger than life so it reads from across the hill. z is mirrored so that, turned to face left,",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "function",
+            "name": "foxLocalToWorld",
+            "label": "export function `foxLocalToWorld()`",
+            "line": 21,
+            "doc": "Fox-local coordinates (x forward, y up, z to the side) to world coordinates.",
+            "exported": true,
+            "children": [],
+            "calls": [
+              "compose",
+              "Matrix4",
+              "Vector3",
+              "hillHeight",
+              "setFromEuler",
+              "Quaternion",
+              "Euler",
+              "applyMatrix4"
+            ]
+          },
+          {
+            "kind": "constant",
+            "name": "FOX_TAG",
+            "label": "export const `FOX_TAG`",
+            "line": 32,
+            "doc": "The wooden tag (an ema, like the prayer tablets at a shrine) on the fox's chest, in fox-local coordinates.",
+            "exported": true,
+            "children": []
+          },
+          {
+            "kind": "constant",
+            "name": "FACET",
+            "label": "const `FACET`",
+            "line": 34,
+            "doc": "",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "constant",
+            "name": "BODY_Y",
+            "label": "const `BODY_Y`",
+            "line": 35,
+            "doc": "",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "constant",
+            "name": "HEAD_AT",
+            "label": "const `HEAD_AT`",
+            "line": 36,
+            "doc": "",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "constant",
+            "name": "MAX_YAW",
+            "label": "const `MAX_YAW`",
+            "line": 37,
+            "doc": "",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "function",
+            "name": "lookAngles",
+            "label": "export function `lookAngles()`",
+            "line": 41,
+            "doc": "How far the head turns (yaw, sideways) and tips (pitch) to look at a point, given as an offset from the head in",
+            "exported": true,
+            "children": [],
+            "calls": [
+              "Math.max",
+              "Math.min",
+              "clamp",
+              "Math.atan2",
+              "Math.hypot"
+            ]
+          },
+          {
+            "kind": "function",
+            "name": "foxCamera",
+            "label": "export function `foxCamera()`",
+            "line": 50,
+            "doc": "The close-up for the download: in front of the fox, low, with the face above the tag.",
+            "exported": true,
+            "children": [],
+            "calls": [
+              "foxLocalToWorld",
+              "lookPose"
+            ]
+          },
+          {
+            "kind": "function",
+            "name": "buildFox",
+            "label": "export function `buildFox()`",
+            "line": 55,
+            "doc": "",
+            "exported": true,
+            "children": [],
+            "calls": [
+              "MeshToonMaterial",
+              "mat",
+              "Group",
+              "Mesh",
+              "SphereGeometry",
+              "mesh.scale.set",
+              "mesh.position.set",
+              "parent.add",
+              "mulberry32",
+              "faceted",
+              "gem",
+              "IcosahedronGeometry",
+              "rock",
+              "forEach",
+              "CylinderGeometry",
+              "head.position.set",
+              "root.add",
+              "ConeGeometry",
+              "muzzle.rotateZ",
+              "OctahedronGeometry",
+              "map",
+              "eye.position.set",
+              "normalize",
+              "Vector3",
+              "eye.quaternion.setFromUnitVectors",
+              "ball",
+              "head.add",
+              "translate",
+              "ear.position.set",
+              "cone",
+              "tail.position.set",
+              "CubicBezierCurve3",
+              "facetedTube",
+              "Math.sin",
+              "tail.add",
+              "ring.position.set",
+              "TorusGeometry",
+              "ring.add",
+              "tag.position.set",
+              "Shape",
+              "closePath",
+              "lineTo",
+              "outline.moveTo",
+              "ExtrudeGeometry",
+              "slab.translate",
+              "slab.rotateY",
+              "plaque.position.set",
+              "tag.add",
+              "from.distanceTo",
+              "multiplyScalar",
+              "add",
+              "cord.position.copy",
+              "cord.quaternion.setFromUnitVectors",
+              "sub",
+              "to.clone",
+              "root.position.set",
+              "hillHeight",
+              "root.scale.set",
+              "ears.map",
+              "createReaction",
+              "nod.kick",
+              "wag.kick",
+              "earWiggle.kick",
+              "p.clone",
+              "windGust",
+              "nod.step",
+              "wag.step",
+              "earWiggle.step",
+              "root.updateWorldMatrix",
+              "lookAngles",
+              "root.worldToLocal",
+              "target.clone",
+              "Math.exp",
+              "Math.max",
+              "Math.pow",
+              "eyes.forEach"
+            ]
+          }
+        ]
+      }
+    },
+    "website/src/scene/grass.test.ts": {
+      "hash": "e0f3c4e105154fca678df5fa9e7cc78d18e7db0fac7851e87441b8b95bac383b",
+      "data": {
+        "symbols": []
+      }
+    },
+    "website/src/scene/grass.ts": {
+      "hash": "8ce80daa0128676437f8c687470bcaee0baff48788ab361862a0eb55355a7bda",
+      "data": {
+        "symbols": [
+          {
+            "kind": "function",
+            "name": "bladeGeometry",
+            "label": "function `bladeGeometry()`",
+            "line": 13,
+            "doc": "One blade: 1 unit tall, slightly bent, tapering to a point.",
+            "exported": false,
+            "children": [],
+            "calls": [
+              "pos.push",
+              "idx.push",
+              "BufferGeometry",
+              "g.setAttribute",
+              "Float32BufferAttribute",
+              "g.setIndex",
+              "g.computeVertexNormals"
+            ]
+          },
+          {
+            "kind": "interface",
+            "name": "Layer",
+            "label": "interface `Layer`",
+            "line": 32,
+            "doc": "",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "function",
+            "name": "buildGrass",
+            "label": "export function `buildGrass()`",
+            "line": 34,
+            "doc": "",
+            "exported": true,
+            "children": [],
+            "calls": [
+              "mulberry32",
+              "rng",
+              "bladeGeometry",
+              "Group",
+              "Matrix4",
+              "Quaternion",
+              "Euler",
+              "Vector3",
+              "e.set",
+              "mesh.setMatrixAt",
+              "m.compose",
+              "p.set",
+              "q.setFromEuler",
+              "s.set",
+              "InstancedMesh",
+              "MeshToonMaterial",
+              "Color",
+              "r",
+              "Math.abs",
+              "riverDistance",
+              "riverWidthAt",
+              "hillHeight",
+              "blades.push",
+              "compose",
+              "group.add",
+              "all.push",
+              "layers.reduce",
+              "blades.forEach",
+              "Math.sin",
+              "windGust"
+            ]
+          }
+        ]
+      }
+    },
+    "website/src/scene/hill.ts": {
+      "hash": "13ea827218a4f21412cd7fae915d9522e1e0680bd1e5a0cdeff09fd715da292b",
+      "data": {
+        "symbols": [
+          {
+            "kind": "function",
+            "name": "hillHeight",
+            "label": "export function `hillHeight()`",
+            "line": 7,
+            "doc": "Ground height at (x, z). The camera is at y = 0 at the foot of the hill; ground rises with distance and toward the right.",
+            "exported": true,
+            "children": [],
+            "calls": [
+              "Math.max",
+              "Math.sin"
+            ]
+          },
+          {
+            "kind": "function",
+            "name": "buildHill",
+            "label": "export function `buildHill()`",
+            "line": 14,
+            "doc": "Main hill and a lower far hill behind it. The main hill receives shadows.",
+            "exported": true,
+            "children": [],
+            "calls": [
+              "PlaneGeometry",
+              "g.rotateX",
+              "pos.setY",
+              "fn",
+              "pos.getX",
+              "pos.getZ",
+              "g.computeVertexNormals",
+              "Mesh",
+              "MeshToonMaterial",
+              "Color",
+              "make",
+              "Math.max",
+              "Math.sin",
+              "Group",
+              "group.add"
+            ]
+          }
+        ]
+      }
+    },
+    "website/src/scene/index.ts": {
+      "hash": "e8e8ea5386468d0c684062b78bf9d1e891e87ae424381b6fe7e8a3c16cd1aea5",
+      "data": {
+        "symbols": [
+          {
+            "kind": "interface",
+            "name": "SceneOptions",
+            "label": "export interface `SceneOptions`",
+            "line": 34,
+            "doc": "",
+            "exported": true,
+            "children": []
+          },
+          {
+            "kind": "interface",
+            "name": "JourneyProjection",
+            "label": "export interface `JourneyProjection`",
+            "line": 47,
+            "doc": "",
+            "exported": true,
+            "children": []
+          },
+          {
+            "kind": "interface",
+            "name": "ScenePart",
+            "label": "export interface `ScenePart`",
+            "line": 55,
+            "doc": "",
+            "exported": true,
+            "children": []
+          },
+          {
+            "kind": "type",
+            "name": "Builder",
+            "label": "type `Builder`",
+            "line": 61,
+            "doc": "Builders for each piece of the world; later tasks add torii, tree, grass and petals here.",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "interface",
+            "name": "Entry",
+            "label": "interface `Entry`",
+            "line": 63,
+            "doc": "What each piece does with the moon's shadow map: casts a shadow, receives one, or neither.",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "constant",
+            "name": "BUILDERS",
+            "label": "const `BUILDERS`",
+            "line": 64,
+            "doc": "",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "function",
+            "name": "toonGradient",
+            "label": "function `toonGradient()`",
+            "line": 78,
+            "doc": "",
+            "exported": false,
+            "children": [],
+            "calls": [
+              "Uint8Array",
+              "DataTexture"
+            ]
+          },
+          {
+            "kind": "function",
+            "name": "mountScene",
+            "label": "export function `mountScene()`",
+            "line": 86,
+            "doc": "",
+            "exported": true,
+            "children": [],
+            "calls": [
+              "WebGLRenderer",
+              "host.appendChild",
+              "Scene",
+              "PerspectiveCamera",
+              "toonGradient",
+              "DirectionalLight",
+              "sun.position.set",
+              "configureMoonLight",
+              "scene.add",
+              "AmbientLight",
+              "Group",
+              "buildSky",
+              "sky.setBlend",
+              "copy",
+              "sky.fogColor",
+              "scene.remove",
+              "disposeTree",
+              "BUILDERS.map",
+              "entry.build",
+              "part.object.traverse",
+              "parts.push",
+              "buildShootingStars",
+              "parts.find",
+              "named",
+              "filter",
+              "map",
+              "buildConstellation",
+              "getState",
+              "parts.forEach",
+              "world.add",
+              "tree.object.attach",
+              "Color",
+              "Fog",
+              "foxCamera",
+              "Raycaster",
+              "Vector2",
+              "starPositions",
+              "createSceneTap",
+              "canvas.getBoundingClientRect",
+              "ndc.set",
+              "raycaster.setFromCamera",
+              "raycaster.intersectObjects",
+              "classifyHit",
+              "hit.point.clone",
+              "nearestPoint",
+              "projectPoints",
+              "tap.cancel",
+              "tap.begin",
+              "pick",
+              "tap.end",
+              "activateSceneHit",
+              "treeLocalToWorld",
+              "Vector3",
+              "parallaxOffset",
+              "camera.position.set",
+              "camera.lookAt",
+              "Math.max",
+              "renderer.setPixelRatio",
+              "cappedPixelRatio",
+              "renderer.setSize",
+              "camera.updateProjectionMatrix",
+              "dispose",
+              "opts.onFail",
+              "shouldGiveUp",
+              "fail",
+              "adaptPixelRatioScale",
+              "resize",
+              "fpsText",
+              "Math.round",
+              "has",
+              "URLSearchParams",
+              "document.createElement",
+              "requestAnimationFrame",
+              "Math.min",
+              "trackFrame",
+              "decayWind",
+              "opts.journey?.getState",
+              "journeyPose",
+              "journeyParallax",
+              "camera.up.set",
+              "addScaledVector",
+              "pose.position.clone",
+              "tintSky",
+              "placeCamera",
+              "foxLocalToWorld",
+              "fox.look",
+              "raycaster.ray.at",
+              "camera.position.distanceTo",
+              "lookingAtSky",
+              "p.update",
+              "camera.updateMatrixWorld",
+              "opts.journey.onProject",
+              "projectStars",
+              "lanterns?.centres",
+              "p.setY",
+              "Math.abs",
+              "renderer.render",
+              "cancelAnimationFrame",
+              "start",
+              "stop",
+              "IntersectionObserver",
+              "sync",
+              "tap.move",
+              "performance.now",
+              "pushWind",
+              "pointerWind",
+              "Math.hypot",
+              "ResizeObserver",
+              "e.preventDefault",
+              "io.disconnect",
+              "ro.disconnect",
+              "document.removeEventListener",
+              "window.removeEventListener",
+              "document.documentElement.removeEventListener",
+              "canvas.removeEventListener",
+              "toon.dispose",
+              "renderer.dispose",
+              "overlay?.remove",
+              "canvas.remove",
+              "canvas.addEventListener",
+              "rebuild",
+              "ro.observe",
+              "io.observe",
+              "document.addEventListener",
+              "window.addEventListener",
+              "document.documentElement.addEventListener"
+            ]
+          }
+        ]
+      }
+    },
+    "website/src/scene/interact.test.ts": {
+      "hash": "d0196a23dd11f4b36adf89dbe127e7d5fafea8e9cbc3790399fe4c3017c531c7",
+      "data": {
+        "symbols": []
+      }
+    },
+    "website/src/scene/interact.ts": {
+      "hash": "1699878917a1ebdefb6face96761b54e82b7994148135c8de3206c9ab654c17a",
+      "data": {
+        "symbols": [
+          {
+            "kind": "type",
+            "name": "SceneHit",
+            "label": "export type `SceneHit`",
+            "line": 4,
+            "doc": "",
+            "exported": true,
+            "children": []
+          },
+          {
+            "kind": "function",
+            "name": "createSceneTap",
+            "label": "export function `createSceneTap()`",
+            "line": 7,
+            "doc": "Only a press and release on the same object counts. Dragging, scrolling and cancellation abandon the tap.",
+            "exported": true,
+            "children": [],
+            "calls": [
+              "Math.hypot",
+              "move"
+            ]
+          },
+          {
+            "kind": "function",
+            "name": "activateSceneHit",
+            "label": "export function `activateSceneHit()`",
+            "line": 29,
+            "doc": "Dispatch to just the selected object; the tree owns its petal shower, without changing the scene's wind.",
+            "exported": true,
+            "children": [],
+            "calls": [
+              "targets.fox?.react",
+              "targets.tree?.shake",
+              "targets.petals?.burst",
+              "lerp",
+              "targets.blossom.clone",
+              "targets.shooting?.shoot"
+            ]
+          },
+          {
+            "kind": "function",
+            "name": "nearestPoint",
+            "label": "export function `nearestPoint()`",
+            "line": 45,
+            "doc": "The index of the point nearest (x, y) that is visible and within `maxDist` pixels, or -1 if there is none.",
+            "exported": true,
+            "children": [],
+            "calls": [
+              "points.forEach",
+              "Math.hypot"
+            ]
+          },
+          {
+            "kind": "function",
+            "name": "classifyHit",
+            "label": "export function `classifyHit()`",
+            "line": 57,
+            "doc": "What a ray hit: the fox, the tree, or something else that only gets in the way (the hill, the gate). Looks up",
+            "exported": true,
+            "children": []
+          },
+          {
+            "kind": "function",
+            "name": "pointerWind",
+            "label": "export function `pointerWind()`",
+            "line": 68,
+            "doc": "How much wind a pointer movement makes: nothing for a slow drift, more for a quick sweep (distance in pixels, over",
+            "exported": true,
+            "children": [],
+            "calls": [
+              "Math.min"
+            ]
+          }
+        ]
+      }
+    },
+    "website/src/scene/journey.test.ts": {
+      "hash": "e6a5a691efc9335be13a001d514777f3b07c323c9b1fd6ed2c0e7c612f97923e",
+      "data": {
+        "symbols": [
+          {
+            "kind": "constant",
+            "name": "FOX",
+            "label": "const `FOX`",
+            "line": 8,
+            "doc": "",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "constant",
+            "name": "dirOf",
+            "label": "const `dirOf()`",
+            "line": 9,
+            "doc": "",
+            "exported": false,
+            "children": [],
+            "calls": [
+              "journeyPose",
+              "journeyAt"
+            ]
+          },
+          {
+            "kind": "constant",
+            "name": "SCROLLS",
+            "label": "const `SCROLLS`",
+            "line": 10,
+            "doc": "",
+            "exported": false,
+            "children": []
+          }
+        ]
+      }
+    },
+    "website/src/scene/journey.ts": {
+      "hash": "02de30e7cc5d73cc470ab6a6a1b0c47fec8eddbfcff62d55df8f84fd7295e246",
+      "data": {
+        "symbols": [
+          {
+            "kind": "constant",
+            "name": "JOURNEY",
+            "label": "export const `JOURNEY`",
+            "line": 7,
+            "doc": "Scroll lengths in screen heights. The hero, tilt and feature lengths come from CONSTELLATION.",
+            "exported": true,
+            "children": []
+          },
+          {
+            "kind": "constant",
+            "name": "STARS_END",
+            "label": "const `STARS_END`",
+            "line": 16,
+            "doc": "",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "constant",
+            "name": "WRITE_END",
+            "label": "const `WRITE_END`",
+            "line": 17,
+            "doc": "",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "constant",
+            "name": "NUMBERS_START",
+            "label": "const `NUMBERS_START`",
+            "line": 18,
+            "doc": "",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "constant",
+            "name": "NUMBERS_END",
+            "label": "const `NUMBERS_END`",
+            "line": 19,
+            "doc": "",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "constant",
+            "name": "JOURNEY_AT",
+            "label": "export const `JOURNEY_AT`",
+            "line": 22,
+            "doc": "Where each chapter starts, in screen heights of scroll (what the \"Features\" link and focus handling scroll to).",
+            "exported": true,
+            "children": []
+          },
+          {
+            "kind": "function",
+            "name": "journeyHeightVh",
+            "label": "export function `journeyHeightVh()`",
+            "line": 29,
+            "doc": "",
+            "exported": true,
+            "children": []
+          },
+          {
+            "kind": "constant",
+            "name": "clamp",
+            "label": "const `clamp()`",
+            "line": 33,
+            "doc": "",
+            "exported": false,
+            "children": [],
+            "calls": [
+              "Math.min",
+              "Math.max"
+            ]
+          },
+          {
+            "kind": "constant",
+            "name": "smooth",
+            "label": "const `smooth()`",
+            "line": 34,
+            "doc": "",
+            "exported": false,
+            "children": [],
+            "calls": [
+              "clamp"
+            ]
+          },
+          {
+            "kind": "constant",
+            "name": "smoothstep",
+            "label": "const `smoothstep()`",
+            "line": 35,
+            "doc": "",
+            "exported": false,
+            "children": [],
+            "calls": [
+              "smooth"
+            ]
+          },
+          {
+            "kind": "interface",
+            "name": "JourneyState",
+            "label": "export interface `JourneyState`",
+            "line": 37,
+            "doc": "",
+            "exported": true,
+            "children": []
+          },
+          {
+            "kind": "function",
+            "name": "journeyAt",
+            "label": "export function `journeyAt()`",
+            "line": 55,
+            "doc": "",
+            "exported": true,
+            "children": [],
+            "calls": [
+              "Math.max",
+              "constellationTimeline",
+              "Math.min",
+              "clamp",
+              "smooth",
+              "smoothstep"
+            ]
+          },
+          {
+            "kind": "interface",
+            "name": "Pose",
+            "label": "export interface `Pose`",
+            "line": 79,
+            "doc": "A camera: where it is, the unit direction it looks in, and the field of view. Never rolled.",
+            "exported": true,
+            "children": []
+          },
+          {
+            "kind": "function",
+            "name": "lookPose",
+            "label": "export function `lookPose()`",
+            "line": 81,
+            "doc": "",
+            "exported": true,
+            "children": [],
+            "calls": [
+              "Vector3",
+              "normalize",
+              "sub"
+            ]
+          },
+          {
+            "kind": "constant",
+            "name": "GLADE",
+            "label": "export const `GLADE`",
+            "line": 87,
+            "doc": "In the glade by the cherry tree: the notebook floats on the left, the tree fills the right.",
+            "exported": true,
+            "children": []
+          },
+          {
+            "kind": "constant",
+            "name": "TREE_VIEW",
+            "label": "export const `TREE_VIEW`",
+            "line": 89,
+            "doc": "Across the glade from the cherry tree, looking at the lanterns that hang from its branches.",
+            "exported": true,
+            "children": []
+          },
+          {
+            "kind": "constant",
+            "name": "mix",
+            "label": "const `mix()`",
+            "line": 91,
+            "doc": "",
+            "exported": false,
+            "children": [],
+            "calls": [
+              "lerp",
+              "a.position.clone",
+              "normalize",
+              "a.direction.clone"
+            ]
+          },
+          {
+            "kind": "function",
+            "name": "journeyPose",
+            "label": "export function `journeyPose()`",
+            "line": 98,
+            "doc": "The camera for a point in the journey. `fox` is the close-up of the fox, which the scene knows and this module does not.",
+            "exported": true,
+            "children": [],
+            "calls": [
+              "constellationPose",
+              "mix",
+              "smooth"
+            ]
+          },
+          {
+            "kind": "function",
+            "name": "lookingAtSky",
+            "label": "export function `lookingAtSky()`",
+            "line": 107,
+            "doc": "True while the camera is looking up at the stars, with the whole hill (and its flowers) below the bottom of the screen.",
+            "exported": true,
+            "children": []
+          },
+          {
+            "kind": "function",
+            "name": "projectPoints",
+            "label": "export function `projectPoints()`",
+            "line": 112,
+            "doc": "Where points in the world are on screen, in CSS pixels, so the page can put DOM next to them.",
+            "exported": true,
+            "children": [],
+            "calls": [
+              "camera.updateMatrixWorld",
+              "points.map",
+              "applyMatrix4",
+              "p.clone",
+              "project",
+              "Math.abs"
+            ]
+          },
+          {
+            "kind": "type",
+            "name": "Chapter",
+            "label": "export type `Chapter`",
+            "line": 127,
+            "doc": "",
+            "exported": true,
+            "children": []
+          },
+          {
+            "kind": "function",
+            "name": "chapterAt",
+            "label": "export function `chapterAt()`",
+            "line": 130,
+            "doc": "Which chapter a scroll position is in (the notebook's chapter runs on until the camera has left the glade).",
+            "exported": true,
+            "children": []
+          },
+          {
+            "kind": "function",
+            "name": "chapterScroll",
+            "label": "export function `chapterScroll()`",
+            "line": 139,
+            "doc": "A scroll position where a chapter is fully shown: what focusing something in that chapter scrolls to.",
+            "exported": true,
+            "children": []
+          }
+        ]
+      }
+    },
+    "website/src/scene/lanterns.test.ts": {
+      "hash": "d93cf4e1de2a9640846fffe72b815a47d5951369c203cb0f64b6edbf10ca6565",
+      "data": {
+        "symbols": [
+          {
+            "kind": "constant",
+            "name": "treeCamera",
+            "label": "const `treeCamera()`",
+            "line": 10,
+            "doc": "",
+            "exported": false,
+            "children": [],
+            "calls": [
+              "PerspectiveCamera",
+              "cam.position.copy",
+              "cam.lookAt",
+              "add",
+              "TREE_VIEW.position.clone",
+              "cam.updateMatrixWorld",
+              "cam.updateProjectionMatrix"
+            ]
+          }
+        ]
+      }
+    },
+    "website/src/scene/lanterns.ts": {
+      "hash": "202a8c75b49b6e9f558c4607c8aa0bc2876ad9fccc40c47d64779ee15b986d33",
+      "data": {
+        "symbols": [
+          {
+            "kind": "constant",
+            "name": "HANGS",
+            "label": "const `HANGS`",
+            "line": 13,
+            "doc": "The four paper lanterns hang from branches of the cherry tree: which branch, how far along it (0..1), and the",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "constant",
+            "name": "BODY_HALF",
+            "label": "const `BODY_HALF`",
+            "line": 19,
+            "doc": "",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "constant",
+            "name": "LANTERN_ATTACH",
+            "label": "export const `LANTERN_ATTACH`",
+            "line": 22,
+            "doc": "Where each cord is tied to its branch (world coordinates).",
+            "exported": true,
+            "children": []
+          },
+          {
+            "kind": "constant",
+            "name": "LANTERNS",
+            "label": "export const `LANTERNS`",
+            "line": 24,
+            "doc": "Where each lantern's centre hangs at rest (world coordinates).",
+            "exported": true,
+            "children": []
+          },
+          {
+            "kind": "constant",
+            "name": "LANTERN_CORDS",
+            "label": "export const `LANTERN_CORDS`",
+            "line": 26,
+            "doc": "Length of each cord, from the branch to the top of its lantern.",
+            "exported": true,
+            "children": []
+          },
+          {
+            "kind": "constant",
+            "name": "PAPER_HALF",
+            "label": "const `PAPER_HALF`",
+            "line": 28,
+            "doc": "",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "constant",
+            "name": "paperRadius",
+            "label": "const `paperRadius()`",
+            "line": 29,
+            "doc": "",
+            "exported": false,
+            "children": [],
+            "calls": [
+              "Math.max",
+              "Math.cos"
+            ]
+          },
+          {
+            "kind": "function",
+            "name": "paperGeometry",
+            "label": "function `paperGeometry()`",
+            "line": 32,
+            "doc": "The shoulders taper into the lacquer collars; small folds give the paper a ribbed silhouette.",
+            "exported": false,
+            "children": [],
+            "calls": [
+              "Array.from",
+              "Math.sin",
+              "Math.cos",
+              "Vector2",
+              "paperRadius",
+              "LatheGeometry"
+            ]
+          },
+          {
+            "kind": "function",
+            "name": "paperMaterial",
+            "label": "function `paperMaterial()`",
+            "line": 42,
+            "doc": "Procedural paper: fine fibres, bamboo ribs and a warmer centre, without downloaded textures.",
+            "exported": false,
+            "children": [],
+            "calls": [
+              "MeshToonMaterial",
+              "replace",
+              "shader.vertexShader.replace",
+              "shader.fragmentShader.replace"
+            ]
+          },
+          {
+            "kind": "function",
+            "name": "merged",
+            "label": "function `merged()`",
+            "line": 67,
+            "doc": "",
+            "exported": false,
+            "children": [],
+            "calls": [
+              "mergeGeometries",
+              "parts.forEach",
+              "part.dispose"
+            ]
+          },
+          {
+            "kind": "function",
+            "name": "ring",
+            "label": "function `ring()`",
+            "line": 73,
+            "doc": "",
+            "exported": false,
+            "children": [],
+            "calls": [
+              "TorusGeometry",
+              "geometry.rotateX",
+              "geometry.translate"
+            ]
+          },
+          {
+            "kind": "constant",
+            "name": "LANTERN_MOTIFS",
+            "label": "const `LANTERN_MOTIFS`",
+            "line": 80,
+            "doc": "",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "type",
+            "name": "LanternMotif",
+            "label": "type `LanternMotif`",
+            "line": 81,
+            "doc": "",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "function",
+            "name": "motifShapes",
+            "label": "function `motifShapes()`",
+            "line": 84,
+            "doc": "Vector emblems stay crisp on close-ups and need no fonts or image textures.",
+            "exported": false,
+            "children": [],
+            "calls": [
+              "Shape",
+              "closePath",
+              "bezierCurveTo",
+              "quadraticCurveTo",
+              "petal.moveTo",
+              "Vector2",
+              "Array.from",
+              "map",
+              "petal.getPoints",
+              "point.rotateAround",
+              "centre.absarc",
+              "lineTo",
+              "mask.moveTo",
+              "Path",
+              "ear.moveTo",
+              "eye.moveTo",
+              "mask.holes.push",
+              "nose.moveTo",
+              "points.map",
+              "Math.hypot",
+              "polygon",
+              "roof.moveTo",
+              "stroke",
+              "sunHole.moveTo",
+              "sun.holes.push"
+            ]
+          },
+          {
+            "kind": "function",
+            "name": "crestGeometry",
+            "label": "function `crestGeometry()`",
+            "line": 149,
+            "doc": "Repeat one emblem around its lantern, curved to the paper instead of floating on a flat decal.",
+            "exported": false,
+            "children": [],
+            "calls": [
+              "Shape",
+              "frame.absarc",
+              "Path",
+              "hole.absarc",
+              "frame.holes.push",
+              "motifShapes",
+              "ShapeGeometry",
+              "geometry.getAttribute",
+              "positions.getX",
+              "positions.getY",
+              "paperRadius",
+              "positions.setXYZ",
+              "Math.sin",
+              "Math.cos",
+              "geometry.computeVertexNormals",
+              "parts.push",
+              "merged"
+            ]
+          },
+          {
+            "kind": "function",
+            "name": "glowMaterial",
+            "label": "function `glowMaterial()`",
+            "line": 173,
+            "doc": "A soft halo, billboarded in the shader so it still faces the viewer while the lantern swings.",
+            "exported": false,
+            "children": [],
+            "calls": [
+              "ShaderMaterial",
+              "Color"
+            ]
+          },
+          {
+            "kind": "function",
+            "name": "buildLanterns",
+            "label": "export function `buildLanterns()`",
+            "line": 196,
+            "doc": "Four glowing paper lanterns on cords tied to the tree's branches. They are always there; the numbers chapter",
+            "exported": true,
+            "children": [],
+            "calls": [
+              "Group",
+              "MeshToonMaterial",
+              "paperGeometry",
+              "LANTERN_CORDS.map",
+              "createPendulum",
+              "Vector3",
+              "HANGS.map",
+              "l.position.copy",
+              "paperMaterial",
+              "Mesh",
+              "bodies.push",
+              "translate",
+              "CylinderGeometry",
+              "TorusGeometry",
+              "merged",
+              "ring",
+              "SphereGeometry",
+              "crestGeometry",
+              "threads.push",
+              "Math.sin",
+              "Math.cos",
+              "tassel.add",
+              "glowMaterial",
+              "PlaneGeometry",
+              "l.add",
+              "details.push",
+              "group.add",
+              "bodies.map",
+              "body.getWorldPosition",
+              "windGust",
+              "group.updateWorldMatrix",
+              "Math.atan2",
+              "lanterns.forEach",
+              "applyMatrix4",
+              "pivot.copy",
+              "step"
+            ]
+          }
+        ]
+      }
+    },
+    "website/src/scene/lowpoly.test.ts": {
+      "hash": "dc4b0c2b593745d29d36efdee948c9730f68e825b8f80bb4487844dea9485831",
+      "data": {
+        "symbols": [
+          {
+            "kind": "constant",
+            "name": "triangles",
+            "label": "const `triangles()`",
+            "line": 6,
+            "doc": "",
+            "exported": false,
+            "children": [],
+            "calls": [
+              "g.getAttribute"
+            ]
+          },
+          {
+            "kind": "constant",
+            "name": "normalOf",
+            "label": "const `normalOf()`",
+            "line": 7,
+            "doc": "",
+            "exported": false,
+            "children": [],
+            "calls": [
+              "g.getAttribute",
+              "Vector3",
+              "n.getX",
+              "n.getY",
+              "n.getZ"
+            ]
+          },
+          {
+            "kind": "constant",
+            "name": "colorOf",
+            "label": "const `colorOf()`",
+            "line": 11,
+            "doc": "",
+            "exported": false,
+            "children": [],
+            "calls": [
+              "g.getAttribute",
+              "c.getX",
+              "c.getY",
+              "c.getZ"
+            ]
+          }
+        ]
+      }
+    },
+    "website/src/scene/lowpoly.ts": {
+      "hash": "c9f8349f8f2cd3b6947e4e5b5a7871c1bf2370125b0c69731ef4068397deaa55",
+      "data": {
+        "symbols": [
+          {
+            "kind": "function",
+            "name": "faceted",
+            "label": "export function `faceted()`",
+            "line": 5,
+            "doc": "A copy of `geometry` with flat faces, each face a slightly different shade of `color` (up to `jitter` lighter or",
+            "exported": true,
+            "children": [],
+            "calls": [
+              "geometry.toNonIndexed",
+              "geometry.clone",
+              "g.computeVertexNormals",
+              "Color",
+              "g.getAttribute",
+              "Float32Array",
+              "rng",
+              "colors.set",
+              "g.setAttribute",
+              "BufferAttribute"
+            ]
+          },
+          {
+            "kind": "function",
+            "name": "facetedTube",
+            "label": "export function `facetedTube()`",
+            "line": 20,
+            "doc": "A flat-shaded tube along `curve` with a few sides, wider or narrower as `radiusAt(t)` says, and a color along its",
+            "exported": true,
+            "children": [],
+            "calls": [
+              "curve.computeFrenetFrames",
+              "curve.getPointAt",
+              "radiusAt",
+              "Array.from",
+              "addScaledVector",
+              "c.clone",
+              "Math.cos",
+              "Math.sin",
+              "ring",
+              "Color",
+              "colorAt",
+              "rng",
+              "pos.push",
+              "col.push",
+              "BufferGeometry",
+              "g.setAttribute",
+              "Float32BufferAttribute",
+              "g.computeVertexNormals"
+            ]
+          }
+        ]
+      }
+    },
+    "website/src/scene/moon.test.ts": {
+      "hash": "f7878670d0ed9764513cad19ef5c132cad22e89a966411f28e0909fe284124b3",
+      "data": {
+        "symbols": []
+      }
+    },
+    "website/src/scene/moon.ts": {
+      "hash": "6b73145dfcac7f3ff8bd5dfaccc92e6e76082f128a298745d5ffe88d033e8286",
+      "data": {
+        "symbols": [
+          {
+            "kind": "constant",
+            "name": "MOON",
+            "label": "export const `MOON`",
+            "line": 6,
+            "doc": "The moon sits on a far dome, up and to the left of the headline.",
+            "exported": true,
+            "children": []
+          },
+          {
+            "kind": "constant",
+            "name": "MOON_RADIUS",
+            "label": "export const `MOON_RADIUS`",
+            "line": 9,
+            "doc": "World radius of the disc itself (the quad around it also carries the glow).",
+            "exported": true,
+            "children": []
+          },
+          {
+            "kind": "constant",
+            "name": "QUAD_RADII",
+            "label": "const `QUAD_RADII`",
+            "line": 11,
+            "doc": "",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "constant",
+            "name": "CRATERS",
+            "label": "const `CRATERS`",
+            "line": 14,
+            "doc": "",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "function",
+            "name": "buildMoon",
+            "label": "export function `buildMoon()`",
+            "line": 20,
+            "doc": "Glow, disc and craters are drawn by one fragment shader on a single quad. Separate meshes lying in the",
+            "exported": true,
+            "children": [],
+            "calls": [
+              "Group",
+              "group.position.set",
+              "Math.cos",
+              "Math.sin",
+              "group.lookAt",
+              "Color",
+              "join",
+              "CRATERS.map",
+              "x.toFixed",
+              "y.toFixed",
+              "s.toFixed",
+              "ShaderMaterial",
+              "toFixed",
+              "QUAD_RADII.toFixed",
+              "Mesh",
+              "PlaneGeometry",
+              "group.add"
+            ]
+          }
+        ]
+      }
+    },
+    "website/src/scene/palette.ts": {
+      "hash": "b5ebd5731f1f847d9560b241273d31ec558abe5756191c571baf3981874b17da",
+      "data": {
+        "symbols": [
+          {
+            "kind": "interface",
+            "name": "Palette",
+            "label": "export interface `Palette`",
+            "line": 1,
+            "doc": "",
+            "exported": true,
+            "children": []
+          },
+          {
+            "kind": "constant",
+            "name": "PALETTE",
+            "label": "export const `PALETTE`",
+            "line": 24,
+            "doc": "The night scene: the same colors as the home page tokens and the SVG prototype.",
+            "exported": true,
+            "children": []
+          }
+        ]
+      }
+    },
+    "website/src/scene/pendulum.test.ts": {
+      "hash": "68b53527e9c889f106586567a8c53c627cb2d7ef34842e2fde915af994876170",
+      "data": {
+        "symbols": []
+      }
+    },
+    "website/src/scene/pendulum.ts": {
+      "hash": "4fbab760ba3ed5dbc2d7ecc9a98e0c4aff6efad54161c1c2ceb37abf2c9acaea",
+      "data": {
+        "symbols": [
+          {
+            "kind": "function",
+            "name": "createPendulum",
+            "label": "export function `createPendulum()`",
+            "line": 2,
+            "doc": "A lantern's angle in world space, driven by the velocity changes of its moving tie point.",
+            "exported": true,
+            "children": [],
+            "calls": [
+              "Math.min",
+              "Math.ceil",
+              "Math.cos",
+              "Math.sin",
+              "Math.max",
+              "Math.abs",
+              "Math.sign"
+            ]
+          }
+        ]
+      }
+    },
+    "website/src/scene/petals.test.ts": {
+      "hash": "c7aae1d9ad49dcf06558d884aa90bf2ee1cb469b5d2a614807011fa53c0bf51d",
+      "data": {
+        "symbols": []
+      }
+    },
+    "website/src/scene/petals.ts": {
+      "hash": "318f41a9553736cdb02b41ad2efb38c8dfe8c02712c7bc030bf4047598b73b8c",
+      "data": {
+        "symbols": [
+          {
+            "kind": "constant",
+            "name": "PETAL_BOUNDS",
+            "label": "export const `PETAL_BOUNDS`",
+            "line": 12,
+            "doc": "Volume the petals live in (meters). They enter at the right edge and leave at the left.",
+            "exported": true,
+            "children": []
+          },
+          {
+            "kind": "interface",
+            "name": "PetalState",
+            "label": "export interface `PetalState`",
+            "line": 14,
+            "doc": "",
+            "exported": true,
+            "children": []
+          },
+          {
+            "kind": "constant",
+            "name": "MAX_DT",
+            "label": "const `MAX_DT`",
+            "line": 28,
+            "doc": "",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "function",
+            "name": "respawn",
+            "label": "function `respawn()`",
+            "line": 30,
+            "doc": "",
+            "exported": false,
+            "children": [],
+            "calls": [
+              "r",
+              "Math.max",
+              "hillHeight"
+            ]
+          },
+          {
+            "kind": "function",
+            "name": "createPetals",
+            "label": "export function `createPetals()`",
+            "line": 42,
+            "doc": "",
+            "exported": true,
+            "children": [],
+            "calls": [
+              "Float32Array",
+              "Uint8Array",
+              "mulberry32",
+              "respawn"
+            ]
+          },
+          {
+            "kind": "function",
+            "name": "burstPetals",
+            "label": "export function `burstPetals()`",
+            "line": 61,
+            "doc": "Shakes `amount` petals loose around `origin` (a point in the blossom): they fly outward and up, then drift and fall",
+            "exported": true,
+            "children": [],
+            "calls": [
+              "r",
+              "Math.acos",
+              "Math.cbrt",
+              "Math.sin",
+              "Math.cos"
+            ]
+          },
+          {
+            "kind": "function",
+            "name": "stepPetals",
+            "label": "export function `stepPetals()`",
+            "line": 87,
+            "doc": "",
+            "exported": true,
+            "children": [],
+            "calls": [
+              "Math.min",
+              "Math.max",
+              "Math.exp",
+              "Math.sin",
+              "Math.cos",
+              "hillHeight",
+              "respawn"
+            ]
+          },
+          {
+            "kind": "function",
+            "name": "petalGeometry",
+            "label": "function `petalGeometry()`",
+            "line": 106,
+            "doc": "",
+            "exported": false,
+            "children": [],
+            "calls": [
+              "Shape",
+              "s.moveTo",
+              "s.bezierCurveTo",
+              "ShapeGeometry"
+            ]
+          },
+          {
+            "kind": "function",
+            "name": "buildPetals",
+            "label": "export function `buildPetals()`",
+            "line": 112,
+            "doc": "",
+            "exported": true,
+            "children": [],
+            "calls": [
+              "createPetals",
+              "InstancedMesh",
+              "petalGeometry",
+              "MeshToonMaterial",
+              "Matrix4",
+              "Quaternion",
+              "Euler",
+              "Vector3",
+              "p.set",
+              "e.set",
+              "mesh.setMatrixAt",
+              "m.compose",
+              "q.setFromEuler",
+              "write",
+              "stepPetals",
+              "windGust",
+              "burstPetals"
+            ]
+          }
+        ]
+      }
+    },
+    "website/src/scene/reaction.test.ts": {
+      "hash": "ada613893cc2cf75ba351afc832fc02c4ccb22a7775d06e532df3e05cb2fe8ee",
+      "data": {
+        "symbols": []
+      }
+    },
+    "website/src/scene/reaction.ts": {
+      "hash": "a303f76b983f5416a8c36f27ce94ab717571379bcf49848c9fc69b374d5e94aa",
+      "data": {
+        "symbols": [
+          {
+            "kind": "function",
+            "name": "createReaction",
+            "label": "export function `createReaction()`",
+            "line": 2,
+            "doc": "A local damped motion. A click adds velocity without resetting the current pose or phase.",
+            "exported": true,
+            "children": [],
+            "calls": [
+              "Math.sqrt",
+              "Math.max",
+              "Math.min",
+              "Math.exp",
+              "Math.cos",
+              "Math.sin"
+            ]
+          }
+        ]
+      }
+    },
+    "website/src/scene/river.test.ts": {
+      "hash": "f16636b6e25e95c9b1a608674bf8aa1f88c2334383f17a4001e87ac2c2cb3fea",
+      "data": {
+        "symbols": []
+      }
+    },
+    "website/src/scene/river.ts": {
+      "hash": "832915010da91cf5d129768ae2d19bee2e4797ad050f53d518e9ed968000073c",
+      "data": {
+        "symbols": [
+          {
+            "kind": "constant",
+            "name": "RIVER",
+            "label": "export const `RIVER`",
+            "line": 7,
+            "doc": "Centerline in (x, z), from far (small z magnitude last) to near the camera. The river flows toward the viewer.",
+            "exported": true,
+            "children": []
+          },
+          {
+            "kind": "constant",
+            "name": "riverWidthAt",
+            "label": "export const `riverWidthAt()`",
+            "line": 14,
+            "doc": "River width at u = 0 (far end) .. 1 (near end).",
+            "exported": true,
+            "children": [],
+            "calls": [
+              "Math.pow"
+            ]
+          },
+          {
+            "kind": "constant",
+            "name": "curve",
+            "label": "const `curve`",
+            "line": 16,
+            "doc": "",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "constant",
+            "name": "SAMPLES",
+            "label": "const `SAMPLES`",
+            "line": 17,
+            "doc": "",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "constant",
+            "name": "samples",
+            "label": "const `samples`",
+            "line": 18,
+            "doc": "",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "function",
+            "name": "riverFrame",
+            "label": "export function `riverFrame()`",
+            "line": 21,
+            "doc": "Centre point of the river at u (0 far .. 1 near), and the horizontal unit vector pointing to the left of the flow.",
+            "exported": true,
+            "children": [],
+            "calls": [
+              "normalize",
+              "setY",
+              "curve.getTangent",
+              "curve.getPoint",
+              "crossVectors",
+              "Vector3"
+            ]
+          },
+          {
+            "kind": "function",
+            "name": "riverDistance",
+            "label": "export function `riverDistance()`",
+            "line": 27,
+            "doc": "Distance in the ground plane from (x, z) to the river centerline.",
+            "exported": true,
+            "children": [],
+            "calls": [
+              "Math.max",
+              "Math.min",
+              "Math.hypot"
+            ]
+          },
+          {
+            "kind": "constant",
+            "name": "VERT",
+            "label": "const `VERT`",
+            "line": 38,
+            "doc": "",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "constant",
+            "name": "FRAG",
+            "label": "const `FRAG`",
+            "line": 46,
+            "doc": "",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "function",
+            "name": "buildRiver",
+            "label": "export function `buildRiver()`",
+            "line": 78,
+            "doc": "",
+            "exported": true,
+            "children": [],
+            "calls": [
+              "Vector3",
+              "normalize",
+              "setY",
+              "curve.getTangent",
+              "crossVectors",
+              "riverWidthAt",
+              "pos.push",
+              "hillHeight",
+              "uv.push",
+              "idx.push",
+              "BufferGeometry",
+              "geo.setAttribute",
+              "Float32BufferAttribute",
+              "geo.setIndex",
+              "ShaderMaterial",
+              "lerp",
+              "Color",
+              "Mesh"
+            ]
+          }
+        ]
+      }
+    },
+    "website/src/scene/riverside.test.ts": {
+      "hash": "0cc46ed9280bff5c7e6b5d31ffd2cc5256ac9209e304a74179becae2803e3913",
+      "data": {
+        "symbols": []
+      }
+    },
+    "website/src/scene/riverside.ts": {
+      "hash": "6b0c4468a1401ab22939b8572cc3ae8caa38dc669b446ff7b74577f569f580be",
+      "data": {
+        "symbols": [
+          {
+            "kind": "constant",
+            "name": "RIVERSIDE",
+            "label": "export const `RIVERSIDE`",
+            "line": 13,
+            "doc": "A little life along the water: stones with foam, reed clumps with cattails, lily pads and petals drifting by.",
+            "exported": true,
+            "children": []
+          },
+          {
+            "kind": "constant",
+            "name": "WATER_LIFT",
+            "label": "const `WATER_LIFT`",
+            "line": 15,
+            "doc": "",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "function",
+            "name": "riverPoint",
+            "label": "export function `riverPoint()`",
+            "line": 18,
+            "doc": "Ground point beside the river at river position u (0 far .. 1 near), `offset` units to the left of the flow (negative: right).",
+            "exported": true,
+            "children": [],
+            "calls": [
+              "riverFrame",
+              "Vector3",
+              "hillHeight"
+            ]
+          },
+          {
+            "kind": "function",
+            "name": "groundNormal",
+            "label": "function `groundNormal()`",
+            "line": 25,
+            "doc": "Unit ground normal at (x, z), from the hill's own height function.",
+            "exported": false,
+            "children": [],
+            "calls": [
+              "normalize",
+              "Vector3",
+              "hillHeight"
+            ]
+          },
+          {
+            "kind": "function",
+            "name": "reedBladeGeometry",
+            "label": "function `reedBladeGeometry()`",
+            "line": 30,
+            "doc": "",
+            "exported": false,
+            "children": [],
+            "calls": [
+              "pos.push",
+              "idx.push",
+              "BufferGeometry",
+              "g.setAttribute",
+              "Float32BufferAttribute",
+              "g.setIndex",
+              "g.computeVertexNormals"
+            ]
+          },
+          {
+            "kind": "function",
+            "name": "buildRiverside",
+            "label": "export function `buildRiverside()`",
+            "line": 46,
+            "doc": "",
+            "exported": true,
+            "children": [],
+            "calls": [
+              "mulberry32",
+              "rng",
+              "Group",
+              "Matrix4",
+              "Quaternion",
+              "Euler",
+              "Vector3",
+              "r",
+              "MeshToonMaterial",
+              "InstancedMesh",
+              "IcosahedronGeometry",
+              "toonMat",
+              "rotateX",
+              "RingGeometry",
+              "MeshBasicMaterial",
+              "U",
+              "riverWidthAt",
+              "riverPoint",
+              "e.set",
+              "stones.setMatrixAt",
+              "m.compose",
+              "tmp.set",
+              "q.setFromEuler",
+              "sc.set",
+              "stones.setColorAt",
+              "offsetHSL",
+              "Color",
+              "Mesh",
+              "foamMat.clone",
+              "groundNormal",
+              "ring.quaternion.setFromUnitVectors",
+              "ring.position.set",
+              "ring.scale.setScalar",
+              "group.add",
+              "foam.push",
+              "blades.push",
+              "reedBladeGeometry",
+              "blades.filter",
+              "CapsuleGeometry",
+              "blades.forEach",
+              "Math.sin",
+              "windGust",
+              "reeds.setMatrixAt",
+              "add",
+              "applyQuaternion",
+              "cattails.setMatrixAt",
+              "placeReeds",
+              "CircleGeometry",
+              "multiply",
+              "pad.quaternion.setFromUnitVectors",
+              "pad.position.set",
+              "pad.scale.setScalar",
+              "scale",
+              "Array.from",
+              "floaters.forEach",
+              "f.mesh.quaternion.setFromUnitVectors",
+              "f.mesh.position.set",
+              "f.mesh.scale.setScalar",
+              "Math.min",
+              "place"
+            ]
+          }
+        ]
+      }
+    },
+    "website/src/scene/rng.test.ts": {
+      "hash": "879cd8f26d06cf3de341c77aaaae26bb58e7d7ee9ad962722dd22e2e19b19c42",
+      "data": {
+        "symbols": []
+      }
+    },
+    "website/src/scene/rng.ts": {
+      "hash": "7c5fbfb07035447cc4c50139fed0b97e4899cc4fc0055209a2ead2c30b6563e1",
+      "data": {
+        "symbols": [
+          {
+            "kind": "function",
+            "name": "mulberry32",
+            "label": "export function `mulberry32()`",
+            "line": 2,
+            "doc": "Small seeded random number generator (mulberry32), so generated shapes are identical on every load.",
+            "exported": true,
+            "children": [],
+            "calls": [
+              "Math.imul"
+            ]
+          }
+        ]
+      }
+    },
+    "website/src/scene/shadows.test.ts": {
+      "hash": "a92799ed57bfc0e092452f954ab0f4faa9608895bb8c612d59c59ccf5b70f6ef",
+      "data": {
+        "symbols": []
+      }
+    },
+    "website/src/scene/shadows.ts": {
+      "hash": "919c44ae54a6e2fbadae3e962ce48ca47e92ccb5beece520398100f96a5eef2d",
+      "data": {
+        "symbols": [
+          {
+            "kind": "constant",
+            "name": "SUN_POSITION",
+            "label": "export const `SUN_POSITION`",
+            "line": 9,
+            "doc": "Where the sun is (the scene's main directional light, which lights the objects from the front-left).",
+            "exported": true,
+            "children": []
+          },
+          {
+            "kind": "constant",
+            "name": "LIGHTING",
+            "label": "export const `LIGHTING`",
+            "line": 16,
+            "doc": "Light levels. The moon's light is the one that casts shadows. It shines from behind the scene, so on its own it",
+            "exported": true,
+            "children": []
+          },
+          {
+            "kind": "function",
+            "name": "moonDirection",
+            "label": "export function `moonDirection()`",
+            "line": 19,
+            "doc": "Unit vector from the origin toward the moon (same placement as the moon disc).",
+            "exported": true,
+            "children": [],
+            "calls": [
+              "Vector3",
+              "Math.cos",
+              "Math.sin"
+            ]
+          },
+          {
+            "kind": "constant",
+            "name": "SHADOW_TARGET",
+            "label": "export const `SHADOW_TARGET`",
+            "line": 25,
+            "doc": "Where the shadow maker looks: the middle of the area that matters (gate, tree, fox and the ground in front).",
+            "exported": true,
+            "children": []
+          },
+          {
+            "kind": "constant",
+            "name": "SHADOW_DISTANCE",
+            "label": "const `SHADOW_DISTANCE`",
+            "line": 26,
+            "doc": "",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "function",
+            "name": "shadowFitPoints",
+            "label": "export function `shadowFitPoints()`",
+            "line": 29,
+            "doc": "Points that must fall inside the shadow map: everything that casts a shadow, and the ground that receives it.",
+            "exported": true,
+            "children": [],
+            "calls": [
+              "hillHeight",
+              "pts.push",
+              "Vector3",
+              "box"
+            ]
+          },
+          {
+            "kind": "interface",
+            "name": "ShadowBounds",
+            "label": "export interface `ShadowBounds`",
+            "line": 42,
+            "doc": "",
+            "exported": true,
+            "children": []
+          },
+          {
+            "kind": "function",
+            "name": "fitShadowBounds",
+            "label": "export function `fitShadowBounds()`",
+            "line": 48,
+            "doc": "Tightest orthographic box around `points`, seen from a light that looks along -dir at `target` from `distance`",
+            "exported": true,
+            "children": [],
+            "calls": [
+              "normalize",
+              "negate",
+              "dir.clone",
+              "crossVectors",
+              "Vector3",
+              "sub",
+              "p.clone",
+              "rel.dot",
+              "Math.min",
+              "Math.max"
+            ]
+          },
+          {
+            "kind": "function",
+            "name": "configureMoonLight",
+            "label": "export function `configureMoonLight()`",
+            "line": 64,
+            "doc": "Puts the moon light where the moon is and sets up its shadow map. The map is drawn once (see the scene), so it can be generous.",
+            "exported": true,
+            "children": [],
+            "calls": [
+              "moonDirection",
+              "addScaledVector",
+              "light.position.copy",
+              "light.target.position.copy",
+              "s.mapSize.set",
+              "fitShadowBounds",
+              "shadowFitPoints",
+              "Object.assign",
+              "s.camera.updateProjectionMatrix"
+            ]
+          }
+        ]
+      }
+    },
+    "website/src/scene/shootingstar.test.ts": {
+      "hash": "ead3c42de2f7c7de1d76e3ee008121f2b2ebaca5899dab0d6fd982972f57ad3f",
+      "data": {
+        "symbols": [
+          {
+            "kind": "constant",
+            "name": "slot",
+            "label": "const `slot()`",
+            "line": 6,
+            "doc": "",
+            "exported": false,
+            "children": [],
+            "calls": [
+              "part.object.getObjectByName"
+            ]
+          },
+          {
+            "kind": "constant",
+            "name": "uP",
+            "label": "const `uP()`",
+            "line": 7,
+            "doc": "",
+            "exported": false,
+            "children": [],
+            "calls": [
+              "slot"
+            ]
+          },
+          {
+            "kind": "constant",
+            "name": "head",
+            "label": "const `head()`",
+            "line": 8,
+            "doc": "",
+            "exported": false,
+            "children": [],
+            "calls": [
+              "part.object.updateMatrixWorld",
+              "getWorldPosition",
+              "slot",
+              "Vector3"
+            ]
+          },
+          {
+            "kind": "constant",
+            "name": "STAR",
+            "label": "const `STAR`",
+            "line": 12,
+            "doc": "",
+            "exported": false,
+            "children": []
+          }
+        ]
+      }
+    },
+    "website/src/scene/shootingstar.ts": {
+      "hash": "85a7f1a76cb367c39b82b7fdc7d5809557b23a231cd320e777abf445293fa13d",
+      "data": {
+        "symbols": [
+          {
+            "kind": "constant",
+            "name": "SHOOTING",
+            "label": "export const `SHOOTING`",
+            "line": 5,
+            "doc": "A shooting star on the star dome: a bright head with a fading tail that flies a short way down the sky.",
+            "exported": true,
+            "children": []
+          },
+          {
+            "kind": "constant",
+            "name": "VERT",
+            "label": "const `VERT`",
+            "line": 14,
+            "doc": "",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "constant",
+            "name": "FRAG",
+            "label": "const `FRAG`",
+            "line": 16,
+            "doc": "",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "constant",
+            "name": "ease",
+            "label": "const `ease()`",
+            "line": 30,
+            "doc": "",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "function",
+            "name": "buildShootingStars",
+            "label": "export function `buildShootingStars()`",
+            "line": 32,
+            "doc": "",
+            "exported": true,
+            "children": [],
+            "calls": [
+              "Group",
+              "Array.from",
+              "ShaderMaterial",
+              "PlaneGeometry",
+              "geometry.translate",
+              "Mesh",
+              "holder.add",
+              "group.add",
+              "Vector3",
+              "slots.filter",
+              "slots.find",
+              "setLength",
+              "slot.holder.position.copy",
+              "slot.holder.lookAt",
+              "slot.holder.updateMatrixWorld",
+              "rand",
+              "transformDirection",
+              "Math.cos",
+              "Math.sin",
+              "slot.dir.set",
+              "slot.streak.position.set",
+              "Math.max",
+              "multiplyScalar",
+              "s.streak.position.copy",
+              "ease"
+            ]
+          }
+        ]
+      }
+    },
+    "website/src/scene/sky.test.ts": {
+      "hash": "f761dbcf1f03797e5e8d3e25e6fab51b11a70d7ac32d2d3193201a0ed612623b",
+      "data": {
+        "symbols": [
+          {
+            "kind": "constant",
+            "name": "channels",
+            "label": "const `channels()`",
+            "line": 6,
+            "doc": "",
+            "exported": false,
+            "children": [],
+            "calls": [
+              "Color"
+            ]
+          },
+          {
+            "kind": "constant",
+            "name": "uniforms",
+            "label": "const `uniforms()`",
+            "line": 7,
+            "doc": "",
+            "exported": false,
+            "children": []
+          }
+        ]
+      }
+    },
+    "website/src/scene/sky.ts": {
+      "hash": "0b2ca120ed358ac6724141a665f046bedaf21c6e857212c6e38ae73bbcb76306",
+      "data": {
+        "symbols": [
+          {
+            "kind": "constant",
+            "name": "SKY_VIOLET",
+            "label": "export const `SKY_VIOLET`",
+            "line": 6,
+            "doc": "Where the sky goes when the world turns over or the camera looks up into the stars: a deep violet.",
+            "exported": true,
+            "children": []
+          },
+          {
+            "kind": "constant",
+            "name": "clamp",
+            "label": "const `clamp()`",
+            "line": 8,
+            "doc": "",
+            "exported": false,
+            "children": [],
+            "calls": [
+              "Math.min",
+              "Math.max"
+            ]
+          },
+          {
+            "kind": "constant",
+            "name": "VERT",
+            "label": "const `VERT`",
+            "line": 10,
+            "doc": "",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "constant",
+            "name": "FRAG",
+            "label": "const `FRAG`",
+            "line": 18,
+            "doc": "",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "function",
+            "name": "buildSky",
+            "label": "export function `buildSky()`",
+            "line": 34,
+            "doc": "The night sky: a big inside-out dome shaded from a lighter blue at the horizon to a deep blue overhead.",
+            "exported": true,
+            "children": [],
+            "calls": [
+              "Color",
+              "ShaderMaterial",
+              "horizon.clone",
+              "zenith.clone",
+              "Mesh",
+              "SphereGeometry",
+              "Group",
+              "group.add",
+              "clamp",
+              "lerp",
+              "material.uniforms.uHorizon.value.copy",
+              "material.uniforms.uZenith.value.copy"
+            ]
+          }
+        ]
+      }
+    },
+    "website/src/scene/stars.test.ts": {
+      "hash": "f5d16694a68255aa1271963fe7ddb20daecae656f139eee9139d968f63013ae3",
+      "data": {
+        "symbols": []
+      }
+    },
+    "website/src/scene/stars.ts": {
+      "hash": "3f757714ed18fa1c0b7dc6dab04aef39101015c9a687b271bc94ab8a8e9dbb8b",
+      "data": {
+        "symbols": [
+          {
+            "kind": "constant",
+            "name": "STARS",
+            "label": "export const `STARS`",
+            "line": 8,
+            "doc": "Stars on a far dome in front of the camera (the visible sky window, with some margin for parallax). It reaches up to",
+            "exported": true,
+            "children": []
+          },
+          {
+            "kind": "constant",
+            "name": "WHITE",
+            "label": "const `WHITE`",
+            "line": 16,
+            "doc": "",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "constant",
+            "name": "YELLOW",
+            "label": "const `YELLOW`",
+            "line": 17,
+            "doc": "",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "function",
+            "name": "generateStars",
+            "label": "export function `generateStars()`",
+            "line": 19,
+            "doc": "",
+            "exported": true,
+            "children": [],
+            "calls": [
+              "mulberry32",
+              "rng",
+              "Float32Array",
+              "r",
+              "Math.cos",
+              "Math.sin",
+              "colors.set"
+            ]
+          },
+          {
+            "kind": "function",
+            "name": "starPositions",
+            "label": "export function `starPositions()`",
+            "line": 40,
+            "doc": "Where each star is in the world (the same stars the scene draws), for working out which one was clicked.",
+            "exported": true,
+            "children": [],
+            "calls": [
+              "generateStars",
+              "Array.from",
+              "Vector3"
+            ]
+          },
+          {
+            "kind": "constant",
+            "name": "VERT",
+            "label": "const `VERT`",
+            "line": 45,
+            "doc": "",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "constant",
+            "name": "FRAG",
+            "label": "const `FRAG`",
+            "line": 60,
+            "doc": "",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "function",
+            "name": "buildStars",
+            "label": "export function `buildStars()`",
+            "line": 71,
+            "doc": "",
+            "exported": true,
+            "children": [],
+            "calls": [
+              "Group",
+              "generateStars",
+              "BufferGeometry",
+              "geo.setAttribute",
+              "Float32BufferAttribute",
+              "ShaderMaterial",
+              "Points",
+              "group.add",
+              "cappedPixelRatio"
+            ]
+          }
+        ]
+      }
+    },
+    "website/src/scene/torii.test.ts": {
+      "hash": "b70a9372b90fa2ddb22f1d2646e6b9bfeddbc685a80ddd27753a7e1d4842ed4d",
+      "data": {
+        "symbols": [
+          {
+            "kind": "constant",
+            "name": "gate",
+            "label": "const `gate()`",
+            "line": 7,
+            "doc": "",
+            "exported": false,
+            "children": [],
+            "calls": [
+              "buildTorii",
+              "g.updateMatrixWorld"
+            ]
+          }
+        ]
+      }
+    },
+    "website/src/scene/torii.ts": {
+      "hash": "60bc7ac44b4a9779d2cacd6895d9a0e3bd9fb5d54e16f6f54d85b34a51539b0b",
+      "data": {
+        "symbols": [
+          {
+            "kind": "constant",
+            "name": "TORII",
+            "label": "export const `TORII`",
+            "line": 9,
+            "doc": "Dimensions in meters, from the SVG prototype (mockups/landing-hero.html).",
+            "exported": true,
+            "children": []
+          },
+          {
+            "kind": "constant",
+            "name": "KASAGI_HALF",
+            "label": "const `KASAGI_HALF`",
+            "line": 16,
+            "doc": "",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "constant",
+            "name": "lift",
+            "label": "const `lift()`",
+            "line": 17,
+            "doc": "",
+            "exported": false,
+            "children": [],
+            "calls": [
+              "Math.pow",
+              "Math.abs"
+            ]
+          },
+          {
+            "kind": "function",
+            "name": "curvedBeam",
+            "label": "function `curvedBeam()`",
+            "line": 20,
+            "doc": "Curved beam silhouette (front view) extruded back along z.",
+            "exported": false,
+            "children": [],
+            "calls": [
+              "Shape",
+              "lift",
+              "s.moveTo",
+              "s.lineTo",
+              "ExtrudeGeometry",
+              "g.translate"
+            ]
+          },
+          {
+            "kind": "function",
+            "name": "buildTorii",
+            "label": "export function `buildTorii()`",
+            "line": 36,
+            "doc": "",
+            "exported": true,
+            "children": [],
+            "calls": [
+              "MeshToonMaterial",
+              "mat",
+              "Group",
+              "hillHeight",
+              "Math.cos",
+              "Math.sin",
+              "groundAt",
+              "Math.max",
+              "gate.position.set",
+              "Mesh",
+              "m.position.set",
+              "gate.add",
+              "BoxGeometry",
+              "forEach",
+              "CylinderGeometry",
+              "p.position.set",
+              "Math.atan",
+              "foot.position.set",
+              "part",
+              "box",
+              "curvedBeam"
+            ]
+          }
+        ]
+      }
+    },
+    "website/src/scene/tree.test.ts": {
+      "hash": "56dcdc0f872b8e29a71b46c2b61392e5cfa82bd0257209cb35454e85805182ea",
+      "data": {
+        "symbols": [
+          {
+            "kind": "constant",
+            "name": "first",
+            "label": "const `first()`",
+            "line": 6,
+            "doc": "",
+            "exported": false,
+            "children": [],
+            "calls": [
+              "obj.getObjectByName",
+              "Array.from",
+              "m.instanceMatrix.array.slice"
+            ]
+          }
+        ]
+      }
+    },
+    "website/src/scene/tree.ts": {
+      "hash": "cd4a1ad7152c79a0dc7bd5f5a6e94920255909cbf2d83a89658a2080752bbd4c",
+      "data": {
+        "symbols": [
+          {
+            "kind": "constant",
+            "name": "TREE",
+            "label": "export const `TREE`",
+            "line": 14,
+            "doc": "Local coordinates: origin at the foot of the trunk, y up, +x to the right on screen. Meters.",
+            "exported": true,
+            "children": []
+          },
+          {
+            "kind": "constant",
+            "name": "TREE_SCALE",
+            "label": "export const `TREE_SCALE`",
+            "line": 19,
+            "doc": "The whole tree is drawn at this scale, and sits 0.2 below the hill surface.",
+            "exported": true,
+            "children": []
+          },
+          {
+            "kind": "constant",
+            "name": "TREE_SINK",
+            "label": "const `TREE_SINK`",
+            "line": 20,
+            "doc": "",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "interface",
+            "name": "TreeStats",
+            "label": "export interface `TreeStats`",
+            "line": 22,
+            "doc": "",
+            "exported": true,
+            "children": []
+          },
+          {
+            "kind": "constant",
+            "name": "v",
+            "label": "const `v()`",
+            "line": 28,
+            "doc": "",
+            "exported": false,
+            "children": [],
+            "calls": [
+              "Vector3"
+            ]
+          },
+          {
+            "kind": "function",
+            "name": "taperedTube",
+            "label": "export function `taperedTube()`",
+            "line": 31,
+            "doc": "Tube along a bezier whose radius tapers from r0 to r1.",
+            "exported": true,
+            "children": [],
+            "calls": [
+              "c.computeFrenetFrames",
+              "c.getPoint",
+              "Math.cos",
+              "Math.sin",
+              "pos.push",
+              "idx.push",
+              "BufferGeometry",
+              "g.setAttribute",
+              "Float32BufferAttribute",
+              "g.setIndex",
+              "g.computeVertexNormals"
+            ]
+          },
+          {
+            "kind": "constant",
+            "name": "TRUNK",
+            "label": "const `TRUNK`",
+            "line": 56,
+            "doc": "",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "constant",
+            "name": "BRANCHES",
+            "label": "export const `BRANCHES`",
+            "line": 57,
+            "doc": "",
+            "exported": true,
+            "children": []
+          },
+          {
+            "kind": "constant",
+            "name": "CLOUDS",
+            "label": "const `CLOUDS`",
+            "line": 67,
+            "doc": "",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "function",
+            "name": "treeLocalToWorld",
+            "label": "export function `treeLocalToWorld()`",
+            "line": 73,
+            "doc": "World position of a point given in the tree's own coordinates (meters, origin at the foot of the trunk).",
+            "exported": true,
+            "children": [],
+            "calls": [
+              "Array.isArray",
+              "Vector3",
+              "local.clone",
+              "add",
+              "p.multiplyScalar",
+              "hillHeight"
+            ]
+          },
+          {
+            "kind": "function",
+            "name": "branchPointWorld",
+            "label": "export function `branchPointWorld()`",
+            "line": 80,
+            "doc": "A point `t` (0..1) along branch `index`, in world coordinates.",
+            "exported": true,
+            "children": [],
+            "calls": [
+              "treeLocalToWorld",
+              "getPoint"
+            ]
+          },
+          {
+            "kind": "function",
+            "name": "flowerGeometry",
+            "label": "function `flowerGeometry()`",
+            "line": 85,
+            "doc": "Five-lobed flower outline, radius about 1.",
+            "exported": false,
+            "children": [],
+            "calls": [
+              "Shape",
+              "Math.cos",
+              "s.moveTo",
+              "Math.sin",
+              "s.lineTo",
+              "ShapeGeometry"
+            ]
+          },
+          {
+            "kind": "function",
+            "name": "leafGeometry",
+            "label": "function `leafGeometry()`",
+            "line": 94,
+            "doc": "",
+            "exported": false,
+            "children": [],
+            "calls": [
+              "Shape",
+              "s.moveTo",
+              "s.bezierCurveTo",
+              "ShapeGeometry"
+            ]
+          },
+          {
+            "kind": "constant",
+            "name": "BLOSSOM",
+            "label": "export const `BLOSSOM`",
+            "line": 101,
+            "doc": "Where the blossom is, in the tree's own coordinates (the middle of the canopy), and how big it is in meters.",
+            "exported": true,
+            "children": []
+          },
+          {
+            "kind": "function",
+            "name": "buildTree",
+            "label": "export function `buildTree()`",
+            "line": 103,
+            "doc": "",
+            "exported": true,
+            "children": [],
+            "calls": [
+              "mulberry32",
+              "rng",
+              "MeshToonMaterial",
+              "Group",
+              "mat",
+              "tree.add",
+              "Mesh",
+              "taperedTube",
+              "CylinderGeometry",
+              "shade.position.set",
+              "BRANCHES.forEach",
+              "flowerGeometry",
+              "Matrix4",
+              "Quaternion",
+              "Euler",
+              "Vector3",
+              "Color",
+              "CLOUDS.map",
+              "volume.reduce",
+              "r",
+              "InstancedMesh",
+              "pickCloud",
+              "inBall",
+              "p.set",
+              "e.set",
+              "q.setFromEuler",
+              "s.set",
+              "mesh.setMatrixAt",
+              "m4.compose",
+              "mesh.setColorAt",
+              "col.setHex",
+              "Math.floor",
+              "canopy.add",
+              "layer",
+              "leafGeometry",
+              "leafMesh.setMatrixAt",
+              "createReaction",
+              "Object3D",
+              "tree.scale.setScalar",
+              "o.add",
+              "o.position.set",
+              "hillHeight",
+              "shudder.step",
+              "Math.sin",
+              "windGust",
+              "shudder.kick"
+            ]
+          }
+        ]
+      }
+    },
+    "website/src/scene/wind.test.ts": {
+      "hash": "c3abd919b5f667ae8b6fde92a3cc9f2e93c565dcef6e61aeeebfdb23659aac76",
+      "data": {
+        "symbols": []
+      }
+    },
+    "website/src/scene/wind.ts": {
+      "hash": "fb3359ed0eefafcffe9f7a99e33012a2242665d7a137aa59eea88544c5fb1fb8",
+      "data": {
+        "symbols": [
+          {
+            "kind": "variable",
+            "name": "pushed",
+            "label": "let `pushed`",
+            "line": 1,
+            "doc": "",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "function",
+            "name": "windGust",
+            "label": "export function `windGust()`",
+            "line": 5,
+            "doc": "Wind strength over time, 0 (calm) to 1 (strong gust). Swells come every ten seconds or so; moving the pointer",
+            "exported": true,
+            "children": [],
+            "calls": [
+              "Math.sin",
+              "Math.min"
+            ]
+          },
+          {
+            "kind": "function",
+            "name": "pushWind",
+            "label": "export function `pushWind()`",
+            "line": 11,
+            "doc": "Adds wind (0..1 in total): a quick sweep of the pointer calls this, and it fades by itself (see `decayWind`).",
+            "exported": true,
+            "children": [],
+            "calls": [
+              "Math.min"
+            ]
+          },
+          {
+            "kind": "function",
+            "name": "decayWind",
+            "label": "export function `decayWind()`",
+            "line": 16,
+            "doc": "Lets the pushed wind die down; call once per frame with the frame time in seconds.",
+            "exported": true,
+            "children": [],
+            "calls": [
+              "Math.exp",
+              "Math.max"
+            ]
+          },
+          {
+            "kind": "function",
+            "name": "pushedWind",
+            "label": "export function `pushedWind()`",
+            "line": 22,
+            "doc": "How much wind the pointer is adding right now (for tests and the readout).",
+            "exported": true,
+            "children": []
+          }
+        ]
+      }
+    },
+    "website/src/scene/windlines.test.ts": {
+      "hash": "cbbf23dfaacac074919cd34ed8afb7918b886e90da95ed412eff605ca5a83143",
+      "data": {
+        "symbols": [
+          {
+            "kind": "constant",
+            "name": "lines",
+            "label": "const `lines()`",
+            "line": 6,
+            "doc": "",
+            "exported": false,
+            "children": []
+          },
+          {
+            "kind": "constant",
+            "name": "opacity",
+            "label": "const `opacity()`",
+            "line": 7,
+            "doc": "",
+            "exported": false,
+            "children": []
+          }
+        ]
+      }
+    },
+    "website/src/scene/windlines.ts": {
+      "hash": "e95e903ab2c6021ecec194e8605522e293bc199f67781bf3ab926b2c332ed31f",
+      "data": {
+        "symbols": [
+          {
+            "kind": "constant",
+            "name": "WIND_LINES",
+            "label": "export const `WIND_LINES`",
+            "line": 7,
+            "doc": "Thin flowing streaks that drift from right to left when a gust blows.",
+            "exported": true,
+            "children": []
+          },
+          {
+            "kind": "function",
+            "name": "windStreakPoints",
+            "label": "export function `windStreakPoints()`",
+            "line": 10,
+            "doc": "Centre line of one streak: runs left from the origin and rolls gently up and down, never doubling back.",
+            "exported": true,
+            "children": [],
+            "calls": [
+              "pts.push",
+              "Math.sin",
+              "Math.min"
+            ]
+          },
+          {
+            "kind": "function",
+            "name": "ribbon",
+            "label": "function `ribbon()`",
+            "line": 20,
+            "doc": "A flat ribbon along the centre line, pointed at both ends so it reads as a wisp of air.",
+            "exported": false,
+            "children": [],
+            "calls": [
+              "Math.max",
+              "Math.min",
+              "Math.hypot",
+              "Math.pow",
+              "Math.sin",
+              "pos.push",
+              "idx.push",
+              "BufferGeometry",
+              "g.setAttribute",
+              "Float32BufferAttribute",
+              "g.setIndex"
+            ]
+          },
+          {
+            "kind": "function",
+            "name": "buildWindLines",
+            "label": "export function `buildWindLines()`",
+            "line": 40,
+            "doc": "",
+            "exported": true,
+            "children": [],
+            "calls": [
+              "mulberry32",
+              "rng",
+              "Group",
+              "Array.from",
+              "ribbon",
+              "windStreakPoints",
+              "r",
+              "Mesh",
+              "MeshBasicMaterial",
+              "mesh.position.set",
+              "mesh.scale.setScalar",
+              "group.add",
+              "windGust",
+              "Math.sin",
+              "Math.min",
+              "Math.max"
+            ]
+          }
+        ]
+      }
+    },
+    "website/vitest.config.ts": {
+      "hash": "565765b08c71a045c0fc658fa035c9517b268e36c64a020e6fff1e03c00ff3ce",
+      "data": {
+        "symbols": []
       }
     }
   }

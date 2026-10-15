@@ -1,0 +1,28 @@
+---
+---
+<nav class="nav">
+  <a class="brand" href="/" aria-label="Raku home">
+    <img src="/favicon.svg" alt="" width="28" height="28" />
+  </a>
+  <div class="links">
+    <a href="/#features">Features</a>
+    <a href="/docs/">Docs</a>
+    <a href="https://github.com/snui1s/Raku" rel="noopener">GitHub</a>
+  </div>
+</nav>
+
+<style>
+  .nav {
+    position: fixed; inset: 0 0 auto 0; z-index: 30;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px max(20px, 3vw);
+    background: transparent; /* fully see-through: the hero scene runs right up to the top edge */
+    pointer-events: none; /* clicks on the empty bar reach the page; the brand and links turn it back on */
+  }
+  .nav > *, .links > * { pointer-events: auto; }
+  .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 17px; color: var(--text); text-decoration: none; }
+  .links { display: flex; align-items: center; gap: 26px; font-size: 14px; }
+  .links a { color: #c9d4ec; text-decoration: none; transition: color 0.15s; }
+  .links a:hover { color: var(--text); }
+  @media (max-width: 640px) { .links a { display: none; } }
+</style>

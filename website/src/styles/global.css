@@ -1,0 +1,26 @@
+@import "tailwindcss";
+@import "./fonts.css";
+
+:root {
+  --font-sans: "Rubik", "Segoe UI", system-ui, sans-serif;
+  --bg: #171717;
+  --text: #f2f2f2;
+  --muted: #9a9a9a;
+  --accent: #f25c54;
+  --accent-hover: #e04d45;
+  --border: rgba(255, 255, 255, 0.1);
+  --nav-bg: rgba(23, 23, 23, 0.1);
+  --card: #1f1f1f;
+}
+
+html {
+  background: var(--bg);
+  color-scheme: dark;
+}
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}

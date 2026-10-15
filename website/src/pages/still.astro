@@ -1,0 +1,27 @@
+---
+// Used only by scripts/render-stills.ts: one deterministic frame of the scene, no page chrome.
+export const prerender = true;
+---
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="robots" content="noindex" />
+    <title>Raku hero still</title>
+    <style>
+      html, body { margin: 0; height: 100%; overflow: hidden; }
+      #host { position: fixed; inset: 0; }
+    </style>
+  </head>
+  <body>
+    <div id="host"></div>
+    <script>
+      import { mountScene } from "../scene/index";
+
+      const host = document.getElementById("host")!;
+      mountScene(host, { still: { time: 12 } }).then(() => {
+        (window as unknown as { __STILL_READY: boolean }).__STILL_READY = true;
+      });
+    </script>
+  </body>
+</html>

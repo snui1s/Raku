@@ -1,0 +1,488 @@
+---
+// The whole home page as one pinned 3D scene: the page holds on the hero, then scrolling tilts the camera up into the
+// night sky (each feature is a star), brings it back down to the glade where a notebook can be written in, moves to the
+// gate (the numbers hang as lanterns) and ends on the fox, whose tag is the Download link.
+// Without the live scene (phones, reduced motion, no WebGL) it is the still picture followed by plain sections.
+import Download from "./Download.astro";
+import type { ReleaseInfo } from "../lib/release";
+import { journeyHeightVh, JOURNEY_AT } from "../scene/journey";
+import { SAMPLE_HTML } from "../notebook/sample";
+
+interface Props { release: ReleaseInfo }
+const { release } = Astro.props;
+
+const features = [
+  ["Local first", "Notes, folders and images stay on your computer. No account, no cloud."],
+  ["Small and fast", "A 5 MB installer. The window appears in under a tenth of a second."],
+  ["Rich text", "Headings, lists, checklists, quotes, highlights, fonts and colors."],
+  ["Make it yours", "Light and dark, 8 color palettes, and a page that zooms with Ctrl and scroll."],
+  ["Clean writing space", "One calm page, just your words. Zen mode and a Pomodoro timer when you need to focus."],
+];
+const minor = ["Folders", "Quick search", "Export and backup", "Auto-update"];
+const stats = [
+  ["5 MB", "installer"],
+  ["< 0.1 s", "until the window appears"],
+  ["~2 s", "until it is ready to type"],
+  ["~170 MB", "memory when idle"],
+];
+// [command, name, what the button shows]. The letters are styled like the thing they do; the rest are small icons.
+const icon = (paths: string) => `<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${paths}</svg>`;
+const tools = [
+  ["h1", "H1 (Heading 1)", "H<small>1</small>"],
+  ["h2", "H2 (Heading 2)", "H<small>2</small>"],
+  ["bold", "Bold", "<b>B</b>"],
+  ["italic", "Italic", "<i>I</i>"],
+  ["underline", "Underline", "<u>U</u>"],
+  ["highlight", "Highlight", '<span class="hl">A</span>'],
+  ["bullet", "Bulleted list", icon('<circle cx="5" cy="7" r="1.3" fill="currentColor" stroke="none"/><circle cx="5" cy="12" r="1.3" fill="currentColor" stroke="none"/><circle cx="5" cy="17" r="1.3" fill="currentColor" stroke="none"/><path d="M10 7h10M10 12h10M10 17h10"/>')],
+  ["task", "Checklist", icon('<rect x="3.5" y="4" width="6.5" height="6.5" rx="1.4"/><path d="M5.1 7.3l1.4 1.4 2.4-2.8"/><path d="M14 7.2h7"/><rect x="3.5" y="13.5" width="6.5" height="6.5" rx="1.4"/><path d="M14 16.7h7"/>')],
+  ["quote", "Quote", icon('<path d="M5 5v14"/><path d="M10 8h10M10 12h10M10 16h6"/>')],
+];
+---
+<section id="hero" class="stage" style={`--stage-vh: ${journeyHeightVh()}; --features-vh: ${JOURNEY_AT.stars};`}>
+  <span class="anchor" aria-hidden="true"></span>
+  <div class="frame">
+    <!-- Still image first: always visible, and the fallback when the live scene is not used -->
+    <picture class="still" data-hero-still>
+      <source media="(max-width: 960px)" srcset="/hero/dark-sm.avif" type="image/avif" />
+      <source media="(max-width: 960px)" srcset="/hero/dark-sm.webp" type="image/webp" />
+      <source srcset="/hero/dark.avif" type="image/avif" />
+      <source srcset="/hero/dark.webp" type="image/webp" />
+      <img src="/hero/dark.webp" alt="" width="1920" height="1200" fetchpriority="high" decoding="async" />
+    </picture>
+    <div id="hero-scene" class="scene" aria-hidden="true"></div>
+
+    <div class="copy" data-chapter="hero">
+      <p class="eyebrow">Open-source notes for Windows</p>
+      <h1 class="flex items-baseline gap-2 text-4xl">
+        Raku <span>楽</span>
+      </h1>
+      <p class="tag">A fast, distraction-free note-taking app. No accounts. No cloud. Just write.</p>
+      <div class="cta">
+        <Download release={release} />
+        <a class="ghost" href="/docs/">Read the docs</a>
+      </div>
+      <p class="meta">
+        {release.version ? `v${release.version} · ` : ""}About 5 MB · Free and open source
+      </p>
+    </div>
+    <p class="hint" aria-hidden="true"><span>Scroll</span><i></i></p>
+
+    <div id="features" class="sky" data-chapter="stars">
+      <h2 class="sky-title">What Raku does</h2>
+      <ol class="labels">
+        {features.map(([title, text], i) => (
+          <li data-index={i}>
+            <div class="label">
+              <span class="num" aria-hidden="true">{String(i + 1).padStart(2, "0")}</span>
+              <h3>{title}</h3>
+              <p>{text}</p>
+            </div>
+          </li>
+        ))}
+      </ol>
+      <p class="minor">{minor.join("   ·   ")}</p>
+      <div class="dots" aria-hidden="true">
+        {features.map(() => <i></i>)}
+      </div>
+    </div>
+
+    <section class="write" data-chapter="write" aria-labelledby="write-title">
+      <h2 id="write-title" class="chapter-title">Try it. Write something.</h2>
+      <div class="notebook">
+        <div id="notebook-toolbar" class="toolbar" role="toolbar" aria-label="Formatting">
+          {tools.map(([cmd, name, inner]) => (
+            <button type="button" data-cmd={cmd} aria-label={name} title={name} aria-pressed="false" disabled set:html={inner} />
+          ))}
+        </div>
+        <div id="notebook-editor" class="paper" set:html={SAMPLE_HTML}></div>
+      </div>
+      <p class="write-note">Nothing you write here is saved or sent anywhere.</p>
+    </section>
+
+    <section class="numbers" data-chapter="numbers" aria-label="Raku in numbers">
+      <dl>
+        {stats.map(([value, label]) => (
+          <div class="stat"><dt>{value}</dt><dd>{label}</dd></div>
+        ))}
+      </dl>
+      <p class="measure">Measured on a Core Ultra 7 laptop with 32 GB RAM. <a href="https://github.com/snui1s/Raku/tree/main/bench">Measure your own machine.</a></p>
+    </section>
+
+    <section class="get" data-chapter="fox">
+      <h2 class="get-title">Start writing in seconds</h2>
+      <div class="sign">
+        <Download release={release} />
+        <p class="sign-meta">{release.version ? `v${release.version} · ` : ""}About 5 MB</p>
+      </div>
+      <p class="smartscreen">
+        Windows may warn about an unsigned app. Click <strong>More info</strong>, then <strong>Run anyway</strong>.{" "}
+        <a href="/docs/getting-started/#windows-smartscreen">Details</a>
+      </p>
+    </section>
+  </div>
+</section>
+
+<style>
+  .stage { position: relative; --paper-bg: #141418; }
+  .anchor { display: none; }
+  .frame { position: relative; min-height: min(100vh, 960px); overflow: clip; background: #07070b; } /* clip, not hidden: focus must not scroll it */
+  /* the picture covers the first screen; without the live scene the sections follow below it */
+  .still, .scene { position: absolute; inset: 0; width: 100%; height: min(100vh, 960px); }
+  .stage.live .still, .stage.live .scene { height: 100%; }
+  .still img { width: 100%; height: 100%; object-fit: cover; object-position: 70% bottom; display: block; }
+
+  /* ---- hero text ---- */
+  .copy {
+    position: relative; z-index: 10; max-width: min(560px, 47vw);
+    min-height: min(100vh, 960px); padding: 80px max(24px, 3vw) 0; margin-left: max(0px, 5vw);
+    display: flex; flex-direction: column; justify-content: center;
+    opacity: calc(1 - var(--hero-out, 0)); transform: translateY(calc(var(--hero-out, 0) * -36px));
+    pointer-events: var(--copy-events, auto);
+  }
+  .eyebrow { font-size: 13px; letter-spacing: 0.14em; text-transform: uppercase; color: #c9d4ec; margin: 0 0 18px; }
+  h1 { margin: 0; font-size: clamp(72px, 11vw, 132px); line-height: 0.95; letter-spacing: -0.03em; font-weight: 800; }
+  h1 span { color: var(--accent); font-weight: 400; margin-left: 0.12em; font-size: 128px; }
+  .tag { margin: 22px 0 0; font-size: 19px; line-height: 1.55; color: #c9d4ec; max-width: 420px; }
+  .cta { margin-top: 34px; display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+  .ghost {
+    padding: 13px 22px; border-radius: 12px; font-size: 15px; font-weight: 600;
+    color: var(--text); text-decoration: none; border: 1px solid var(--border);
+    background: rgba(7, 7, 11, 0.55); backdrop-filter: blur(6px); /* readable over the picture */
+  }
+  .ghost:hover { background: var(--border); }
+  .meta { display: inline-block; margin: 14px 0 0 -10px; padding: 4px 10px; border-radius: 8px; font-size: 13px; color: #c9d4ec; background: rgba(7, 7, 11, 0.6); } /* a plate: it can lie over the flowers of the picture */
+  .hint { display: none; }
+
+  /* ---- the sky: labels for the feature stars (the page moves them next to the stars every frame) ---- */
+  .sky { position: relative; z-index: 10; padding: 88px max(24px, 3vw) 40px; background: #07070b; text-align: center; }
+  .sky-title { margin: 0 0 32px; font-size: 14px; letter-spacing: 0.3em; text-transform: uppercase; color: #ffe9a8; }
+  .labels { list-style: none; margin: 0 auto; padding: 0; max-width: 1040px; display: flex; flex-wrap: wrap; justify-content: center; gap: 16px; }
+  .labels li { flex: 1 1 300px; max-width: 330px; }
+  .label { display: block; box-sizing: border-box; }
+  /* the plain page: each feature is a card (the scene lays them out its own way, below) */
+  .stage:not(.live) .minor { margin-top: 36px; }
+  .stage:not(.live) .label { height: 100%; padding: 24px 22px 26px; border: 1px solid rgba(255, 255, 255, 0.09); border-radius: 16px; background: linear-gradient(180deg, #11121a, #0b0b11); }
+  .stage.live .label { cursor: pointer; }
+  .num { display: block; font-size: 12px; letter-spacing: 0.2em; color: #ffe9a8; }
+  .label h3 { margin: 4px 0 0; font-size: 22px; color: #fff3d6; }
+  .label p { margin: 6px 0 0; color: #c9d4ec; font-size: 15px; line-height: 1.5; max-width: 40ch; }
+  .stage:not(.live) .label p { margin: 8px auto 0; }
+  .minor { margin: 28px 0 0; color: var(--muted); font-size: 13px; letter-spacing: 0.04em; }
+  .dots { display: none; }
+
+  /* ---- the notebook ---- */
+  .write { position: relative; z-index: 10; padding: 56px max(24px, 3vw) 24px; background: #07070b; max-width: 640px; margin: 0 auto; box-sizing: content-box; }
+  .chapter-title { margin: 0 0 18px; font-size: 14px; letter-spacing: 0.3em; text-transform: uppercase; color: #ffe9a8; }
+  .notebook { background: var(--paper-bg); border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 16px; overflow: hidden; box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5); }
+  .toolbar { display: flex; flex-wrap: wrap; gap: 4px; padding: 8px 10px; border-bottom: 1px solid var(--border); }
+  .toolbar button {
+    all: unset; box-sizing: border-box; min-width: 32px; height: 30px; padding: 0 6px; border-radius: 8px;
+    text-align: center; line-height: 30px; font-size: 13px; font-weight: 700; color: #c9d4ec; cursor: pointer;
+  }
+  .toolbar button:hover:not(:disabled) { background: rgba(255, 255, 255, 0.08); }
+  .toolbar button:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+  .toolbar button.on { background: rgba(242, 92, 84, 0.22); color: #fff; }
+  .toolbar button:disabled { opacity: 0.35; cursor: default; }
+  .toolbar button { display: inline-flex; align-items: center; justify-content: center; line-height: 1; }
+  .toolbar button :global(b) { font-weight: 800; font-size: 15px; }
+  .toolbar button :global(i) { font-family: Georgia, "Times New Roman", serif; font-style: italic; font-weight: 700; font-size: 16px; padding-right: 1px; }
+  .toolbar button :global(u) { font-size: 15px; text-underline-offset: 3px; }
+  .toolbar button :global(small) { font-size: 10px; font-weight: 700; margin-top: 4px; }
+  .toolbar button :global(.hl) { display: inline-block; padding: 1px 5px; border-radius: 4px; background: rgba(255, 214, 102, 0.45); color: #fff; font-size: 13px; font-weight: 700; }
+  .paper { padding: 22px 26px 26px; max-height: min(46vh, 380px); overflow: auto; font-size: 16px; line-height: 1.65; color: #ececec; caret-color: var(--accent); }
+  /* a thin, quiet scrollbar: no track, no arrows, a soft rounded thumb that brightens when the pointer is over it
+     (Chrome and Safari use the ::-webkit-scrollbar rules, Firefox the standard two properties) */
+  /* Chrome ignores the ::-webkit-scrollbar rules if the standard properties are set, so those are for Firefox only */
+  @supports not selector(::-webkit-scrollbar) {
+    .paper { scrollbar-width: thin; scrollbar-color: rgba(255, 255, 255, 0.16) transparent; }
+    .paper:hover { scrollbar-color: rgba(255, 255, 255, 0.32) transparent; }
+  }
+  .paper::-webkit-scrollbar { width: 10px; }
+  .paper::-webkit-scrollbar-track { background: transparent; margin: 6px 0; }
+  .paper::-webkit-scrollbar-button, .paper::-webkit-scrollbar-corner { display: none; width: 0; height: 0; background: transparent; } /* no arrow buttons */
+  .paper::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.16); border-radius: 999px; border: 3px solid transparent; background-clip: padding-box; }
+  .paper:hover::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.32); background-clip: padding-box; }
+  .paper :global(.ProseMirror) { outline: none; min-height: 140px; }
+  .paper :global(h1) { margin: 0 0 8px; font-size: 26px; line-height: 1.2; letter-spacing: -0.02em; }
+  .paper :global(h2) { margin: 18px 0 6px; font-size: 19px; line-height: 1.3; }
+  .paper :global(p) { margin: 0 0 8px; }
+  .paper :global(ul), .paper :global(ol) { margin: 0 0 8px; padding-left: 24px; } /* the page's reset removes list markers, so they are put back here */
+  .paper :global(ul) { list-style: disc; }
+  .paper :global(ol) { list-style: decimal; }
+  .paper :global(li::marker) { color: var(--accent); }
+  .paper :global(li > p) { margin: 0 0 4px; }
+  .paper :global(ul[data-type="taskList"]) { list-style: none; padding-left: 0; }
+  .paper :global(ul[data-type="taskList"] li) { display: flex; gap: 10px; align-items: flex-start; }
+  .paper :global(ul[data-type="taskList"] li > label) { flex: none; display: flex; align-items: center; height: 1.65em; margin: 0; } /* one line tall, so the box is centred on the first line of text */
+  .paper :global(ul[data-type="taskList"] li > div) { flex: 1; }
+  .paper :global(ul[data-type="taskList"] li > div p) { margin: 0 0 4px; }
+  .paper :global(ul[data-type="taskList"] li[data-checked="true"] > div) { text-decoration: line-through; opacity: 0.55; }
+  .paper :global(input[type="checkbox"]) { accent-color: var(--accent); width: 15px; height: 15px; margin: 0; cursor: pointer; }
+  .paper :global(mark) { background: rgba(255, 214, 102, 0.35); color: inherit; border-radius: 3px; padding: 0 2px; }
+  .paper :global(blockquote) { margin: 8px 0; padding: 6px 14px; border-left: 3px solid var(--accent); background: rgba(242, 92, 84, 0.1); border-radius: 0 8px 8px 0; font-style: italic; }
+  .paper :global(p.is-editor-empty:first-child::before) { content: attr(data-placeholder); float: left; height: 0; color: #777; pointer-events: none; }
+  .write-note { margin: 12px 4px 0; font-size: 13px; color: var(--muted); }
+  /* text over the scene sits on a dark, see-through chip so it stays readable on the red gate and pink blossom */
+  .stage.live .chapter-title, .stage.live .write-note, .stage.live .measure, .stage.live .smartscreen, .stage.live .stat {
+    background: rgba(7, 10, 28, 0.62); border-radius: 12px; padding: 7px 14px; width: fit-content;
+  }
+
+  /* ---- the numbers ---- */
+  .numbers { position: relative; z-index: 10; max-width: 1080px; margin: 0 auto; padding: 48px max(24px, 3vw) 24px; background: #07070b; box-sizing: border-box; }
+  .numbers dl { margin: 0; display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
+  .stat { padding: 8px 0; }
+  .stat dt { font-size: clamp(32px, 5vw, 48px); font-weight: 800; letter-spacing: -0.03em; color: var(--accent); }
+  .stat dd { margin: 4px 0 0; color: var(--muted); font-size: 14px; }
+  .measure { margin: 24px 0 0; color: var(--muted); font-size: 13px; }
+  .measure a { color: var(--text); text-decoration: underline; text-underline-offset: 2px; }
+
+  /* ---- the download ---- */
+  .get { position: relative; z-index: 10; text-align: center; padding: 96px 24px; background: #07070b; }
+  .get-title { font-size: clamp(28px, 4vw, 40px); letter-spacing: -0.02em; margin: 0 0 28px; }
+  .sign-meta { margin: 12px 0 0; font-size: 13px; color: var(--muted); }
+  .smartscreen { margin: 18px auto 0; max-width: 420px; color: var(--muted); font-size: 13px; line-height: 1.5; }
+  .smartscreen a { color: var(--text); text-decoration: underline; text-underline-offset: 2px; }
+
+  /* ---- live: the stage is tall, the frame is pinned, and the camera and everything over it are driven by scroll ---- */
+  .stage.live { height: calc(var(--stage-vh) * 100vh); }
+  .stage.live .anchor { display: block; position: absolute; left: 0; top: calc(var(--features-vh) * 100vh); width: 1px; height: 1px; }
+  .stage.live .frame { position: sticky; top: 0; height: 100vh; min-height: 0; }
+  .stage.live .copy { min-height: 100vh; }
+
+  .stage.live .sky { text-align: left; position: absolute; inset: 0; padding: 0; background: none; opacity: var(--ui, 0); pointer-events: none; }
+  .stage.live .sky-title { position: absolute; left: max(24px, 3vw); top: 84px; margin: 0; }
+  .stage.live .labels { display: block; }
+  .stage.live .labels li { position: absolute; left: 0; top: 0; width: 280px; will-change: transform, opacity; opacity: 0; }
+  .stage.live .label { pointer-events: auto; position: relative; padding-left: 38px; opacity: 0.4; transition: opacity 0.4s ease; }
+  /* a short line from the star to its label */
+  .stage.live .label::before { content: ""; position: absolute; left: 0; top: 14px; width: 28px; height: 1px; background: linear-gradient(90deg, rgba(255, 233, 168, 0), rgba(255, 233, 168, 0.9)); transform: scaleX(-1); }
+  .stage.live li.left .label { padding-left: 0; padding-right: 38px; text-align: right; }
+  .stage.live li.left .label::before { left: auto; right: 0; transform: none; }
+  .stage.live li.active .label { opacity: 1; }
+  .stage.live .label p { position: absolute; left: 38px; right: 0; top: 100%; opacity: 0; transform: translateY(-4px); transition: opacity 0.4s ease, transform 0.4s ease; }
+  .stage.live li.left .label p { left: 0; right: 38px; }
+  .stage.live li.active .label p { opacity: 1; transform: none; }
+  .stage.live .minor { position: absolute; left: max(24px, 3vw); bottom: 7vh; margin: 0; opacity: var(--minor, 0); }
+  .stage.live .dots { display: flex; gap: 10px; position: absolute; right: max(24px, 3vw); top: 50%; transform: translateY(-50%); flex-direction: column; }
+  .stage.live .dots i { width: 6px; height: 6px; border-radius: 50%; background: rgba(255, 233, 168, 0.3); transition: background 0.3s ease, transform 0.3s ease; }
+  .stage.live .dots i.on { background: #ffe9a8; transform: scale(1.5); }
+
+  /* the notebook floats on the left of the glade; the tree is on the right */
+  .stage.live .write {
+    position: absolute; left: max(24px, 5vw); top: 50%; width: min(470px, 42vw); max-width: none; margin: 0; padding: 0; background: none;
+    opacity: var(--write, 0); pointer-events: var(--write-events, none);
+    transform: translateY(calc(-50% + (1 - var(--write, 0)) * 48px));
+  }
+  .stage.live .notebook { animation: float 7s ease-in-out infinite; }
+  .stage.live .notebook:focus-within { animation: none; }
+  .stage.live .notebook:hover { animation-play-state: paused; } /* hold still while the pointer is on it */
+  .stage.live .write-note { color: #c9d4ec; }
+  .stage.live .chapter-title { margin-bottom: 12px; }
+  @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+
+  /* the numbers hang under their lanterns; the page puts each one there */
+  .stage.live .numbers { position: absolute; inset: 0; max-width: none; margin: 0; padding: 0; background: none; opacity: var(--numbers, 0); pointer-events: none; }
+  .stage.live .numbers dl { display: block; }
+  .stage.live .stat { position: absolute; left: 0; top: 0; text-align: center; opacity: 0; will-change: transform; white-space: nowrap; padding: 8px 18px 10px; }
+  .stage.live .stat dt { font-size: clamp(26px, 3.4vw, 40px); line-height: 1.1; }
+  .stage.live .measure { position: absolute; left: 50%; bottom: 5vh; margin: 0; transform: translateX(-50%); text-align: center; color: #c9d4ec; pointer-events: var(--numbers-events, none); white-space: nowrap; }
+
+  /* the download hangs on the fox's tag; the page sizes and places it over the tag */
+  .stage.live .get { position: absolute; inset: 0; padding: 0; background: none; text-align: center; opacity: var(--tag, 0); pointer-events: none; }
+  .stage.live .get-title { display: none; }
+  .stage.live .sign { position: absolute; left: 0; top: 0; width: calc(var(--tag-w, 240px) * 0.8); will-change: transform; pointer-events: var(--tag-events, none); }
+  .stage.live .sign :global(.btn) {
+    display: flex; justify-content: center; width: 100%; box-sizing: border-box; text-align: center;
+    padding: 0.7em 0.5em; font-size: clamp(12px, calc(var(--tag-w, 240px) * 0.062), 20px);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+  }
+  .stage.live .sign-meta { margin: 0.55em 0 0; color: #3d2a18; font-weight: 700; font-size: clamp(10px, calc(var(--tag-w, 240px) * 0.045), 14px); }
+  .stage.live .smartscreen { position: absolute; left: 50%; bottom: calc(var(--footer-h, 72px) + 3vh); margin: 0; transform: translateX(-50%); width: min(440px, 90vw); box-sizing: border-box; color: #c9d4ec; pointer-events: var(--tag-events, none); }
+  .stage.live .smartscreen a { color: #fff; }
+
+  .stage.live .hint {
+    display: block; position: absolute; left: 50%; bottom: 4vh; z-index: 10; transform: translateX(-50%); margin: 0;
+    font-size: 11px; letter-spacing: 0.3em; text-transform: uppercase; color: #d9d4e4; text-shadow: 0 1px 6px rgba(0, 0, 0, 0.8); text-align: center;
+    opacity: calc(1 - var(--hero-out, 0) * 3);
+  }
+  .stage.live .hint i { display: block; width: 1px; height: 28px; margin: 8px auto 0; background: linear-gradient(#d9d4e4, transparent); animation: hint 2s ease-in-out infinite; }
+  @keyframes hint { 0%, 100% { transform: scaleY(0.4); transform-origin: top; } 50% { transform: scaleY(1); transform-origin: top; } }
+
+  @media (max-width: 767px) {
+    /* phones: the picture fills the top of the first screen and fades into the page; the name sits on its lower edge and
+       the text and buttons follow below. (Text first, then the picture, left a black first screen.) */
+    .frame { display: flex; flex-direction: column; }
+    .still { position: absolute; inset: 0 0 auto 0; height: 56vh; height: 56svh; min-height: 340px; max-height: 560px; -webkit-mask-image: linear-gradient(#000 45%, transparent 98%); mask-image: linear-gradient(#000 45%, transparent 98%); }
+    .still img { object-position: 68% bottom; }
+    .copy { order: 1; max-width: none; min-height: 0; margin-left: 0; justify-content: flex-start; padding-top: calc(clamp(340px, 56svh, 560px) - 96px); padding-bottom: 28px; }
+    .eyebrow, h1 { text-shadow: 0 2px 14px rgba(7, 7, 11, 0.85); }
+    .eyebrow { letter-spacing: 0.1em; }
+    h1 { font-size: min(72px, 19vw); } /* "Raku 楽" must fit the narrowest phones (320 px) */
+    h1 span { font-size: min(112px, 24vw); }
+    .sky, .write, .numbers, .get { order: 3; }
+    .write { width: auto; box-sizing: border-box; }
+    .scene { display: none; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .stage.live .hint i, .stage.live .notebook { animation: none; }
+  }
+</style>
+
+<script>
+  import { detectEnv, shouldRunScene } from "../scene/capabilities";
+  import { CONSTELLATION } from "../scene/constellation";
+  import { JOURNEY_AT, chapterAt, chapterScroll, journeyAt, type Chapter } from "../scene/journey";
+  import type { JourneyProjection } from "../scene/index";
+
+  const stage = document.getElementById("hero");
+  const host = document.getElementById("hero-scene");
+  const editorEl = document.getElementById("notebook-editor");
+  const toolbarEl = document.getElementById("notebook-toolbar");
+
+  // The notebook's code is a separate chunk, loaded when the visitor gets near it (or reaches for it)
+  let notebookRequested = false;
+  const loadNotebook = () => {
+    if (notebookRequested || !editorEl || !toolbarEl) return;
+    notebookRequested = true;
+    import("../notebook/mount")
+      .then(({ mountNotebook }) => mountNotebook(editorEl, toolbarEl))
+      .catch((err) => { notebookRequested = false; console.warn("The notebook could not start.", err); });
+  };
+  editorEl?.addEventListener("pointerdown", loadNotebook, { once: true });
+  editorEl?.addEventListener("focusin", loadNotebook, { once: true });
+
+  // plain page: load the notebook as it comes near the screen
+  let watching = false;
+  const loadWhenNear = () => {
+    if (watching || !stage) return;
+    watching = true;
+    const near = stage.querySelector(".write");
+    if (near && "IntersectionObserver" in window) {
+      new IntersectionObserver((e, io) => { if (e.some((x) => x.isIntersecting)) { loadNotebook(); io.disconnect(); } }, { rootMargin: "800px" }).observe(near);
+    } else loadNotebook();
+  };
+
+  const live = stage && host && shouldRunScene(detectEnv(window));
+  if (stage && !live) loadWhenNear();
+
+  if (stage && host && live) {
+    const sky = stage.querySelector<HTMLElement>(".sky")!;
+    const anchor = stage.querySelector<HTMLElement>(".anchor")!;
+    const items = [...stage.querySelectorAll<HTMLLIElement>(".labels li")];
+    const dots = [...stage.querySelectorAll<HTMLElement>(".dots i")];
+    const stats = [...stage.querySelectorAll<HTMLElement>(".stat")];
+    const sign = stage.querySelector<HTMLElement>(".sign")!;
+    const N = CONSTELLATION.stars.length;
+    const clamp = (v: number, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+
+    // The "Features" link (#features) points at the plain list when there is no live scene, and at the scroll position
+    // where the features begin when there is one.
+    const setLive = (on: boolean) => {
+      stage.classList.toggle("live", on);
+      // the plain page must not keep the scroll-driven look (a faded hero) if the live scene stops part-way
+      if (!on) {
+        for (const v of ["--hero-out", "--copy-events"]) stage.style.removeProperty(v);
+        loadWhenNear(); // the scene stopped (or was too slow): this is now the plain page, and its notebook needs loading too
+      }
+      for (const li of items) {
+        const label = li.querySelector<HTMLElement>(".label")!;
+        if (on) { label.setAttribute("role", "button"); label.tabIndex = 0; }
+        else { label.removeAttribute("role"); label.removeAttribute("tabindex"); }
+      }
+      sky.id = on ? "" : "features";
+      anchor.id = on ? "features" : "";
+    };
+    const toFeatures = () => { if (location.hash === "#features") anchor.scrollIntoView(); };
+    setLive(true);
+    toFeatures();
+    addEventListener("hashchange", toFeatures);
+
+    // The scroll position the page is at, and the (slightly behind) position the scene follows. Following it with
+    // a time-based easing makes mouse-wheel steps glide instead of jumping.
+    let targetVh = 0, shownVh = 0, lastMs = 0;
+    const readScroll = () => { targetVh = -stage.getBoundingClientRect().top / window.innerHeight; };
+    addEventListener("scroll", readScroll, { passive: true });
+    addEventListener("resize", readScroll);
+    readScroll();
+    shownVh = targetVh;
+
+    let state = journeyAt(shownVh);
+    const getState = () => {
+      const now = performance.now();
+      if (now - lastMs > 3) { // once per frame, however many times the scene asks
+        const dt = lastMs ? Math.min(0.1, (now - lastMs) / 1000) : 0;
+        lastMs = now;
+        shownVh += (targetVh - shownVh) * (1 - Math.exp(-dt * 6));
+        state = journeyAt(shownVh);
+      }
+      return state;
+    };
+
+    const current = (feature: number) => clamp(Math.floor(feature), 0, N - 1);
+    const onProject = (p: JourneyProjection) => {
+      const s = state, st = stage.style, width = host.clientWidth;
+      if (s.scroll > JOURNEY_AT.stars) loadNotebook();
+      st.setProperty("--hero-out", String(clamp(s.tilt * 2.2)));
+      st.setProperty("--copy-events", s.tilt > 0.25 ? "none" : "auto"); // the faded-out buttons must not catch clicks
+      st.setProperty("--ui", String(s.stars));
+      st.setProperty("--minor", String(clamp(s.feature - (N - 1))));
+      st.setProperty("--write", String(s.write));
+      st.setProperty("--write-events", s.write > 0.5 ? "auto" : "none");
+      st.setProperty("--numbers", String(s.numbers));
+      st.setProperty("--numbers-events", s.numbers > 0.5 ? "auto" : "none");
+      st.setProperty("--tag", String(s.tag));
+      st.setProperty("--tag-events", s.tag > 0.5 ? "auto" : "none");
+      st.setProperty("--tag-w", p.tag.width.toFixed(1) + "px");
+
+      const active = current(s.feature);
+      items.forEach((li, i) => {
+        const q = p.stars[i];
+        const left = q.x + 14 + 280 > width - 16; // the label goes on the left of its star only if it would run off the right edge
+        li.classList.toggle("left", left);
+        li.classList.toggle("active", i === active && s.feature > 0);
+        const w = 280, x = left ? q.x - w - 14 : q.x + 14;
+        li.style.transform = "translate3d(" + x.toFixed(1) + "px," + (q.y - 15).toFixed(1) + "px,0)";
+        li.style.opacity = q.visible && i <= active + 1 ? "1" : "0"; // only the current star and the next one show a label
+      });
+      dots.forEach((d, i) => d.classList.toggle("on", i === active && s.feature > 0));
+
+      if (s.numbers > 0) {
+        stats.forEach((el, i) => {
+          const q = p.lanterns[i];
+          el.style.transform = "translate3d(" + q.x.toFixed(1) + "px," + q.y.toFixed(1) + "px,0) translate(-50%,0)";
+          el.style.opacity = q.visible ? "1" : "0";
+        });
+      }
+      if (s.tag > 0) sign.style.transform = "translate3d(" + p.tag.x.toFixed(1) + "px," + p.tag.y.toFixed(1) + "px,0) translate(-50%,-50%)";
+    };
+
+    // clicking a label scrolls to that feature
+    items.forEach((li, i) => li.querySelector<HTMLElement>(".label")?.addEventListener("click", () => {
+      const vh = JOURNEY_AT.stars + CONSTELLATION.itemVh * (i + 0.5);
+      scrollTo({ top: stage.getBoundingClientRect().top + scrollY + vh * window.innerHeight, behavior: "smooth" });
+    }));
+
+    // Focus (Tab) moving into a chapter the page is not at: scroll there first, so the camera and the thing focused agree
+    stage.addEventListener("focusin", (e) => {
+      if (!stage.classList.contains("live")) return;
+      const chapter = (e.target as Element).closest<HTMLElement>("[data-chapter]")?.dataset.chapter as Chapter | undefined;
+      if (!chapter || chapter === chapterAt(targetVh)) return;
+      scrollTo({ top: stage.getBoundingClientRect().top + scrollY + chapterScroll(chapter) * window.innerHeight, behavior: "instant" });
+    });
+
+    // Three.js is a separate chunk, loaded only here, after the still has painted
+    import("../scene/index")
+      .then(({ mountScene }) => mountScene(host, { journey: { getState, onProject }, onFail: () => setLive(false) }))
+      .then((handle) => {
+        // Reduced motion switched on while the page is open: drop the live scene, the still and the plain sections stay
+        window.matchMedia("(prefers-reduced-motion: reduce)").addEventListener("change", (e) => {
+          if (e.matches) { handle.dispose(); setLive(false); }
+        });
+      })
+      .catch((err) => {
+        console.warn("The live scene could not start; showing the still image instead.", err);
+        setLive(false);
+      });
+  }
+</script>
