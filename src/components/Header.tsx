@@ -8,6 +8,7 @@ import {
   Timer,
   Minus,
   Plus,
+  Save,
 } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import type { ReactNode } from "react";
@@ -26,6 +27,10 @@ interface HeaderProps {
   exportMenu: ReactNode;
   settingsMenu: ReactNode;
   crumbs: string[];
+  onSave: () => void;
+  canSave: boolean;
+  // true for a moment after a successful save
+  justSaved: boolean;
 }
 
 const iconBtn =
@@ -43,6 +48,9 @@ export function Header({
   exportMenu,
   settingsMenu,
   crumbs,
+  onSave,
+  canSave,
+  justSaved,
 }: HeaderProps) {
   const { isRunning, startPomodoro, adjustMinutes, formatPomodoro } =
     usePomodoro();
@@ -77,6 +85,15 @@ export function Header({
           <PanelLeft size={17} />
         </button>
       )}
+      <button
+        onClick={onSave}
+        disabled={!canSave}
+        className={`${iconBtn} ${justSaved ? "text-accent!" : ""} disabled:opacity-40 disabled:pointer-events-none`}
+        title={justSaved ? "Saved" : "Save (Ctrl+S)"}
+        aria-label={justSaved ? "Saved" : "Save"}
+      >
+        {justSaved ? <Check size={17} /> : <Save size={17} />}
+      </button>
       <nav
         className="ml-2 flex items-center gap-2 min-w-0 text-xs font-mono text-app-muted"
         aria-label="Location"

@@ -112,20 +112,21 @@ export function useNotes() {
 
   // Update note content
   const updateNote = useCallback(
-    async (id: string, content: string) => {
-      if (!db) return;
+    // Resolves to false when the note could not be saved, true when it was saved or there was nothing to save
+    async (id: string, content: string): Promise<boolean> => {
+      if (!db) return false;
 
       const currentNote = notesRef.current.find((n) => n.id === id);
-      if (!currentNote) return;
+      if (!currentNote) return false;
 
       // Skip update if content has not changed
       if (currentNote.content === content) {
-        return;
+        return true;
       }
 
       // If note was empty ("") and new content has no actual text, skip update
       if (currentNote.content === "" && !hasTextContent(content)) {
-        return;
+        return true;
       }
 
       let title = extractTitle(content);
@@ -149,9 +150,11 @@ export function useNotes() {
           [content, title, updatedAt, id]
         );
         setSaveError(null);
+        return true;
       } catch (e) {
         console.error("Failed to update note:", e);
         setSaveError("Could not save note. Your latest changes may not be saved.");
+        return false;
       }
     },
     [db] // No 'notes' dependency
