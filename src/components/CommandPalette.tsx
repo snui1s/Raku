@@ -57,8 +57,9 @@ export function CommandPalette({
     }
   }, [open]);
 
-  // parsed once per change of the notes, not on every keystroke
-  const noteIndex = useMemo(() => indexNotes(notes), [notes]);
+  // Parsed once per change of the notes, not on every keystroke, and only while the palette is open:
+  // the notes list changes on every autosave and this component stays mounted.
+  const noteIndex = useMemo(() => (open ? indexNotes(notes) : []), [open, notes]);
 
   const items = useMemo<Item[]>(() => {
     const q = query.trim().toLowerCase();
