@@ -1,6 +1,7 @@
 // Fonts
 export const AVAILABLE_FONTS = [
   { name: "Chakra Petch", family: "'Chakra Petch', sans-serif" },
+  { name: "Google Sans", family: "'Google Sans', 'LINE Seed Sans TH', sans-serif" },
   { name: "IBM Plex Sans Thai", family: "'IBM Plex Sans Thai', sans-serif" },
   { name: "Inter", family: "'Inter', sans-serif" },
   { name: "Kanit", family: "'Kanit', sans-serif" },

@@ -1,6 +1,7 @@
 import { NodeViewWrapper, NodeViewProps } from "@tiptap/react";
 import { useCallback, useEffect, useState, useRef } from "react";
 import { readFile, BaseDirectory } from "@tauri-apps/plugin-fs";
+import { resizedWidth } from "../utils/imageSize";
 
 export const ResizableImage = (props: NodeViewProps) => {
   const [width, setWidth] = useState(props.node.attrs.width || "auto");
@@ -42,12 +43,13 @@ export const ResizableImage = (props: NodeViewProps) => {
 
       const startX = e.clientX;
       const startWidth = imageRef.current?.offsetWidth || 0;
+      // the text column: the paper can be narrower than the saved width (paper width and zoom settings)
+      const column = imageRef.current?.closest(".ProseMirror")?.clientWidth || 0;
 
       const onMouseMove = (e: MouseEvent) => {
         const currentX = e.clientX;
         const diffX = currentX - startX;
-        const newWidth = Math.max(100, startWidth + diffX); // Min width 100px
-        setWidth(`${newWidth}px`);
+        setWidth(`${resizedWidth(startWidth, diffX, column)}px`);
       };
 
       const onMouseUp = () => {
@@ -73,12 +75,13 @@ export const ResizableImage = (props: NodeViewProps) => {
   const isSelected = props.selected;
 
   return (
-    <NodeViewWrapper className="resize-image-wrapper inline-block relative leading-none">
+    <NodeViewWrapper className="resize-image-wrapper inline-block relative leading-none max-w-full">
       <div
         className={`relative inline-block transition-all ${
           isSelected || isResizing ? "ring-2 ring-accent" : ""
         }`}
-        style={{ width: width === "auto" ? "auto" : width }}
+        // a saved width can be wider than the paper is now: the image shrinks with it instead of sticking out
+        style={{ width: width === "auto" ? "auto" : width, maxWidth: "100%" }}
       >
         {/* The Image */}
         <img
