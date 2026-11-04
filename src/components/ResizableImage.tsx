@@ -19,17 +19,26 @@ export const ResizableImage = (props: NodeViewProps) => {
     const src = props.node.attrs.src;
     if (src && src.startsWith("local-image:")) {
       const path = src.replace("local-image:", "");
+      let objectUrl: string | null = null;
+      let cancelled = false;
 
       readFile(path, { baseDir: BaseDirectory.AppData })
         .then((bytes) => {
+          if (cancelled) return;
           const blob = new Blob([bytes]);
-          const objectUrl = URL.createObjectURL(blob);
+          objectUrl = URL.createObjectURL(blob);
           setImgSrc(objectUrl);
         })
         .catch((err) => {
           console.error("Failed to load local image:", err);
           // Fallback or error placeholder could go here
         });
+
+      // free the file held by the blob URL when the image goes away or its source changes
+      return () => {
+        cancelled = true;
+        if (objectUrl) URL.revokeObjectURL(objectUrl);
+      };
     } else {
       setImgSrc(src);
     }
