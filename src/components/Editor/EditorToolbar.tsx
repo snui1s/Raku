@@ -101,15 +101,15 @@ export function EditorToolbar({ editor, isDark }: EditorToolbarProps) {
 
   if (!isVisible) {
     return (
-      <div className="fixed top-14 left-1/2 -translate-x-1/2 z-40">
+      // In the layout, in the same slot as the toolbar, so it never covers the paper
+      <div className="flex justify-center px-6 pt-1 pb-2 relative z-20 raku-fade">
         <button
           onClick={() => setIsVisible(true)}
-          className="px-3 py-1.5 rounded-full backdrop-blur-md bg-app-toolbar border border-app-border text-xs text-app-muted hover:text-accent shadow-md transition-all flex items-center gap-1.5 group cursor-pointer hover:scale-105"
+          className="flex h-7 cursor-pointer items-center gap-1.5 rounded-full px-3 text-xs text-app-muted transition-colors hover:bg-app-tertiary hover:text-accent"
           title="Show Toolbar (Ctrl+Shift+T)"
         >
-          <Eye size={14} className="text-accent" />
-          <span className="font-medium">Show Toolbar</span>
-          <span className="text-[0.625rem] opacity-60 font-mono bg-app-tertiary px-1.5 py-0.5 rounded">Ctrl+Shift+T</span>
+          <Eye size={14} />
+          <span>Show toolbar</span>
         </button>
       </div>
     );
