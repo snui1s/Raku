@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import type { ReactNode } from "react";
 import { Note, Folder } from "../hooks/useNotes";
+import { indexNotes, searchNotes } from "../utils/noteSearch";
 
 interface CommandPaletteProps {
   open: boolean;
@@ -26,6 +27,7 @@ interface CommandPaletteProps {
 interface Item {
   key: string;
   label: string;
+  snippet?: string | null;
   hint: string;
   icon: ReactNode;
   run: () => void;
@@ -55,22 +57,22 @@ export function CommandPalette({
     }
   }, [open]);
 
+  // parsed once per change of the notes, not on every keystroke
+  const noteIndex = useMemo(() => indexNotes(notes), [notes]);
+
   const items = useMemo<Item[]>(() => {
     const q = query.trim().toLowerCase();
     const folderName = (id?: string | null) =>
       folders.find((f) => f.id === id)?.name ?? "Inbox";
 
-    const noteItems: Item[] = notes
-      .filter((n) => !q || (n.title || "Untitled").toLowerCase().includes(q))
-      .sort((a, b) => b.updatedAt - a.updatedAt)
-      .slice(0, 8)
-      .map((n) => ({
-        key: n.id,
-        label: n.title || "Untitled",
-        hint: folderName(n.folderId),
-        icon: <FileText size={16} />,
-        run: () => onSelectNote(n.id),
-      }));
+    const noteItems: Item[] = searchNotes(noteIndex, query, 8).map(({ note: n, snippet }) => ({
+      key: n.id,
+      label: n.title || "Untitled",
+      snippet,
+      hint: folderName(n.folderId),
+      icon: <FileText size={16} />,
+      run: () => onSelectNote(n.id),
+    }));
 
     const actions: Item[] = [
       {
@@ -113,7 +115,7 @@ export function CommandPalette({
     return [...noteItems, ...actions];
   }, [
     query,
-    notes,
+    noteIndex,
     folders,
     onSelectNote,
     onNewNote,
@@ -186,8 +188,13 @@ export function CommandPalette({
                 <span className={i === index ? "text-accent" : ""}>
                   {item.icon}
                 </span>
-                <span className="truncate">{item.label}</span>
-                <span className="ml-auto text-[0.6875rem] font-mono text-app-muted">
+                <span className="min-w-0 flex-1">
+                  <span className="block truncate">{item.label}</span>
+                  {item.snippet && (
+                    <span className="block truncate text-xs text-app-muted">{item.snippet}</span>
+                  )}
+                </span>
+                <span className="ml-auto shrink-0 text-[0.6875rem] font-mono text-app-muted">
                   {item.hint}
                 </span>
               </button>
