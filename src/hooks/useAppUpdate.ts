@@ -16,7 +16,7 @@ export function useAppUpdate() {
         if (update?.available) {
           setUpdateAvailable({
             version: update.version,
-            notes: update.body || "New version available!",
+            notes: update.body || "",
             downloadAndInstall: async () => {
               setIsUpdating(true);
               await update.downloadAndInstall();

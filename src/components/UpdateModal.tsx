@@ -1,5 +1,3 @@
-import { Download } from "lucide-react";
-
 interface UpdateModalProps {
   updateAvailable: {
     version: string;
@@ -18,6 +16,9 @@ export function UpdateModal({
 }: UpdateModalProps) {
   if (!updateAvailable) return null;
 
+  // update.json carries "Release vX.Y.Z" when there are no real notes, which only repeats the version above
+  const notes = /^Release v?[\d.]+$/i.test(updateAvailable.notes.trim()) ? "" : updateAvailable.notes;
+
   return (
     <div
       role="dialog"
@@ -26,18 +27,14 @@ export function UpdateModal({
       className="raku-fade fixed inset-0 z-100 flex items-center justify-center bg-black/40 backdrop-blur-sm"
     >
       <div className="raku-pop mx-4 w-full max-w-sm rounded-2xl border border-app-border bg-app-dropdown p-6 text-app-text shadow-2xl">
-        <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-full bg-accent/15 text-accent">
-          <Download size={18} />
-        </div>
-
         <h2 className="text-base font-semibold">Update available</h2>
         <p className="mt-1 text-sm text-app-muted">
           Raku {updateAvailable.version} is ready to install.
         </p>
 
-        {updateAvailable.notes && (
+        {notes && (
           <p className="mt-3 max-h-32 overflow-y-auto whitespace-pre-line text-xs leading-relaxed text-app-muted">
-            {updateAvailable.notes}
+            {notes}
           </p>
         )}
 
