@@ -190,6 +190,43 @@ function App() {
     }, settings.autosaveDelay);
   }, [editor, activeNoteId, updateNote, settings.autosaveDelay]);
 
+  // Manual save (button and Ctrl+S): skips the autosave wait and shows a check for a moment
+  const [justSaved, setJustSaved] = useState(false);
+  const justSavedTimeoutRef = useRef<number | null>(null);
+
+  const saveNow = useCallback(async () => {
+    if (!editor || !activeNoteId) return;
+
+    if (saveTimeoutRef.current) {
+      clearTimeout(saveTimeoutRef.current);
+      saveTimeoutRef.current = null;
+    }
+
+    const saved = await updateNote(activeNoteId, JSON.stringify(editor.getJSON()));
+    if (!saved) return;
+
+    setJustSaved(true);
+    if (justSavedTimeoutRef.current) clearTimeout(justSavedTimeoutRef.current);
+    justSavedTimeoutRef.current = window.setTimeout(() => setJustSaved(false), 1500);
+  }, [editor, activeNoteId, updateNote]);
+
+  useEffect(() => {
+    return () => {
+      if (justSavedTimeoutRef.current) clearTimeout(justSavedTimeoutRef.current);
+    };
+  }, []);
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && !e.shiftKey && !e.altKey && e.key.toLowerCase() === "s") {
+        e.preventDefault();
+        saveNow();
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [saveNow]);
+
   // Attach editor update listener
   useEffect(() => {
     if (editor) {
@@ -340,6 +377,9 @@ function App() {
             setCurrentTheme={setCurrentTheme}
             zenMode={zenMode}
             setZenMode={setZenMode}
+            onSave={saveNow}
+            canSave={!!activeNoteId}
+            justSaved={justSaved}
             settingsMenu={
               <SettingsMenu
                 open={isSettingsOpen}
