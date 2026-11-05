@@ -33,8 +33,9 @@ interface BackupFolder {
   created_at: number | null;
 }
 
-// Safe file name inside the images folder (no path separators)
-const isSafeImageName = (name: string) => /^[\w.-]+$/.test(name);
+// Safe file name inside the images folder (no path separators, and not only dots: "." and ".." are
+// folders, and Windows drops trailing dots)
+const isSafeImageName = (name: string) => /^[\w.-]+$/.test(name) && !/^\.+$/.test(name);
 
 /** Build a .zip containing every note (notes.json) and every image. */
 export async function createBackup(): Promise<{ blob: Blob; filename: string }> {
