@@ -13,7 +13,8 @@ jobs:
       - uses: oven-sh/setup-bun@v2
       - run: bun install --frozen-lockfile
       - run: bun run typecheck
-      - run: bun run test
+      # Keep cold jsdom/ICU startup from competing across too many workers on the Windows runner.
+      - run: bun run test --maxWorkers=2
       - run: bun run build
 
   rust:

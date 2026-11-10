@@ -36,14 +36,18 @@ interface SidebarProps {
   onOpenPalette: () => void;
 }
 
+// Reuse the locale formatters across notes and drag renders instead of initializing ICU for every label.
+const noteDateFormatter = new Intl.DateTimeFormat("en-GB", { day: "numeric", month: "short" });
+const noteTimeFormatter = new Intl.DateTimeFormat("en-GB", { hour: "2-digit", minute: "2-digit" });
+
 const formatNoteDate = (ts: number) => {
   const d = new Date(ts);
   const days = Math.floor((Date.now() - ts) / 86400000);
   if (days <= 0 && new Date().getDate() === d.getDate())
-    return `Today ${d.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })}`;
+    return `Today ${noteTimeFormatter.format(d)}`;
   if (days <= 1) return "Yesterday";
   if (days < 7) return `${days} days ago`;
-  return d.toLocaleDateString("en-GB", { day: "numeric", month: "short" });
+  return noteDateFormatter.format(d);
 };
 
 const smallBtn =
