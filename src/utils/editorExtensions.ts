@@ -21,6 +21,8 @@ export function createEditorExtensions(imageNodeView?: NodeViewRenderer) {
       bulletList: false,
       orderedList: false,
       listItem: false,
+      dropcursor: false,
+      underline: false,
     }),
     ListItem,
     Dropcursor.configure({

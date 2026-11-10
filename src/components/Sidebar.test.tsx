@@ -12,12 +12,12 @@ const notes: Note[] = [
   { id: "n2", title: "Filed note", content: "", createdAt: 1, updatedAt: 2, folderId: "f1" },
 ];
 
-const setup = () => {
+const setup = (noteList: Note[] = notes) => {
   const moveNote = vi.fn();
   const handleSelectNote = vi.fn();
   render(
     <Sidebar
-      notes={notes}
+      notes={noteList}
       folders={folders}
       activeNoteId="n1"
       renamingNoteId={null}
@@ -47,7 +47,22 @@ const dropOn = (el: Element | null) => {
 
 afterEach(() => {
   cleanup();
+  vi.useRealTimers();
   document.body.classList.remove("raku-dragging");
+});
+
+describe("Sidebar note dates", () => {
+  it("preserves today's time, yesterday, recent days and older dates", () => {
+    vi.useFakeTimers({ toFake: ["Date"] });
+    vi.setSystemTime(new Date(2026, 10, 10, 12, 30));
+    setup([0, 1, 3, 8].map((days, index) => ({
+      ...notes[0], id: `date-${index}`, title: `Note ${index}`,
+      updatedAt: new Date(2026, 10, 10 - days, 12, 30).getTime(),
+    })));
+    for (const label of ["Today 12:30", "Yesterday", "3 days ago", "2 Nov"]) {
+      expect(screen.getByText(label)).toBeTruthy();
+    }
+  });
 });
 
 describe("Sidebar drag and drop", () => {

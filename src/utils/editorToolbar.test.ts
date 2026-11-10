@@ -16,6 +16,17 @@ beforeEach(() => {
 });
 afterEach(() => editor.destroy());
 
+describe("editor extension registration", () => {
+  it("registers each extension once and keeps the custom drop cursor", () => {
+    const extensions = editor.extensionManager.extensions;
+    const names = extensions.map((extension) => extension.name);
+    expect(names.filter((name, index) => names.indexOf(name) !== index)).toEqual([]);
+    const dropCursor = extensions.find((extension) => extension.name === "dropCursor")!;
+    expect(dropCursor.options).toMatchObject({ color: "var(--color-accent)", width: 2 });
+    expect(extensions.filter((extension) => extension.name === "underline")).toHaveLength(1);
+  });
+});
+
 describe("inline formatting", () => {
   it.each([
     ["bold", () => editor.chain().focus().toggleBold().run(), "<strong>"],

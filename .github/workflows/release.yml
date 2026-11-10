@@ -107,7 +107,7 @@ jobs:
 
       # Never ship something CI would reject
       - run: bun run typecheck
-      - run: bun run test
+      - run: bun run test --maxWorkers=2
 
       - uses: dtolnay/rust-toolchain@stable
       - uses: swatinem/rust-cache@v2
